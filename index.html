@@ -103,45 +103,35 @@ body::before{
   -webkit-backdrop-filter:blur(28px) saturate(1.8);
   box-shadow:0 8px 32px rgba(0,0,0,.4),inset 0 -1px 0 rgba(255,255,255,.06);
   display:flex;align-items:center;justify-content:center;
-  /* fixed height - NEVER shrinks regardless of logo/font slider */
-  height:90px;
   flex-shrink:0;
-  /* push content below device notch/camera */
-  padding-top:env(safe-area-inset-top, 0px);
-  padding-left:max(16px, env(safe-area-inset-left, 0px));
-  padding-right:max(16px, env(safe-area-inset-right, 0px));
-  padding-bottom:0;
+  padding-top:calc(env(safe-area-inset-top, 0px) + 10px);
+  padding-left:max(14px, env(safe-area-inset-left, 0px));
+  padding-right:max(14px, env(safe-area-inset-right, 0px));
+  padding-bottom:10px;
 }
 .nav-logos{
   display:flex;align-items:center;justify-content:center;
-  gap:10px;width:100%;
-  /* content is clipped to the fixed 72px bar */
-  overflow:hidden;
+  gap:clamp(8px, 2.5vw, 14px);width:100%;
 }
 .nav-logos img{
-  /* logo size controlled by slider var, but capped so it never overflows the bar */
-  width:clamp(32px, var(--logo-size, 44px), 52px);
-  height:clamp(32px, var(--logo-size, 44px), 52px);
+  width:clamp(36px, 10vw, 60px);
+  height:clamp(36px, 10vw, 60px);
   object-fit:contain;border-radius:8px;flex-shrink:0;
 }
 .nav-school{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0;flex:1}
 .nav-school h1{
   font-family:'Playfair Display',Georgia,serif;
-  /* font size controlled by slider var, capped so it never overflows bar */
-  font-size:clamp(11px, var(--header-font-size, 14px), 17px);
+  font-size:clamp(12px, 3.8vw, 20px);
   font-weight:700;color:var(--text);line-height:1.2;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  width:100%;
 }
 .nav-school p{
-  font-size:clamp(8px, calc(var(--header-font-size, 14px) * 0.66), 12px);
+  font-size:clamp(9px, 2.5vw, 13px);
   font-weight:500;color:var(--muted);text-transform:uppercase;
-  letter-spacing:.04em;margin-top:1px;
+  letter-spacing:.04em;margin-top:3px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-
-/* ── RESPONSIVE HEADER ── */
-@media (max-width:360px){
-  #topNav{height:64px}
+  width:100%;
 }
 
 /* ── MAIN CONTENT AREA ── */
@@ -601,10 +591,6 @@ body::before{
       </select>
     </div>
     
-    <div class="s-title">🖼️ Tampilan Logo &amp; Font</div>
-    <div class="s-row"><label>Ukuran Logo</label><input type="range" id="range-logo" min="36" max="80" oninput="previewLayout()"></div>
-    <div class="s-row"><label>Ukuran Font</label><input type="range" id="range-font" min="10" max="22" step="1" oninput="previewLayout()"></div>
-    
     <div class="s-title">🔗 Tautan &amp; Info</div>
     <a href="https://azzahrolocare.github.io/rekapitulasi-presensi-siswa/" target="_blank" class="btn-rekap-a" id="btn-rekap" onclick="event.stopPropagation()">
       <i class="fa-solid fa-chart-pie"></i> Rekapitulasi Presensi Siswa
@@ -825,29 +811,16 @@ const rawURL = '';
 
 function applySettings() {
   const cfg = JSON.parse(localStorage.getItem('absensiConfig')) || {
-    sound:'notification/Notif01.mp3', logoSize:'44', fontSize:'14'
+    sound:'notification/Notif01.mp3'
   };
   document.getElementById('sound-choice').value = cfg.sound;
-  document.getElementById('range-logo').value = cfg.logoSize;
-  document.getElementById('range-font').value = cfg.fontSize;
-  previewLayout();
-}
-
-function previewLayout() {
-  const logoVal = document.getElementById('range-logo').value;
-  const fontVal = document.getElementById('range-font').value;
-  // clamp applied in CSS via clamp(), JS just sets the variable
-  document.documentElement.style.setProperty('--logo-size', logoVal + 'px');
-  document.documentElement.style.setProperty('--header-font-size', fontVal + 'px');
 }
 
 function cancelSettings() { applySettings(); }
 
 function saveSettings() {
   const cfg = {
-    sound:document.getElementById('sound-choice').value,
-    logoSize:document.getElementById('range-logo').value,
-    fontSize:document.getElementById('range-font').value
+    sound:document.getElementById('sound-choice').value
   };
   localStorage.setItem('absensiConfig', JSON.stringify(cfg));
   new Audio(rawURL+cfg.sound).play().catch(()=>{});
