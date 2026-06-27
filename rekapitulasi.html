@@ -64,7 +64,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans p-2 md:p-4 max-h-screen overflow-y-auto">
+<body id="mainBody" class="bg-slate-50 text-slate-800 font-sans p-2 md:p-4 max-h-screen overflow-y-auto">
 
     <div id="rotateOverlay" class="hidden fixed inset-0 bg-slate-900/95 backdrop-blur-md z-50 flex flex-col items-center justify-center text-center p-6 text-white transition-all duration-500">
         <div class="phone-container w-32 h-44 mb-8 flex items-center justify-center">
@@ -86,14 +86,14 @@
             Mode Lanskap Diperlukan
         </h2>
         <p class="text-xs md:text-sm text-slate-300 max-w-sm mb-8 leading-relaxed font-medium px-4">
-            Agar tabel rekap presensi berukuran besar dapat ditampilkan dengan rapi dan sempurna, silakan **aktifkan rotasi otomatis** pada HP Anda lalu miringkan posisi HP.
+            Agar tabel rekap presensi dapat ditampilkan dengan rapi dan sempurna, silakan miringkan posisi HP anda.
         </p>
 
         <button onclick="requestFullScreenAndRotate()" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 active:scale-95 text-white font-bold text-xs py-3.5 px-6 rounded-xl shadow-lg shadow-blue-500/20 transition-all duration-200 flex items-center gap-2 tracking-wide uppercase">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 animate-pulse">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9m5.25 11.25v-4.5m0 4.5h-4.5m4.5 0L15 15" />
             </svg>
-            Aktifkan Layar Penuh
+            Buka Layar Penuh
         </button>
     </div>
 
@@ -228,17 +228,26 @@
         function checkOrientation() {
             const overlay = document.getElementById('rotateOverlay');
             const statusBar = document.getElementById('statusBarTheme');
+            const body = document.getElementById('mainBody');
             
             if (window.innerHeight > window.innerWidth && window.innerWidth < 768) {
                 overlay.classList.remove('hidden');
                 overlay.classList.add('flex');
-                // Saat overlay gelap aktif, status bar diikutkan gelap gulita (#0f172a / Slate 900)
-                statusBar.setAttribute('content', '#0f172a');
+                
+                // Matikan scroll pada background saat modal tampil
+                body.classList.remove('overflow-y-auto');
+                body.classList.add('overflow-hidden');
+                
+                if(statusBar) statusBar.setAttribute('content', '#0f172a');
             } else {
                 overlay.classList.add('hidden');
                 overlay.classList.remove('flex');
-                // Saat mode landscape / normal aktif, status bar kembali putih bersih (#f8fafc)
-                statusBar.setAttribute('content', '#f8fafc');
+                
+                // Aktifkan kembali scroll saat mode landscape / normal
+                body.classList.remove('overflow-hidden');
+                body.classList.add('overflow-y-auto');
+                
+                if(statusBar) statusBar.setAttribute('content', '#f8fafc');
             }
         }
 
@@ -246,7 +255,6 @@
         function requestFullScreenAndRotate() {
             const docElm = document.documentElement;
             
-            // Masuk mode layar penuh secara mendalam (menghilangkan status bar bawaan OS di Chrome)
             if (docElm.requestFullscreen) {
                 docElm.requestFullscreen({ navigationUI: "hide" });
             } else if (docElm.webkitRequestFullScreen) {
@@ -438,6 +446,8 @@
         window.addEventListener('DOMContentLoaded', () => {
             setBulanTahunOtomatis();
             checkOrientation(); 
+            // Memastikan KELAS 07 langsung di-load secara otomatis di latar belakang
+            document.getElementById('pilihKelas').value = "KELAS 07";
             muatData(); 
         });
     </script>
