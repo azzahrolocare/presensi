@@ -28,7 +28,7 @@
         .rekap-col { min-width: 35px; max-width: 35px; }
         .persen-col { min-width: 50px; max-width: 50px; }
 
-        /* KUNCI PERBAIKAN: Mengunci warna latar belakang agar TIDAK TRANSPARAN saat digeser */
+        /* Mengunci warna latar belakang agar TIDAK TRANSPARAN saat digeser */
         .sticky-col {
             position: sticky;
             left: 0;
@@ -37,18 +37,27 @@
         
         /* Memberikan warna solid untuk header dan baris agar menutupi kolom tanggal di belakangnya */
         th.sticky-col {
-            background-color: #cbd5e1 !important; /* Warna abu-abu solid untuk header nama */
+            background-color: #cbd5e1 !important;
         }
         tr:nth-child(even) td.sticky-col {
-            background-color: #f8fafc !important; /* Warna solid untuk baris genap */
+            background-color: #f8fafc !important;
         }
         tr:nth-child(odd) td.sticky-col {
-            background-color: #ffffff !important; /* Warna solid untuk baris ganjil */
+            background-color: #ffffff !important;
         }
         
-        /* Hilangkan scrollbar default demi estetika satu layar penuh */
+        /* Hilangkan scrollbar default namun tetap menjaga fungsi geser yang halus */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scroll-bar-width: none; }
+
+        /* Mengubah kursor tabel agar mengindikasikan bisa digeser */
+        #containerTabel {
+            cursor: grab;
+            user-select: none; /* Mencegah teks terblok secara tidak sengaja saat digeser */
+        }
+        #containerTabel:active {
+            cursor: grabbing;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans p-2 md:p-4 max-h-screen overflow-y-auto">
@@ -104,13 +113,6 @@
         </div>
 
         <div class="relative border border-slate-200 rounded-lg shadow-inner bg-white">
-            
-            <button id="btnScrollKanan" class="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-slate-800/20 hover:bg-slate-800/40 text-white p-2 rounded-full backdrop-blur-xs transition-all opacity-70 hover:opacity-100 shadow flex items-center justify-center animate-bounce-horizontal" title="Geser ke Rekap Keterangan">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5M4.5 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-            </button>
-
             <div id="containerTabel" class="overflow-x-auto no-scrollbar scroll-smooth">
                 <table class="w-full text-[11px] text-slate-600 border-collapse">
                     <thead class="text-slate-700 uppercase font-bold bg-slate-100 sticky top-0 z-20">
@@ -177,19 +179,10 @@
 
     </div>
 
-    <style>
-        @keyframes bounceHorizontal {
-            0%, 100% { transform: translateY(-50%) translateX(0); }
-            50% { transform: translateY(-50%) translateX(4px); }
-        }
-        .animate-bounce-horizontal { animation: bounceHorizontal 1.2s infinite; }
-    </style>
-
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbwzJeGPQLKAYIOMUWht45sHz3Vv-JBOJ9jfeFZ434ANaT8sPSe2JQI441YoZBrdqV9a/exec";
         
         const containerTabel = document.getElementById('containerTabel');
-        const btnScrollKanan = document.getElementById('btnScrollKanan');
         const barisHari = document.getElementById('barisHari');
         const barisTanggal = document.getElementById('barisTanggal');
         const refHari = barisHari.children[1]; 
@@ -197,26 +190,38 @@
 
         let indexHariMinggu = [];
 
-        btnScrollKanan.addEventListener('click', () => {
-            const maxScroll = containerTabel.scrollWidth - containerTabel.clientWidth;
-            if (containerTabel.scrollLeft < maxScroll - 10) {
-                containerTabel.scrollTo({ left: maxScroll, behavior: 'smooth' });
-            } else {
-                containerTabel.scrollTo({ left: 0, behavior: 'smooth' });
-            }
+        // FITUR TAMBAHAN: Logika Geser Menggunakan Kursor Tikus (Drag to Scroll)
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        containerTabel.addEventListener('mousedown', (e) => {
+            isDown = true;
+            // Ubah ke scroll-auto agar pergeseran kursor terasa instan tanpa delay
+            containerTabel.classList.remove('scroll-smooth');
+            startX = e.pageX - containerTabel.offsetLeft;
+            scrollLeft = containerTabel.scrollLeft;
         });
 
-        containerTabel.addEventListener('scroll', () => {
-            const maxScroll = containerTabel.scrollWidth - containerTabel.clientWidth;
-            if (containerTabel.scrollLeft >= maxScroll - 20) {
-                btnScrollKanan.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5M12 19.5l-7.5-7.5 7.5-7.5" /></svg>`;
-                btnScrollKanan.title = "Kembali ke awal tanggal";
-            } else {
-                btnScrollKanan.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5M4.5 4.5l7.5 7.5-7.5 7.5" /></svg>`;
-                btnScrollKanan.title = "Geser ke Rekap Keterangan";
-            }
+        containerTabel.addEventListener('mouseleave', () => {
+            isDown = false;
         });
 
+        containerTabel.addEventListener('mouseup', () => {
+            isDown = false;
+            // Kembalikan ke smooth jika ada sistem otomatisasi trigger scroll di kemudian hari
+            containerTabel.classList.add('scroll-smooth');
+        });
+
+        containerTabel.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - containerTabel.offsetLeft;
+            const walk = (x - startX) * 1.5; // Angka 1.5 menetapkan kecepatan sensitivitas geser
+            containerTabel.scrollLeft = scrollLeft - walk;
+        });
+
+        // Generate Elemen Tanggal 1 s.d 31
         for (let t = 1; t <= 31; t++) {
             const thHari = document.createElement('th');
             thHari.className = "bg-blue-50 text-blue-800 text-[9px] font-semibold p-1 min-w-[38px] max-w-[38px]";
@@ -323,7 +328,6 @@
                 tr.className = index % 2 === 0 ? "bg-white hover:bg-slate-50" : "bg-slate-50/50 hover:bg-slate-50";
 
                 const tdNama = document.createElement('td');
-                // DIHAPUS kelas 'bg-inherit' agar warna latar belakang diatur secara penuh oleh CSS sticky-col
                 tdNama.className = "name-col sticky-col border-r-2 font-semibold text-slate-700 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]";
                 tdNama.innerText = siswa.nama || "-";
                 tdNama.title = siswa.nama; 
