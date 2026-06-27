@@ -102,26 +102,45 @@ body::before{
   backdrop-filter:blur(28px) saturate(1.8);
   -webkit-backdrop-filter:blur(28px) saturate(1.8);
   box-shadow:0 8px 32px rgba(0,0,0,.4),inset 0 -1px 0 rgba(255,255,255,.06);
-  display:flex;flex-direction:column;
-  padding:12px 16px;gap:8px;
+  display:flex;align-items:center;justify-content:center;
+  padding:10px 16px;min-height:68px;
 }
-.nav-header-top{display:flex;align-items:center;justify-content:space-between;width:100%;gap:10px}
-.nav-logos{display:flex;align-items:center;justify-content:space-between;width:100%;min-width:0;flex:1}
-.nav-logos img{width:var(--logo-size, 42px);height:var(--logo-size, 42px);object-fit:contain;border-radius:8px;flex-shrink:0}
-.nav-school{display:flex;flex-direction:column;align-items:center;text-align:center;flex:1;min-width:0;padding:0 4px}
-.nav-school h1{font-family:'Playfair Display',Georgia,serif;font-size:var(--header-font-size, 13.5px);font-weight:700;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nav-school p{font-size:calc(var(--header-font-size, 13.5px) * 0.72);font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
-.nav-clock-row{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;margin-top:2px}
-.nav-clock-row .date{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.03em;text-transform:uppercase}
-.nav-clock-row .time{font-size:12px;font-weight:800;color:var(--accent);letter-spacing:.05em;font-variant-numeric:tabular-nums}
+.nav-logos{display:flex;align-items:center;justify-content:center;gap:10px;width:100%}
+.nav-logos img{width:var(--logo-size, 44px);height:var(--logo-size, 44px);object-fit:contain;border-radius:8px;flex-shrink:0}
+.nav-school{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
+.nav-school h1{font-family:'Playfair Display',Georgia,serif;font-size:var(--header-font-size, 14px);font-weight:700;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-school p{font-size:calc(var(--header-font-size, 14px) * 0.66);font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── RESPONSIVE HEADER ── */
+@media (max-width:360px){
+  .nav-logos img{width:36px;height:36px}
+  .nav-school h1{font-size:11px}
+  .nav-school p{font-size:8px}
+}
+@media (min-width:600px){
+  .nav-logos img{width:52px;height:52px}
+  .nav-school h1{font-size:17px}
+  .nav-school p{font-size:11px}
+  #topNav{min-height:76px}
+}
 
 /* ── MAIN SCROLL AREA ── */
 #mainScroll{
   flex:1;overflow-y:auto;overflow-x:hidden;
-  padding:125px 16px 96px;
+  padding:80px 16px 96px;
   display:flex;flex-direction:column;align-items:center;
 }
-.main-inner{width:100%;max-width:430px;display:flex;flex-direction:column;gap:12px}
+.main-inner{width:100%;max-width:600px;display:flex;flex-direction:column;gap:12px}
+
+@media (min-width:600px){
+  #mainScroll{padding:90px 24px 100px}
+  .scanner-box{min-height:380px}
+}
+@media (min-width:900px){
+  #mainScroll{padding:96px 32px 100px}
+  .main-inner{max-width:720px}
+  .scanner-box{min-height:460px}
+}
 
 /* ── DROPDOWN KETERANGAN ── */
 .ket-wrap{position:relative}
@@ -439,19 +458,13 @@ body::before{
 
 <!-- TOP NAV -->
 <nav id="topNav">
-  <div class="nav-header-top">
-    <div class="nav-logos">
-      <img src="logo-smp-azzahro.png" alt="SMP">
-      <div class="nav-school">
-        <h1>SMP Islam Az-Zahro</h1>
-        <p>SMK Az-Zahro</p>
-      </div>
-      <img src="logo-smk-azzahro.png" alt="SMK">
+  <div class="nav-logos">
+    <img src="logo-smp-azzahro.png" alt="SMP">
+    <div class="nav-school">
+      <h1>PRESENSI DIGITAL</h1>
+      <p>SMP Islam Az-Zahro &amp; SMK Az-Zahro</p>
     </div>
-  </div>
-  <div class="nav-clock-row">
-    <span class="date" id="date-top">-- -- ----</span>
-    <span class="time" id="clock-top">00:00:00</span>
+    <img src="logo-smk-azzahro.png" alt="SMK">
   </div>
 </nav>
 
@@ -707,7 +720,7 @@ const DAFTAR_TEMA = {
     '--ic-ready':'linear-gradient(135deg,rgba(6,182,212,.85),rgba(8,145,178,.75))','--ic-ready-bdr':'rgba(34,211,238,.65)','--ic-ready-sh':'0 4px 20px rgba(6,182,212,.55),0 0 12px rgba(34,211,238,.3)',
     '--ic-aktif':'linear-gradient(135deg,#22d3ee,#67e8f9,#a5f3fc)','--ic-aktif-txt':'#032028',
     '--inp-border':'rgba(34,211,238,.22)','--inp-focus-border':'rgba(34,211,238,.75)','--inp-focus-bg':'rgba(6,182,212,.18)',
-    '--muted':'#a5f3fc','--accent':'--accent':'#22d3ee','--scan-border':'rgba(6,182,212,.9)','--scan-glow':'rgba(6,182,212,.4)','--scroll-thumb':'rgba(34,211,238,.35)','--meta':'#032028'
+    '--muted':'#a5f3fc','--accent':'#22d3ee','--scan-border':'rgba(6,182,212,.9)','--scan-glow':'rgba(6,182,212,.4)','--scroll-thumb':'rgba(34,211,238,.35)','--meta':'#032028'
   }
 };
 
@@ -726,20 +739,8 @@ function pilihTema(nama) {
 }
 
 /* =====================================================
-   CLOCK
+   CLOCK (removed)
 ===================================================== */
-function updateClock() {
-  const n = new Date();
-  const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-  const h = String(n.getHours()).padStart(2,'0');
-  const m = String(n.getMinutes()).padStart(2,'0');
-  const s = String(n.getSeconds()).padStart(2,'0');
-  document.getElementById('clock-top').textContent = h+':'+m+':'+s;
-  document.getElementById('date-top').textContent = days[n.getDay()]+', '+n.getDate()+' '+months[n.getMonth()]+' '+n.getFullYear();
-}
-setInterval(updateClock, 1000);
-updateClock();
 
 /* =====================================================
    MODAL
