@@ -1,1016 +1,1085 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <link rel="icon" type="image/png" href="icon-apk-presensi-azzahro.png">
-    <link rel="apple-touch-icon" href="icon-apk-presensi-azzahro.png">
-    <title>PRESENSI DIGITAL SMP & SMK AZ-ZAHRO</title>
-    <link rel="manifest" href="manifest.json">
-    <meta id="metaThemeColor" name="theme-color" content="#051a0f">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config={theme:{extend:{fontFamily:{serif:['Playfair Display','Georgia','serif'],sans:['Inter','system-ui','sans-serif']}}}}</script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <style>
-/* =====================================================
-   CSS VARIABLES — ditimpa oleh DAFTAR_TEMA via JS
-   ===================================================== */
-:root {
-  --primary: #198754;
-  --body-bg: linear-gradient(135deg,#051a0f 0%,#09331f 25%,#0d5a36 55%,#1a7a4a 75%,#0a4528 100%);
-  --body-solid-bg: #07261a;
-  --glow-1: #198754; --glow-2: #D4AF37; --glow-3: #0ea56a;
-  --header-bg: linear-gradient(135deg,rgba(5,20,12,.97) 0%,rgba(9,51,31,.96) 35%,rgba(20,108,67,.93) 65%,rgba(14,82,52,.97) 100%);
-  --header-border: rgba(212,175,55,.35);
-  --glass-bg: linear-gradient(145deg,rgba(255,255,255,.14) 0%,rgba(25,135,84,.08) 50%,rgba(255,255,255,.06) 100%);
-  --glass-border: rgba(255,255,255,.22);
-  --glass-shadow: 0 12px 48px rgba(0,0,0,.5),0 4px 16px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.15);
-  --badge-bg: linear-gradient(135deg,rgba(25,135,84,.4) 0%,rgba(212,175,55,.28) 100%);
-  --badge-border: rgba(212,175,55,.5);
-  --btn-primary-bg: linear-gradient(135deg,#22a161 0%,#1a7a4a 40%,#146c43 70%,#0F5132 100%);
-  --btn-primary-hover: linear-gradient(135deg,#2dbe78 0%,#22a161 40%,#198754 70%,#146c43 100%);
-  --btn-shadow: rgba(20,108,67,.55);
-  --btn-glow: 0 0 28px rgba(25,135,84,.5),0 0 10px rgba(212,175,55,.2);
-  --nav-dock-bg: linear-gradient(180deg,rgba(7,26,16,.97) 0%,rgba(5,18,10,.99) 100%);
-  --nav-dock-border: rgba(212,175,55,.3);
-  --icon-circle-pasif: rgba(255,255,255,.12);
-  --icon-circle-ready: linear-gradient(135deg,rgba(26,122,74,.85) 0%,rgba(20,108,67,.75) 100%);
-  --icon-circle-ready-border: rgba(212,175,55,.65);
-  --icon-circle-ready-shadow: 0 4px 20px rgba(25,135,84,.55),0 0 12px rgba(212,175,55,.2);
-  --icon-circle-aktif: linear-gradient(135deg,#D4AF37 0%,#f0c830 60%,#ffe066 100%);
-  --icon-text-aktif: #0F5132;
-  --input-bg: rgba(255,255,255,.11); --input-bg-hover: rgba(255,255,255,.17);
-  --input-border: rgba(255,255,255,.22);
-  --input-focus-border: rgba(212,175,55,.75); --input-focus-bg: rgba(25,135,84,.18);
-  --text-main: #ffffff; --text-muted: #c8e6d4;
-  --accent-icon: #D4AF37;
-  --scanner-border: rgba(25,135,84,.8);
-  --scanner-glow: rgba(25,135,84,.4);
-  --panel-accent-bg: linear-gradient(135deg,rgba(5,20,12,.85) 0%,rgba(9,51,31,.7) 50%,rgba(14,82,52,.55) 100%);
-  --panel-accent-border: rgba(212,175,55,.4);
-  --modal-overlay-bg: rgba(0,0,0,.72);
-  --scrollbar-thumb: rgba(212,175,55,.35);
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<link rel="icon" type="image/png" href="icon-apk-presensi-azzahro.png">
+<link rel="apple-touch-icon" href="icon-apk-presensi-azzahro.png">
+<title>PRESENSI DIGITAL SMP & SMK AZ-ZAHRO</title>
+<link rel="manifest" href="manifest.json">
+<meta id="metaThemeColor" name="theme-color" content="#051a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* ── ROOT VARIABLES (tema emerald default) ── */
+:root{
+  --primary:#198754;
+  --body-bg:linear-gradient(135deg,#051a0f 0%,#09331f 25%,#0d5a36 55%,#1a7a4a 75%,#0a4528 100%);
+  --body-solid:#07261a;
+  --glow1:#198754;--glow2:#D4AF37;--glow3:#0ea56a;
+  --hdr-bg:linear-gradient(135deg,rgba(5,20,12,.97) 0%,rgba(9,51,31,.96) 35%,rgba(20,108,67,.93) 65%,rgba(14,82,52,.97) 100%);
+  --hdr-border:rgba(212,175,55,.35);
+  --glass:linear-gradient(145deg,rgba(255,255,255,.14) 0%,rgba(25,135,84,.08) 50%,rgba(255,255,255,.06) 100%);
+  --glass-border:rgba(255,255,255,.22);
+  --glass-shadow:0 12px 48px rgba(0,0,0,.5),0 4px 16px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.18);
+  --badge:linear-gradient(135deg,rgba(25,135,84,.4) 0%,rgba(212,175,55,.28) 100%);
+  --badge-border:rgba(212,175,55,.5);
+  --btn-bg:linear-gradient(135deg,#22a161 0%,#1a7a4a 40%,#146c43 70%,#0F5132 100%);
+  --btn-glow:0 0 28px rgba(25,135,84,.5),0 0 10px rgba(212,175,55,.2),0 4px 14px rgba(20,108,67,.55);
+  --nav-bg:linear-gradient(180deg,rgba(7,26,16,.97) 0%,rgba(5,18,10,.99) 100%);
+  --nav-border:rgba(212,175,55,.3);
+  --ic-pasif:rgba(255,255,255,.12);
+  --ic-ready:linear-gradient(135deg,rgba(26,122,74,.85),rgba(20,108,67,.75));
+  --ic-ready-bdr:rgba(212,175,55,.65);
+  --ic-ready-sh:0 4px 20px rgba(25,135,84,.55),0 0 12px rgba(212,175,55,.2);
+  --ic-aktif:linear-gradient(135deg,#D4AF37,#f0c830,#ffe066);
+  --ic-aktif-txt:#0F5132;
+  --inp-border:rgba(255,255,255,.22);
+  --inp-focus-border:rgba(212,175,55,.75);
+  --inp-focus-bg:rgba(25,135,84,.18);
+  --text:#ffffff;--muted:#c8e6d4;
+  --accent:#D4AF37;
+  --scan-border:rgba(25,135,84,.9);
+  --scan-glow:rgba(25,135,84,.5);
+  --scroll-thumb:rgba(212,175,55,.35);
+  --meta:#051a0f;
 }
 
-/* =====================================================
-   BASE
-   ===================================================== */
-html,body{height:100%;margin:0;padding:0;overscroll-behavior:none;touch-action:manipulation;position:fixed;width:100%;background-color:var(--body-solid-bg)}
-body{font-family:'Inter',system-ui,sans-serif;display:flex;flex-direction:column;align-items:stretch;color:var(--text-main);transition:background .5s ease,color .3s ease;overflow:hidden}
-body::before{content:"";position:fixed;top:0;left:0;width:100%;height:100%;background:var(--body-bg);z-index:-2;pointer-events:none;transition:background .6s ease}
-.font-serif-custom{font-family:'Playfair Display',Georgia,serif}
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;overscroll-behavior:none}
+body{
+  height:100%;width:100%;
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--text);
+  background:var(--body-solid);
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  position:relative;
+}
+body::before{
+  content:"";position:fixed;inset:0;
+  background:var(--body-bg);
+  z-index:-2;pointer-events:none;
+  transition:background .6s ease;
+}
 
-/* GLOW */
-.glow-sphere-1{position:fixed;top:-15%;left:-15%;width:70vw;height:70vw;background:radial-gradient(circle,var(--glow-1) 0%,rgba(25,135,84,.4) 35%,transparent 70%);opacity:.35;z-index:-1;pointer-events:none;transition:all .6s ease}
-.glow-sphere-2{position:fixed;bottom:-15%;right:-15%;width:65vw;height:65vw;background:radial-gradient(circle,var(--glow-2) 0%,rgba(212,175,55,.3) 35%,transparent 70%);opacity:.28;z-index:-1;pointer-events:none;transition:all .6s ease}
-.glow-sphere-3{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:55vw;height:55vw;background:radial-gradient(circle,var(--glow-3) 0%,transparent 70%);opacity:.15;z-index:-1;pointer-events:none;transition:all .6s ease}
+/* ── GLOW SPHERES ── */
+.gs{position:fixed;border-radius:50%;pointer-events:none;z-index:-1;transition:all .6s ease}
+.gs1{top:-15%;left:-15%;width:70vw;height:70vw;background:radial-gradient(circle,var(--glow1) 0%,transparent 70%);opacity:.32}
+.gs2{bottom:-15%;right:-15%;width:65vw;height:65vw;background:radial-gradient(circle,var(--glow2) 0%,transparent 70%);opacity:.25}
+.gs3{top:50%;left:50%;transform:translate(-50%,-50%);width:55vw;height:55vw;background:radial-gradient(circle,var(--glow3) 0%,transparent 70%);opacity:.14}
 
-/* =====================================================
-   GLASS PANEL
-   ===================================================== */
-.glass-panel{background:var(--glass-bg);backdrop-filter:blur(32px) saturate(1.9);-webkit-backdrop-filter:blur(32px) saturate(1.9);border:1px solid var(--glass-border);color:var(--text-main);box-shadow:var(--glass-shadow);transition:all .35s ease;position:relative;overflow:hidden}
-.glass-panel::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);pointer-events:none}
-.glass-panel-strong{background:linear-gradient(145deg,rgba(255,255,255,.16) 0%,rgba(25,135,84,.1) 40%,rgba(255,255,255,.07) 100%);backdrop-filter:blur(40px) saturate(2);-webkit-backdrop-filter:blur(40px) saturate(2);border:1px solid rgba(255,255,255,.26);box-shadow:0 16px 56px rgba(0,0,0,.55),0 6px 20px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.18)}
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--scroll-thumb);border-radius:99px}
 
-/* =====================================================
-   HEADER / TOP NAV DOCK
-   ===================================================== */
-.top-nav{position:fixed;top:0;left:0;right:0;z-index:50;background:var(--header-bg);border-bottom:1px solid var(--header-border);border-radius:0 0 28px 28px;box-shadow:0 8px 32px rgba(0,0,0,.45),0 2px 8px rgba(0,0,0,.3),inset 0 -1px 0 rgba(255,255,255,.06);backdrop-filter:blur(28px) saturate(1.8);-webkit-backdrop-filter:blur(28px) saturate(1.8);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:72px}
-.top-nav-logo-group{display:flex;align-items:center;gap:10px;min-width:0}
-.top-nav-logo-group img{width:44px;height:44px;object-fit:contain;border-radius:10px;flex-shrink:0}
-.top-nav-title{display:flex;flex-direction:column;min-width:0}
-.top-nav-title h1{margin:0;font-family:'Playfair Display',Georgia,serif;font-size:14px;font-weight:700;color:var(--text-main);line-height:1.2;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.top-nav-title p{margin:0;font-size:9.5px;font-weight:500;color:var(--text-muted);letter-spacing:.03em;text-transform:uppercase;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.top-nav-clock{text-align:right;font-size:11px;font-weight:700;color:var(--text-main);letter-spacing:.04em;text-transform:uppercase;line-height:1.35;flex-shrink:0}
-.top-nav-clock span{display:block;font-size:9px;font-weight:500;color:var(--text-muted);margin-bottom:1px}
+/* ── GLASSMORPHISM ── */
+.glass{
+  background:var(--glass);
+  backdrop-filter:blur(32px) saturate(1.9);
+  -webkit-backdrop-filter:blur(32px) saturate(1.9);
+  border:1px solid var(--glass-border);
+  box-shadow:var(--glass-shadow);
+  position:relative;overflow:hidden;
+}
+.glass::after{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
+  pointer-events:none;
+}
 
-/* =====================================================
-   MAIN CONTENT
-   ===================================================== */
-.main-content{flex:1;overflow-y:auto;padding-top:82px;padding-bottom:100px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;width:100%;box-sizing:border-box}
-.main-inner{width:100%;max-width:420px;padding:0 16px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px}
+/* ── TOP NAV ── */
+#topNav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:var(--hdr-bg);
+  border-bottom:1px solid var(--hdr-border);
+  border-radius:0 0 26px 26px;
+  backdrop-filter:blur(28px) saturate(1.8);
+  -webkit-backdrop-filter:blur(28px) saturate(1.8);
+  box-shadow:0 8px 32px rgba(0,0,0,.4),inset 0 -1px 0 rgba(255,255,255,.06);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;min-height:68px;gap:10px;
+}
+.nav-logos{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.nav-logos img{width:42px;height:42px;object-fit:contain;border-radius:8px;flex-shrink:0}
+.nav-school{display:flex;flex-direction:column;min-width:0}
+.nav-school h1{font-family:'Playfair Display',Georgia,serif;font-size:13.5px;font-weight:700;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-school p{font-size:9px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-clock{text-align:right;flex-shrink:0}
+.nav-clock .time{font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.05em;font-variant-numeric:tabular-nums}
+.nav-clock .date{font-size:8.5px;font-weight:500;color:var(--muted);margin-top:2px;letter-spacing:.03em;text-transform:uppercase}
 
-/* =====================================================
-   DROPDOWN KETERANGAN
-   ===================================================== */
-.keterangan-wrap{position:relative}
-.keterangan-wrap select{width:100%;appearance:none;-webkit-appearance:none;background:var(--glass-bg);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid var(--input-border);border-radius:16px;color:var(--text-main);font-size:15px;font-weight:700;padding:14px 44px 14px 18px;outline:none;cursor:pointer;box-shadow:var(--glass-shadow);transition:all .3s ease}
-.keterangan-wrap select:focus{border-color:var(--input-focus-border);background:var(--input-focus-bg);box-shadow:0 0 0 3px rgba(212,175,55,.15),var(--glass-shadow)}
-.keterangan-wrap select option{background:#111827;color:#fff}
-.keterangan-wrap::after{content:"\f078";font-family:"Font Awesome 6 Free";font-weight:900;position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--accent-icon);font-size:12px;pointer-events:none}
+/* ── MAIN SCROLL AREA ── */
+#mainScroll{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:80px 16px 96px;
+  display:flex;flex-direction:column;align-items:center;
+}
+.main-inner{width:100%;max-width:430px;display:flex;flex-direction:column;gap:12px}
 
-/* =====================================================
-   SCANNER BOX
-   ===================================================== */
-.scanner-wrap{position:relative;width:100%;border-radius:24px;overflow:hidden;border:2px solid var(--scanner-border);box-shadow:0 0 0 1px rgba(255,255,255,.08),0 12px 40px rgba(0,0,0,.5),0 0 60px var(--scanner-glow);background:#000;min-height:300px;display:flex;align-items:center;justify-content:center;transition:border-color .4s ease,box-shadow .4s ease}
-.scanner-corner{position:absolute;width:28px;height:28px;border:3px solid var(--accent-icon);z-index:20;border-radius:2px}
-.corner-tl{top:12px;left:12px;border-right:none;border-bottom:none;border-top-left-radius:8px}
-.corner-tr{top:12px;right:12px;border-left:none;border-bottom:none;border-top-right-radius:8px}
-.corner-bl{bottom:12px;left:12px;border-right:none;border-top:none;border-bottom-left-radius:8px}
-.corner-br{bottom:12px;right:12px;border-left:none;border-top:none;border-bottom-right-radius:8px}
-@keyframes scanAnim{0%{top:15%;opacity:.2}50%{top:80%;opacity:1}100%{top:15%;opacity:.2}}
-.scan-line{width:70%;height:2px;background:linear-gradient(90deg,transparent,var(--primary),transparent);position:absolute;left:15%;z-index:15;animation:scanAnim 2.5s infinite ease-in-out;box-shadow:0 0 16px var(--primary),0 0 6px var(--accent-icon)}
+/* ── DROPDOWN KETERANGAN ── */
+.ket-wrap{position:relative}
+.ket-wrap select{
+  width:100%;appearance:none;-webkit-appearance:none;
+  background:var(--glass);
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  border:1.5px solid var(--inp-border);
+  border-radius:16px;color:var(--text);
+  font-size:15px;font-weight:700;font-family:'Inter',sans-serif;
+  padding:14px 46px 14px 18px;outline:none;cursor:pointer;
+  box-shadow:var(--glass-shadow);transition:border-color .25s,background .25s;
+}
+.ket-wrap select:focus{border-color:var(--inp-focus-border);background:var(--inp-focus-bg)}
+.ket-wrap select option{background:#111827;color:#fff}
+.ket-wrap .ket-arrow{
+  position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  color:var(--accent);font-size:12px;pointer-events:none;
+}
+
+/* ── SCANNER BOX ── */
+.scanner-box{
+  width:100%;border-radius:22px;overflow:hidden;
+  border:2.5px solid var(--scan-border);
+  box-shadow:0 0 0 1px rgba(255,255,255,.07),0 12px 40px rgba(0,0,0,.5),0 0 50px var(--scan-glow);
+  background:#000;min-height:300px;position:relative;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .4s,box-shadow .4s;
+}
+.sc-corner{position:absolute;width:26px;height:26px;border:3px solid var(--accent);z-index:10}
+.sc-tl{top:10px;left:10px;border-right:none;border-bottom:none;border-top-left-radius:7px}
+.sc-tr{top:10px;right:10px;border-left:none;border-bottom:none;border-top-right-radius:7px}
+.sc-bl{bottom:10px;left:10px;border-right:none;border-top:none;border-bottom-left-radius:7px}
+.sc-br{bottom:10px;right:10px;border-left:none;border-top:none;border-bottom-right-radius:7px}
+@keyframes scanLine{0%{top:12%;opacity:.2}50%{top:82%;opacity:1}100%{top:12%;opacity:.2}}
+.scan-line{
+  position:absolute;left:10%;width:80%;height:2px;z-index:9;
+  background:linear-gradient(90deg,transparent,var(--primary),transparent);
+  box-shadow:0 0 14px var(--primary),0 0 5px var(--accent);
+  animation:scanLine 2.5s ease-in-out infinite;
+}
 #reader{width:100%;height:100%}
 #reader video{object-fit:cover!important;min-height:300px}
-#selection-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.88);z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;box-sizing:border-box}
-.barcode-option{background:var(--btn-primary-bg);color:white;padding:14px;border-radius:14px;font-weight:bold;width:100%;cursor:pointer;border:1px solid rgba(255,255,255,.2);text-align:center;font-size:14px;box-sizing:border-box;transition:filter .2s}
-.barcode-option:hover{filter:brightness(1.12)}
+#selection-overlay{
+  position:absolute;inset:0;
+  background:rgba(0,0,0,.9);z-index:100;
+  display:none;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;padding:16px;
+}
+.barcode-option{
+  background:var(--btn-bg);color:white;
+  padding:13px;border-radius:13px;font-weight:bold;
+  width:100%;cursor:pointer;border:1px solid rgba(255,255,255,.2);
+  text-align:center;font-size:14px;transition:filter .2s;
+}
+.barcode-option:hover{filter:brightness(1.15)}
 
-/* =====================================================
-   LAST SCAN
-   ===================================================== */
-.last-scan-panel{background:var(--glass-bg);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid var(--input-border);border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:var(--glass-shadow)}
-.last-scan-icon{width:36px;height:36px;border-radius:10px;background:var(--badge-bg);border:1px solid var(--badge-border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.last-scan-icon i{color:var(--accent-icon);font-size:15px}
-.last-scan-label{font-size:9.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
-#last-name-display{background:none;border:none;outline:none;color:var(--primary);font-weight:800;font-size:17px;width:100%;padding:0;letter-spacing:.02em}
+/* ── LAST SCAN PANEL ── */
+.last-scan{
+  display:flex;align-items:center;gap:12px;
+  background:var(--glass);
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  border:1.5px solid var(--inp-border);
+  border-radius:16px;padding:12px 16px;
+  box-shadow:var(--glass-shadow);
+}
+.last-scan-ic{
+  width:38px;height:38px;border-radius:10px;flex-shrink:0;
+  background:var(--badge);border:1px solid var(--badge-border);
+  display:flex;align-items:center;justify-content:center;
+}
+.last-scan-ic i{color:var(--accent);font-size:15px}
+.last-scan-lbl{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+#last-name-display{
+  background:none;border:none;outline:none;
+  color:var(--primary);font-weight:800;font-size:17px;
+  width:100%;font-family:'Inter',sans-serif;
+  letter-spacing:.02em;
+}
 
-/* =====================================================
-   STATUS TOAST
-   ===================================================== */
-#status-kirim{position:fixed;top:85px;left:50%;transform:translateX(-50%);width:88%;max-width:400px;padding:16px 18px;border-radius:18px;z-index:30000;display:none;color:white;text-align:center;font-weight:800;font-size:13px;line-height:1.4;box-shadow:0 12px 40px rgba(0,0,0,.6);white-space:pre-line;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.2)}
+/* ── BOTTOM NAV DOCK ── */
+#bottomNav{
+  position:fixed;bottom:0;left:0;right:0;
+  height:78px;z-index:200;
+  background:var(--nav-bg);
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  border-top:1px solid var(--nav-border);
+  border-radius:28px 28px 0 0;
+  box-shadow:0 -10px 40px rgba(0,0,0,.4);
+  display:flex;align-items:center;justify-content:space-around;
+  padding:0 8px;
+}
+.nav-it{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;position:relative;
+  width:72px;height:100%;cursor:pointer;
+  transition:all .35s cubic-bezier(.175,.885,.32,1.275);
+  -webkit-tap-highlight-color:transparent;
+}
+.ic-wrap{
+  width:46px;height:46px;border-radius:50%;
+  background:var(--ic-pasif);
+  border:1px solid rgba(255,255,255,.14);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.75);
+  transition:all .35s cubic-bezier(.175,.885,.32,1.275);
+}
+.ic-wrap i{font-size:17px;transition:transform .25s,color .35s}
+.nav-lbl{
+  position:absolute;bottom:-16px;
+  font-size:9px;font-weight:700;letter-spacing:.02em;
+  color:var(--text);opacity:0;
+  transform:translateY(6px);
+  transition:all .35s cubic-bezier(.175,.885,.32,1.275);
+  white-space:nowrap;
+}
+/* ready */
+.nav-it.ready{transform:translateY(-26px)}
+.nav-it.ready .ic-wrap{background:var(--ic-ready);border-color:var(--ic-ready-bdr);box-shadow:var(--ic-ready-sh);transform:scale(1.06)}
+.nav-it.ready .nav-lbl{opacity:1;transform:translateY(0)}
+/* active */
+.nav-it.active{transform:translateY(-30px)}
+.nav-it.active .ic-wrap{background:var(--ic-aktif);color:var(--ic-aktif-txt)!important;box-shadow:0 8px 20px rgba(255,255,255,.25),0 0 0 4px rgba(255,255,255,.1);transform:scale(1.12)}
+.nav-it.active .ic-wrap i{color:var(--ic-aktif-txt)!important;transform:scale(1.08)}
+.nav-it.active .nav-lbl{opacity:1;transform:translateY(0);color:var(--accent)}
 
-/* =====================================================
-   BOTTOM NAV DOCK
-   ===================================================== */
-.custom-bottom-nav{position:fixed;bottom:0;left:0;right:0;width:100%;height:80px;z-index:40;background:var(--nav-dock-bg);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-top:1px solid var(--nav-dock-border);border-radius:30px 30px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:space-around;padding:0 12px}
-.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;width:72px;height:100%;cursor:pointer;transition:all .4s cubic-bezier(.175,.885,.32,1.275)}
-.icon-circle{width:46px;height:46px;border-radius:50%;background:var(--icon-circle-pasif);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.8);transition:all .4s cubic-bezier(.175,.885,.32,1.275);z-index:2}
-.icon-circle i{font-size:18px;transition:transform .3s ease,color .4s ease}
-.nav-text{position:absolute;bottom:-18px;font-size:9.5px;font-weight:700;letter-spacing:.02em;color:#fff;opacity:0;transform:translateY(8px);transition:all .4s cubic-bezier(.175,.885,.32,1.275);white-space:nowrap;z-index:1}
-.nav-item.ready{transform:translateY(-28px)}
-.nav-item.ready .icon-circle{background:var(--icon-circle-ready);border-color:var(--icon-circle-ready-border);box-shadow:var(--icon-circle-ready-shadow);transform:scale(1.06)}
-.nav-item.ready .nav-text{opacity:1;transform:translateY(0)}
-.nav-item.active{transform:translateY(-32px)}
-.nav-item.active .icon-circle{background:var(--icon-circle-aktif);color:var(--icon-text-aktif)!important;box-shadow:0 8px 20px rgba(255,255,255,.3),0 0 0 4px rgba(255,255,255,.12);transform:scale(1.12)}
-.nav-item.active .icon-circle i{color:var(--icon-text-aktif)!important;transform:scale(1.08)}
-.nav-item.active .nav-text{opacity:1;transform:translateY(0);color:var(--accent-icon)}
+/* ── MODAL OVERLAY ── */
+.modal-ov{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  z-index:500;align-items:center;justify-content:center;
+  padding:16px;
+}
+.modal-ov.show{display:flex}
+.modal-card{
+  background:var(--glass);
+  backdrop-filter:blur(40px) saturate(2);-webkit-backdrop-filter:blur(40px) saturate(2);
+  border:1px solid var(--glass-border);
+  border-radius:26px;padding:22px;
+  width:100%;max-width:370px;max-height:88vh;
+  overflow-y:auto;box-shadow:var(--glass-shadow);
+  position:relative;color:var(--text);
+}
+.modal-card::after{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);pointer-events:none;
+}
+.mhdr{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:16px;
+}
+.mhdr h3{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--text)}
+.mhdr h3 i{color:var(--accent)}
+.btn-x{
+  width:32px;height:32px;border-radius:10px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.6);font-size:15px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s;flex-shrink:0;
+}
+.btn-x:hover{background:rgba(255,255,255,.15);color:#fff}
 
-/* =====================================================
-   MODAL (shared)
-   ===================================================== */
-.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:var(--modal-overlay-bg);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9000;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
-.modal-overlay.open{display:flex}
-.modal-card{background:var(--glass-bg);backdrop-filter:blur(40px) saturate(2);-webkit-backdrop-filter:blur(40px) saturate(2);border:1px solid var(--glass-border);border-radius:28px;padding:24px;width:100%;max-width:370px;max-height:88vh;overflow-y:auto;box-shadow:var(--glass-shadow);position:relative;color:var(--text-main)}
-.modal-card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);pointer-events:none}
-.modal-header-row{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:16px}
-.modal-header-row h3{margin:0;font-family:'Playfair Display',Georgia,serif;font-size:17px;font-weight:700;color:var(--text-main);display:flex;align-items:center;gap:8px}
-.modal-header-row h3 i{color:var(--accent-icon)}
-.btn-close{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:rgba(255,255,255,.6);font-size:16px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
-.btn-close:hover{background:rgba(255,255,255,.15);color:#fff}
+/* ── TEMA SWATCH ── */
+.tswatch{
+  width:100%;padding:11px 14px;border-radius:14px;
+  font-weight:700;font-size:12px;text-align:left;color:#fff;
+  display:flex;justify-content:space-between;align-items:center;
+  cursor:pointer;border:1px solid rgba(255,255,255,.15);
+  transition:all .2s;margin-bottom:8px;
+}
+.tswatch:hover{filter:brightness(1.12);transform:translateX(3px)}
+.sdots{display:flex;gap:4px}
+.sdot{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.3);flex-shrink:0}
 
-/* =====================================================
-   TEMA MODAL (swatch)
-   ===================================================== */
-.tema-btn-swatch{width:100%;padding:12px 14px;border-radius:14px;font-weight:700;font-size:12px;text-align:left;color:#fff;display:flex;justify-content:space-between;align-items:center;transition:all .2s ease;cursor:pointer;border:1px solid rgba(255,255,255,.15)}
-.tema-btn-swatch:hover{transform:translateX(3px);filter:brightness(1.12)}
-.swatch-dots{display:flex;gap:4px}
-.swatch-dot{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.3);flex-shrink:0}
+/* ── SETTINGS ── */
+.s-title{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);opacity:.8;margin:14px 0 7px}
+.s-row{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;font-size:12px;color:var(--text);
+  padding:9px 13px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;margin-bottom:6px;
+}
+.s-row label{font-weight:600;font-size:12px;color:var(--text)}
+.s-row input[type=range]{flex-grow:1;height:4px;accent-color:var(--primary);cursor:pointer}
+.s-row input[type=color]{border:none;width:30px;height:24px;background:none;cursor:pointer;border-radius:5px}
+.s-row select{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:var(--text);padding:4px 7px;font-size:11px;outline:none}
+.s-row select option{background:#111827;color:#fff}
+.btn-simpan{
+  width:100%;padding:13px;
+  background:var(--btn-bg);color:white;font-weight:800;
+  border:none;border-radius:14px;margin-top:14px;cursor:pointer;
+  font-size:13px;letter-spacing:.03em;
+  box-shadow:var(--btn-glow);transition:filter .25s,transform .2s;
+  font-family:'Inter',sans-serif;
+}
+.btn-simpan:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-rekap-a{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px;background:var(--btn-bg);color:white;
+  font-weight:800;border-radius:14px;text-decoration:none;
+  font-size:12px;margin-top:8px;
+  box-shadow:var(--btn-glow);border:1px solid rgba(255,255,255,.12);
+  transition:filter .25s;
+}
+.btn-rekap-a:hover{filter:brightness(1.1)}
+/* toggle */
+.tog{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.tog-sl{position:absolute;inset:0;background:rgba(255,255,255,.15);border-radius:22px;cursor:pointer;transition:.3s}
+.tog-sl::before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background:rgba(255,255,255,.7);border-radius:50%;transition:.3s}
+input:checked+.tog-sl{background:var(--primary)}
+input:checked+.tog-sl::before{transform:translateX(18px);background:#fff}
+#gradient-controls{display:none;border-top:1px dashed rgba(255,255,255,.1);margin-top:8px;padding-top:8px}
 
-/* =====================================================
-   SETTINGS ITEMS
-   ===================================================== */
-.setting-section-title{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent-icon);opacity:.8;margin:16px 0 8px}
-.setting-row{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--text-main);padding:10px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;margin-bottom:6px}
-.setting-row label{font-weight:600;font-size:12px}
-.setting-row input[type="range"]{height:4px;flex-grow:1;accent-color:var(--primary)}
-.setting-row input[type="color"]{border:none;width:32px;height:26px;background:none;cursor:pointer;border-radius:6px}
-.setting-row select{background:rgba(255,255,255,.1);border:1px solid var(--input-border);border-radius:8px;color:var(--text-main);padding:4px 8px;font-size:12px;outline:none}
-.setting-row select option{background:#111827;color:#fff}
-.btn-save-settings{width:100%;padding:13px;background:var(--btn-primary-bg);color:white;font-weight:800;border:none;border-radius:14px;margin-top:16px;cursor:pointer;font-size:14px;letter-spacing:.03em;box-shadow:var(--btn-glow),0 4px 14px var(--btn-shadow);transition:all .3s ease}
-.btn-save-settings:hover{filter:brightness(1.1);transform:translateY(-1px)}
-.btn-rekap-link{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:var(--btn-primary-bg);color:white;font-weight:800;border-radius:14px;text-decoration:none;font-size:13px;margin-top:8px;box-shadow:var(--btn-glow),0 4px 14px var(--btn-shadow);border:1px solid rgba(255,255,255,.15);transition:all .3s ease}
-.btn-rekap-link:hover{filter:brightness(1.1)}
-.checkbox-toggle{position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0}
-.checkbox-toggle input{opacity:0;width:0;height:0}
-.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.15);border-radius:24px;transition:.3s}
-.toggle-slider::before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:rgba(255,255,255,.7);border-radius:50%;transition:.3s}
-input:checked+.toggle-slider{background:var(--primary)}
-input:checked+.toggle-slider::before{transform:translateX(18px);background:#fff}
-
-/* =====================================================
-   MODAL OFFLINE ANTREAN
-   ===================================================== */
-#modal-antrean{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);z-index:20000;justify-content:center;align-items:center;padding:16px;box-sizing:border-box}
-.modal-content-antrean{background:var(--glass-bg);border:1px solid var(--glass-border);width:100%;max-width:380px;border-radius:24px;padding:22px;max-height:85vh;overflow-y:auto;box-shadow:var(--glass-shadow);color:var(--text-main)}
-.progress-container{width:100%;background:rgba(255,255,255,.1);border-radius:10px;height:8px;margin:12px 0;display:none;overflow:hidden}
+/* ── OFFLINE MODAL ── */
+#modal-antrean{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  z-index:600;justify-content:center;align-items:center;padding:16px;
+}
+.antr-card{
+  background:var(--glass);border:1px solid var(--glass-border);
+  width:100%;max-width:380px;border-radius:22px;padding:20px;
+  max-height:85vh;overflow-y:auto;box-shadow:var(--glass-shadow);color:var(--text);
+}
+.progress-container{width:100%;background:rgba(255,255,255,.1);border-radius:10px;height:7px;margin:10px 0;display:none;overflow:hidden}
 .progress-bar{height:100%;background:var(--primary);width:0%;transition:width .3s;border-radius:10px}
-#loading-text{font-size:12px;color:var(--accent-icon);text-align:center;margin-bottom:5px;display:none;font-weight:bold}
+#loading-text{font-size:12px;color:var(--accent);text-align:center;margin-bottom:5px;display:none;font-weight:bold}
 
-/* =====================================================
-   FLOAT OFFLINE BADGE
-   ===================================================== */
-.btn-antrean-float{position:fixed;bottom:90px;right:14px;background:rgba(243,156,18,.15);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#f39c12;border:1.5px solid #f39c12;padding:7px 13px;border-radius:14px;cursor:pointer;z-index:99;font-weight:800;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 4px 18px rgba(0,0,0,.4);transition:all .3s ease}
-.btn-antrean-float.ada-data{background:#f39c12;color:white;box-shadow:0 0 20px rgba(243,156,18,.5);border-color:rgba(255,255,255,.3)}
-#label-jumlah-antrean{font-size:15px;font-weight:900}
+/* ── FLOAT BADGE ── */
+.float-off{
+  position:fixed;bottom:88px;right:14px;
+  background:rgba(243,156,18,.15);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  color:#f39c12;border:1.5px solid #f39c12;
+  padding:7px 12px;border-radius:13px;cursor:pointer;z-index:190;
+  font-weight:800;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:2px;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);transition:all .3s;
+  font-family:'Inter',sans-serif;
+}
+.float-off.ada{background:#f39c12;color:white;box-shadow:0 0 18px rgba(243,156,18,.5);border-color:rgba(255,255,255,.3)}
+#lbl-antrean{font-size:15px;font-weight:900}
 
-/* =====================================================
-   LOADING DOTS
-   ===================================================== */
-.loading-dots::after{display:inline-block;animation:ellipsis 2s infinite;content:".";width:2.5em;text-align:left}
-@keyframes ellipsis{0%{content:"."}20%{content:".."}40%{content:"..."}60%{content:"...."}80%{content:"....."}100%{content:"."}}
+/* ── STATUS TOAST ── */
+#status-kirim{
+  position:fixed;top:78px;left:50%;transform:translateX(-50%);
+  width:88%;max-width:400px;padding:15px 18px;
+  border-radius:16px;z-index:700;display:none;
+  color:white;text-align:center;font-weight:800;font-size:13px;line-height:1.45;
+  box-shadow:0 12px 40px rgba(0,0,0,.6);white-space:pre-line;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.18);font-family:'Inter',sans-serif;
+}
 
-/* =====================================================
-   GRADIENT CONTROLS
-   ===================================================== */
-#gradient-controls{display:none;border-top:1px dashed rgba(255,255,255,.12);margin-top:8px;padding-top:8px}
+/* ── LOADING DOTS ── */
+.loading-dots::after{display:inline-block;animation:ell 2s infinite;content:".";width:2.5em;text-align:left}
+@keyframes ell{0%{content:"."}20%{content:".."}40%{content:"..."}60%{content:"...."}80%{content:"....."}100%{content:"."}}
 
-/* =====================================================
-   SCROLLBAR
-   ===================================================== */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:rgba(0,0,0,.1)}
-::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:99px}
+/* ── ABOUT POPUP ── */
+#about-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:550}
+#about-pop-up{
+  display:none;position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%);z-index:560;
+  width:90%;max-width:340px;
+}
 
-/* =====================================================
-   PWA POPUP
-   ===================================================== */
-#pwa-popup{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(10px)}
-.pwa-card{background:var(--glass-bg);border:1px solid var(--glass-border);width:88%;max-width:320px;padding:28px 24px;border-radius:24px;text-align:center;box-shadow:var(--glass-shadow);position:relative}
-.pwa-card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);pointer-events:none}
-.pwa-card img{width:76px;height:76px;border-radius:18px;margin-bottom:14px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
-.pwa-card h3{margin:0 0 8px;font-size:1.05rem;font-family:'Playfair Display',serif;color:var(--text-main)}
-.pwa-card p{font-size:.875rem;color:var(--text-muted);margin-bottom:20px;line-height:1.5}
+/* ── PWA POPUP ── */
+#pwa-popup{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.85);z-index:800;
+  align-items:center;justify-content:center;
+  backdrop-filter:blur(10px);
+}
+.pwa-card{
+  background:var(--glass);border:1px solid var(--glass-border);
+  width:88%;max-width:320px;padding:26px 22px;
+  border-radius:22px;text-align:center;box-shadow:var(--glass-shadow);
+}
+.pwa-card img{width:72px;height:72px;border-radius:16px;margin-bottom:12px}
+.pwa-card h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text);margin-bottom:8px}
+.pwa-card p{font-size:.85rem;color:var(--muted);margin-bottom:18px;line-height:1.5}
 
-/* MODAL BLOCK CLICK OVERLAY */
-body.modal-open > *:not(.modal-overlay.open):not(#modal-antrean):not(#pwa-popup):not(#status-kirim):not(.glow-sphere-1):not(.glow-sphere-2):not(.glow-sphere-3) {pointer-events:none}
-body.modal-open .modal-overlay.open,
-body.modal-open #modal-antrean[style*="flex"],
-body.modal-open #pwa-popup[style*="flex"]{pointer-events:all}
-    </style>
+/* ── MISC ── */
+#fullscreen-info{font-size:10px;opacity:.38;text-align:center;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+</style>
 </head>
-<body onclick="toggleFullscreen()">
-<div class="glow-sphere-1"></div>
-<div class="glow-sphere-2"></div>
-<div class="glow-sphere-3"></div>
+<body onclick="onBodyClick()">
+
+<div class="gs gs1"></div>
+<div class="gs gs2"></div>
+<div class="gs gs3"></div>
 
 <!-- STATUS TOAST -->
 <div id="status-kirim"></div>
 
 <!-- ABOUT OVERLAY -->
-<div id="about-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:10001;" onclick="closeAbout()"></div>
+<div id="about-overlay" onclick="closeAbout()"></div>
 
-<!-- FLOAT OFFLINE BADGE -->
-<button id="btn-float-offline" class="btn-antrean-float" onclick="bukaModalAntrean(event)">
-    <i class="fa-solid fa-database" style="font-size:12px"></i>
-    <span id="label-jumlah-antrean">0</span>
+<!-- FLOAT OFFLINE -->
+<button class="float-off" id="btn-float-offline" onclick="bukaModalAntrean(event)">
+  <i class="fa-solid fa-database" style="font-size:11px"></i>
+  <span id="lbl-antrean">0</span>
 </button>
 
-<!-- MODAL ANTREAN OFFLINE -->
+<!-- MODAL ANTREAN -->
 <div id="modal-antrean">
-    <div class="modal-content-antrean" onclick="event.stopPropagation()">
-        <div class="modal-header-row">
-            <h3><i class="fa-solid fa-clock-rotate-left"></i> Antrean Offline</h3>
-            <button class="btn-close" onclick="tutupModalAntrean()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div id="loading-text">MENGIRIM: <span id="current-send">0</span> / <span id="total-send">0</span></div>
-        <div class="progress-container" id="prog-cont"><div class="progress-bar" id="prog-bar"></div></div>
-        <div id="daftar-item-antrean" style="margin-bottom:16px;max-height:280px;overflow-y:auto;"></div>
-        <div style="display:flex;gap:10px">
-            <button onclick="kirimManual()" id="btn-kirim-manual" style="flex:1;background:var(--btn-primary-bg);color:white;border:none;padding:13px;border-radius:12px;font-weight:800;cursor:pointer;font-size:13px;box-shadow:var(--btn-glow)">
-                <span id="text-btn-kirim">KIRIM</span>
-            </button>
-            <button onclick="tutupModalAntrean()" id="btn-tutup-antrean" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:white;padding:13px;border-radius:12px;font-weight:800;cursor:pointer;font-size:13px">TUTUP</button>
-        </div>
+  <div class="antr-card" onclick="event.stopPropagation()">
+    <div class="mhdr">
+      <h3><i class="fa-solid fa-clock-rotate-left"></i> Antrean Offline</h3>
+      <div class="btn-x" onclick="tutupModalAntrean()"><i class="fa-solid fa-xmark"></i></div>
     </div>
+    <div id="loading-text">MENGIRIM: <span id="current-send">0</span>/<span id="total-send">0</span></div>
+    <div class="progress-container" id="prog-cont"><div class="progress-bar" id="prog-bar"></div></div>
+    <div id="daftar-item-antrean" style="margin-bottom:14px;max-height:280px;overflow-y:auto"></div>
+    <div style="display:flex;gap:10px">
+      <button onclick="kirimManual()" id="btn-kirim-manual" style="flex:1;background:var(--btn-bg);color:#fff;border:none;padding:12px;border-radius:12px;font-weight:800;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif">
+        <span id="text-btn-kirim">KIRIM</span>
+      </button>
+      <button onclick="tutupModalAntrean()" id="btn-tutup-antrean" style="flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;padding:12px;border-radius:12px;font-weight:800;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif">TUTUP</button>
+    </div>
+  </div>
 </div>
 
-<!-- =================== TOP NAV DOCK =================== -->
-<nav class="top-nav">
-    <div class="top-nav-logo-group">
-        <img src="logo-smp-azzahro.png" alt="SMP Logo">
-        <div class="top-nav-title">
-            <h1>PRESENSI DIGITAL</h1>
-            <p>SMP Islam Az-Zahro &amp; SMK Az-Zahro</p>
-        </div>
-        <img src="logo-smk-azzahro.png" alt="SMK Logo" style="margin-left:4px">
+<!-- TOP NAV -->
+<nav id="topNav">
+  <div class="nav-logos">
+    <img src="logo-smp-azzahro.png" alt="SMP">
+    <div class="nav-school">
+      <h1>PRESENSI DIGITAL</h1>
+      <p>SMP Islam Az-Zahro &amp; SMK Az-Zahro</p>
     </div>
-    <div class="top-nav-clock">
-        <span>Waktu Sekarang</span>
-        <div id="clock-top" style="font-size:12px;font-weight:800;color:var(--accent-icon)">--:--:--</div>
-        <div id="date-top" style="font-size:9px;font-weight:500;color:var(--text-muted);margin-top:1px">--- -- ----</div>
-    </div>
+    <img src="logo-smk-azzahro.png" alt="SMK" style="margin-left:2px">
+  </div>
+  <div class="nav-clock">
+    <div class="time" id="clock-top">00:00:00</div>
+    <div class="date" id="date-top">-- -- ----</div>
+  </div>
 </nav>
 
-<!-- =================== MAIN CONTENT =================== -->
-<div class="main-content" id="mainContent">
-    <div class="main-inner">
+<!-- MAIN CONTENT -->
+<div id="mainScroll">
+  <div class="main-inner">
 
-        <!-- DROPDOWN KETERANGAN -->
-        <div class="keterangan-wrap">
-            <select id="keterangan">
-                <option value="" disabled selected>Pilih Keterangan</option>
-                <option value="●">🟢 HADIR</option>
-                <option value="I">🟡 IZIN</option>
-                <option value="S">🔵 SAKIT</option>
-                <option value="A">🔴 ALPA</option>
-            </select>
-        </div>
-
-        <!-- CAMERA SCANNER -->
-        <div class="scanner-wrap">
-            <div class="scanner-corner corner-tl"></div>
-            <div class="scanner-corner corner-tr"></div>
-            <div class="scanner-corner corner-bl"></div>
-            <div class="scanner-corner corner-br"></div>
-            <div class="scan-line"></div>
-            <div id="reader"></div>
-            <div id="selection-overlay"></div>
-        </div>
-
-        <!-- NAMA TERAKHIR DISCAN -->
-        <div class="last-scan-panel">
-            <div class="last-scan-icon"><i class="fa-solid fa-id-card"></i></div>
-            <div style="flex:1;min-width:0">
-                <div class="last-scan-label">Terakhir Discan</div>
-                <input type="text" id="last-name-display" placeholder="MENUNGGU SCAN..." readonly>
-            </div>
-        </div>
-
-        <p id="fullscreen-info" style="font-size:10px;opacity:.4;margin:0;text-align:center;letter-spacing:.05em;text-transform:uppercase">Ketuk layar untuk layar penuh</p>
-
+    <!-- DROPDOWN KETERANGAN -->
+    <div class="ket-wrap">
+      <select id="keterangan">
+        <option value="" disabled selected>Pilih Keterangan</option>
+        <option value="●">🟢 HADIR</option>
+        <option value="I">🟡 IZIN</option>
+        <option value="S">🔵 SAKIT</option>
+        <option value="A">🔴 ALPA</option>
+      </select>
+      <span class="ket-arrow"><i class="fa-solid fa-chevron-down"></i></span>
     </div>
+
+    <!-- SCANNER -->
+    <div class="scanner-box">
+      <div class="sc-corner sc-tl"></div>
+      <div class="sc-corner sc-tr"></div>
+      <div class="sc-corner sc-bl"></div>
+      <div class="sc-corner sc-br"></div>
+      <div class="scan-line"></div>
+      <div id="reader"></div>
+      <div id="selection-overlay"></div>
+    </div>
+
+    <!-- NAMA TERAKHIR -->
+    <div class="last-scan">
+      <div class="last-scan-ic"><i class="fa-solid fa-id-card"></i></div>
+      <div style="flex:1;min-width:0">
+        <div class="last-scan-lbl">Terakhir Discan</div>
+        <input type="text" id="last-name-display" placeholder="MENUNGGU SCAN..." readonly>
+      </div>
+    </div>
+
+    <p id="fullscreen-info">Ketuk layar untuk layar penuh</p>
+  </div>
 </div>
 
-<!-- =================== BOTTOM NAV DOCK =================== -->
-<div class="custom-bottom-nav" id="bottomNav">
-    <div class="nav-item" id="navTema" onclick="navKlikAksi(this,'tema')">
-        <div class="icon-circle"><i class="fa-solid fa-palette"></i></div>
-        <span class="nav-text">Tema</span>
+<!-- BOTTOM NAV -->
+<nav id="bottomNav">
+  <div class="nav-it" id="nTema" onclick="navKlik(this,'tema');event.stopPropagation()">
+    <div class="ic-wrap"><i class="fa-solid fa-palette"></i></div>
+    <span class="nav-lbl">Tema</span>
+  </div>
+  <div class="nav-it" id="nRekap" onclick="navKlik(this,'rekap');event.stopPropagation()">
+    <div class="ic-wrap"><i class="fa-solid fa-chart-pie"></i></div>
+    <span class="nav-lbl">Rekap</span>
+  </div>
+  <div class="nav-it" id="nOffline" onclick="navKlik(this,'offline');event.stopPropagation()">
+    <div class="ic-wrap"><i class="fa-solid fa-database"></i></div>
+    <span class="nav-lbl">Offline</span>
+  </div>
+  <div class="nav-it" id="nPengaturan" onclick="navKlik(this,'pengaturan');event.stopPropagation()">
+    <div class="ic-wrap"><i class="fa-solid fa-gear"></i></div>
+    <span class="nav-lbl">Pengaturan</span>
+  </div>
+</nav>
+
+<!-- MODAL TEMA -->
+<div class="modal-ov" id="mTema" onclick="tutupMod('mTema')">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="mhdr">
+      <h3><i class="fa-solid fa-palette"></i> Pilih Tema</h3>
+      <div class="btn-x" onclick="tutupMod('mTema')"><i class="fa-solid fa-xmark"></i></div>
     </div>
-    <div class="nav-item" id="navRekap" onclick="navKlikAksi(this,'rekap')">
-        <div class="icon-circle"><i class="fa-solid fa-chart-pie"></i></div>
-        <span class="nav-text">Rekap</span>
-    </div>
-    <div class="nav-item" id="navOffline" onclick="navKlikAksi(this,'offline')">
-        <div class="icon-circle"><i class="fa-solid fa-database"></i></div>
-        <span class="nav-text">Data Offline</span>
-    </div>
-    <div class="nav-item" id="navPengaturan" onclick="navKlikAksi(this,'pengaturan')">
-        <div class="icon-circle"><i class="fa-solid fa-gear"></i></div>
-        <span class="nav-text">Pengaturan</span>
-    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:-8px;margin-bottom:14px">6 Tema Tersedia</p>
+    <button class="tswatch" style="background:linear-gradient(135deg,#09331f,#1a7a4a,#0d5a36);border-color:rgba(25,135,84,.4)" onclick="pilihTema('emerald');tutupMod('mTema')">
+      <span>🌿 Emerald Forest</span>
+      <div class="sdots"><div class="sdot" style="background:#09331f"></div><div class="sdot" style="background:#198754"></div><div class="sdot" style="background:#1a7a4a"></div><div class="sdot" style="background:#D4AF37"></div></div>
+    </button>
+    <button class="tswatch" style="background:linear-gradient(135deg,#0b0f19,#1e1b4b,#312e81);border-color:rgba(99,102,241,.4)" onclick="pilihTema('biru-ungu');tutupMod('mTema')">
+      <span>🔮 Blue Violet</span>
+      <div class="sdots"><div class="sdot" style="background:#0b0f19"></div><div class="sdot" style="background:#1e1b4b"></div><div class="sdot" style="background:#4f46e5"></div><div class="sdot" style="background:#818cf8"></div></div>
+    </button>
+    <button class="tswatch" style="background:linear-gradient(135deg,#0c1a3a,#1a3a6b,#2f7dff);border-color:rgba(47,125,255,.45)" onclick="pilihTema('electric-blue');tutupMod('mTema')">
+      <span>⚡ Electric Blue</span>
+      <div class="sdots"><div class="sdot" style="background:#0c1a3a"></div><div class="sdot" style="background:#1a3a6b"></div><div class="sdot" style="background:#2f7dff"></div><div class="sdot" style="background:#00c6ff"></div></div>
+    </button>
+    <button class="tswatch" style="background:linear-gradient(135deg,#1a0f05,#3a1c05,#7c2d00);border-color:rgba(234,88,12,.4)" onclick="pilihTema('sunset-orange');tutupMod('mTema')">
+      <span>🌅 Sunset Orange</span>
+      <div class="sdots"><div class="sdot" style="background:#1a0f05"></div><div class="sdot" style="background:#7c2d00"></div><div class="sdot" style="background:#ea580c"></div><div class="sdot" style="background:#eab308"></div></div>
+    </button>
+    <button class="tswatch" style="background:linear-gradient(135deg,#1a0520,#3d0f50,#7e1f75);border-color:rgba(219,39,119,.4)" onclick="pilihTema('rose-galaxy');tutupMod('mTema')">
+      <span>🌸 Rose Galaxy</span>
+      <div class="sdots"><div class="sdot" style="background:#1a0520"></div><div class="sdot" style="background:#3d0f50"></div><div class="sdot" style="background:#9333ea"></div><div class="sdot" style="background:#ec4899"></div></div>
+    </button>
+    <button class="tswatch" style="background:linear-gradient(135deg,#032028,#084255,#0e7490);border-color:rgba(6,182,212,.4)" onclick="pilihTema('ocean-teal');tutupMod('mTema')">
+      <span>🌊 Ocean Teal</span>
+      <div class="sdots"><div class="sdot" style="background:#032028"></div><div class="sdot" style="background:#084255"></div><div class="sdot" style="background:#0e7490"></div><div class="sdot" style="background:#22d3ee"></div></div>
+    </button>
+  </div>
 </div>
 
-<!-- =================== MODAL PILIH TEMA =================== -->
-<div class="modal-overlay" id="modalTema" onclick="tutupModal('modalTema')">
-    <div class="modal-card" onclick="event.stopPropagation()">
-        <div class="modal-header-row">
-            <h3><i class="fa-solid fa-palette"></i> Pilih Tema</h3>
-            <button class="btn-close" onclick="tutupModal('modalTema')"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <p style="font-size:11px;color:var(--text-muted);margin-top:-8px;margin-bottom:14px">6 Tema Tersedia — Klik untuk menerapkan</p>
-        <div class="space-y-2" style="display:flex;flex-direction:column;gap:10px">
-            <button class="tema-btn-swatch" style="background:linear-gradient(135deg,#09331f,#1a7a4a,#0d5a36);border-color:rgba(25,135,84,.4)" onclick="pilihSistemTema('emerald');tutupModal('modalTema')">
-                <span>🌿 Emerald Forest</span>
-                <div class="swatch-dots"><div class="swatch-dot" style="background:#09331f"></div><div class="swatch-dot" style="background:#198754"></div><div class="swatch-dot" style="background:#1a7a4a"></div><div class="swatch-dot" style="background:#D4AF37"></div><div class="swatch-dot" style="background:#0ea56a"></div></div>
-            </button>
-            <button class="tema-btn-swatch" style="background:linear-gradient(135deg,#0b0f19,#1e1b4b,#312e81);border-color:rgba(99,102,241,.4)" onclick="pilihSistemTema('biru-ungu');tutupModal('modalTema')">
-                <span>🔮 Blue Violet</span>
-                <div class="swatch-dots"><div class="swatch-dot" style="background:#0b0f19"></div><div class="swatch-dot" style="background:#1e1b4b"></div><div class="swatch-dot" style="background:#4f46e5"></div><div class="swatch-dot" style="background:#7c3aed"></div><div class="swatch-dot" style="background:#818cf8"></div></div>
-            </button>
-            <button class="tema-btn-swatch" style="background:linear-gradient(135deg,#0c1a3a,#1a3a6b,#2f7dff);border-color:rgba(47,125,255,.45)" onclick="pilihSistemTema('electric-blue');tutupModal('modalTema')">
-                <span>⚡ Electric Blue</span>
-                <div class="swatch-dots"><div class="swatch-dot" style="background:#0c1a3a"></div><div class="swatch-dot" style="background:#1a3a6b"></div><div class="swatch-dot" style="background:#2f7dff"></div><div class="swatch-dot" style="background:#00c6ff"></div><div class="swatch-dot" style="background:#cb3dff"></div></div>
-            </button>
-            <button class="tema-btn-swatch" style="background:linear-gradient(135deg,#1a0f05,#3a1c05,#7c2d00);border-color:rgba(234,88,12,.4)" onclick="pilihSistemTema('sunset-orange');tutupModal('modalTema')">
-                <span>🌅 Sunset Orange</span>
-                <div class="swatch-dots"><div class="swatch-dot" style="background:#1a0f05"></div><div class="swatch-dot" style="background:#7c2d00"></div><div class="swatch-dot" style="background:#ea580c"></div><div class="swatch-dot" style="background:#eab308"></div><div class="swatch-dot" style="background:#f97316"></div></div>
-            </button>
-            <button class="tema-btn-swatch" style="background:linear-gradient(135deg,#1a0520,#3d0f50,#7e1f75);border-color:rgba(219,39,119,.4)" onclick="pilihSistemTema('rose-galaxy');tutupModal('modalTema')">
-                <span>🌸 Rose Galaxy</span>
-                <div class="swatch-dots"><div class="swatch-dot" style="background:#1a0520"></div><div class="swatch-dot" style="background:#3d0f50"></div><div class="swatch-dot" style="background:#9333ea"></div><div class="swatch-dot" style="background:#ec4899"></div><div class="swatch-dot" style="background:#f472b6"></div></div>
-            </button>
-            <button class="tema-btn-swatch" style="background:linear-gradient(135deg,#032028,#084255,#0e7490);border-color:rgba(6,182,212,.4)" onclick="pilihSistemTema('ocean-teal');tutupModal('modalTema')">
-                <span>🌊 Ocean Teal</span>
-                <div class="swatch-dots"><div class="swatch-dot" style="background:#032028"></div><div class="swatch-dot" style="background:#084255"></div><div class="swatch-dot" style="background:#0e7490"></div><div class="swatch-dot" style="background:#06b6d4"></div><div class="swatch-dot" style="background:#22d3ee"></div></div>
-            </button>
-        </div>
+<!-- MODAL PENGATURAN -->
+<div class="modal-ov" id="mPengaturan" onclick="tutupMod('mPengaturan')">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="mhdr">
+      <h3><i class="fa-solid fa-sliders"></i> Pengaturan</h3>
+      <div class="btn-x" onclick="cancelSettings();tutupMod('mPengaturan')"><i class="fa-solid fa-xmark"></i></div>
     </div>
+    <div class="s-title">🔔 Suara Notifikasi</div>
+    <div class="s-row">
+      <label>Pilih Suara</label>
+      <select id="sound-choice" style="width:52%">
+        <option value="notification/Notif01.mp3">Default</option>
+        <option value="notification/Notif02.mp3">Notifikasi 01</option>
+        <option value="notification/Notif03.mp3">Notifikasi 02</option>
+        <option value="notification/apple-success.mp3">Apple Success</option>
+        <option value="notification/success.mp3">Success</option>
+        <option value="notification/Done.mp3">Done</option>
+        <option value="notification/Notif-ML.mp3">Notifikasi ML</option>
+        <option value="notification/Mission-success.mp3">Mission Success</option>
+        <option value="notification/Success-fanfare-trumpets.mp3">Success Fanfare</option>
+        <option value="notification/floraphonic-cute-animal-squeak-1.mp3">Squeak 1</option>
+        <option value="notification/floraphonic-cute-animal-squeak-2.mp3">Squeak 2</option>
+        <option value="notification/Yayyy.mp3">Yayyy!!</option>
+        <option value="notification/kiw-kiw-cukurukuk-small-child.mp3">Kiw-kiw Child</option>
+        <option value="notification/kiw-kiw-original.mp3">Kiw-kiw Original</option>
+      </select>
+    </div>
+    <div class="s-title">🖼️ Tampilan Logo &amp; Font</div>
+    <div class="s-row"><label>Ukuran Logo</label><input type="range" id="range-logo" min="40" max="110" oninput="previewLayout()"></div>
+    <div class="s-row"><label>Ukuran Font</label><input type="range" id="range-font" min="0.5" max="1.5" step="0.05" oninput="previewLayout()"></div>
+    <div class="s-title">🎨 Warna Kustom</div>
+    <div class="s-row">
+      <label>Warna Garis</label><input type="color" id="color-picker" oninput="previewLayout()">
+      <label>Warna Latar</label><input type="color" id="color-bg" oninput="previewLayout()">
+    </div>
+    <div class="s-row">
+      <label>Gunakan Gradien</label>
+      <label class="tog"><input type="checkbox" id="gradient-toggle" onchange="previewLayout()"><span class="tog-sl"></span></label>
+    </div>
+    <div id="gradient-controls">
+      <div class="s-row">
+        <label>Atas</label><input type="color" id="grad-1" oninput="previewLayout()">
+        <label>Tengah</label><input type="color" id="grad-2" oninput="previewLayout()">
+        <label>Bawah</label><input type="color" id="grad-3" oninput="previewLayout()">
+      </div>
+      <div class="s-row">
+        <label>Arah</label>
+        <select id="grad-dir" onchange="previewLayout()">
+          <option value="180deg">Vertikal</option>
+          <option value="90deg">Horizontal</option>
+          <option value="45deg">Diagonal</option>
+        </select>
+      </div>
+    </div>
+    <div class="s-title">🔗 Tautan &amp; Info</div>
+    <a href="https://azzahrolocare.github.io/rekapitulasi-presensi-siswa/" target="_blank" class="btn-rekap-a" id="btn-rekap" onclick="event.stopPropagation()">
+      <i class="fa-solid fa-chart-pie"></i> Rekapitulasi Presensi Siswa
+    </a>
+    <button onclick="event.stopPropagation();showAbout()" style="width:100%;margin-top:8px;padding:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:var(--text);font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Inter',sans-serif">
+      <i class="fa-solid fa-circle-info" style="color:var(--accent)"></i> Tentang Aplikasi
+    </button>
+    <button class="btn-simpan" onclick="saveSettings()"><i class="fa-solid fa-floppy-disk"></i> &nbsp;SIMPAN</button>
+  </div>
 </div>
 
-<!-- =================== MODAL PENGATURAN =================== -->
-<div class="modal-overlay" id="modalPengaturan" onclick="tutupModal('modalPengaturan')">
-    <div class="modal-card" onclick="event.stopPropagation()">
-        <div class="modal-header-row">
-            <h3><i class="fa-solid fa-sliders"></i> Pengaturan</h3>
-            <button class="btn-close" onclick="cancelSettings();tutupModal('modalPengaturan')"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-
-        <div class="setting-section-title">🔔 Suara Notifikasi</div>
-        <div class="setting-row">
-            <label>Pilih Suara</label>
-            <select id="sound-choice" style="width:55%;font-size:11px">
-                <option value="notification/Notif01.mp3">Default</option>
-                <option value="notification/Notif02.mp3">Notifikasi 01</option>
-                <option value="notification/Notif03.mp3">Notifikasi 02</option>
-                <option value="notification/apple-success.mp3">Apple Success</option>
-                <option value="notification/success.mp3">Success</option>
-                <option value="notification/Done.mp3">Done</option>
-                <option value="notification/Notif-ML.mp3">Notifikasi ML</option>
-                <option value="notification/Mission-success.mp3">Mission Success</option>
-                <option value="notification/Success-fanfare-trumpets.mp3">Success Fanfare</option>
-                <option value="notification/floraphonic-cute-animal-squeak-1.mp3">Squeak 1</option>
-                <option value="notification/floraphonic-cute-animal-squeak-2.mp3">Squeak 2</option>
-                <option value="notification/Yayyy.mp3">Yayyy...!!</option>
-                <option value="notification/kiw-kiw-cukurukuk-small-child.mp3">Kiw-kiw Small</option>
-                <option value="notification/kiw-kiw-original.mp3">Kiw-kiw Original</option>
-            </select>
-        </div>
-
-        <div class="setting-section-title">🖼️ Tampilan</div>
-        <div class="setting-row">
-            <label>Ukuran Logo</label>
-            <input type="range" id="range-logo" min="40" max="110" oninput="previewLayout()">
-        </div>
-        <div class="setting-row">
-            <label>Ukuran Font</label>
-            <input type="range" id="range-font" min="0.5" max="1.5" step="0.05" oninput="previewLayout()">
-        </div>
-        <div class="setting-row" style="flex-wrap:wrap;gap:6px">
-            <label style="width:100%">Warna Kustom</label>
-            <div style="display:flex;gap:12px;align-items:center;width:100%;justify-content:space-between;font-size:11px">
-                <span>Garis <input type="color" id="color-picker" oninput="previewLayout()"></span>
-                <span>Latar <input type="color" id="color-bg" oninput="previewLayout()"></span>
-            </div>
-        </div>
-        <div class="setting-row">
-            <label>Gunakan Gradien</label>
-            <label class="checkbox-toggle"><input type="checkbox" id="gradient-toggle" onchange="previewLayout()"><span class="toggle-slider"></span></label>
-        </div>
-        <div id="gradient-controls">
-            <div class="setting-row" style="flex-wrap:wrap;gap:6px">
-                <label style="width:100%">Warna Gradien</label>
-                <div style="display:flex;gap:12px;align-items:center;width:100%;justify-content:space-between;font-size:11px">
-                    <span>Atas <input type="color" id="grad-1" oninput="previewLayout()"></span>
-                    <span>Tengah <input type="color" id="grad-2" oninput="previewLayout()"></span>
-                    <span>Bawah <input type="color" id="grad-3" oninput="previewLayout()"></span>
-                </div>
-            </div>
-            <div class="setting-row">
-                <label>Arah Gradien</label>
-                <select id="grad-dir" onchange="previewLayout()" style="font-size:11px">
-                    <option value="180deg">Vertikal</option>
-                    <option value="90deg">Horizontal</option>
-                    <option value="45deg">Diagonal</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="setting-section-title" style="margin-top:14px">🔗 Tautan</div>
-        <a href="https://azzahrolocare.github.io/rekapitulasi-presensi-siswa/" target="_blank" class="btn-rekap-link" id="btn-rekap" onclick="event.stopPropagation()">
-            <i class="fa-solid fa-chart-pie"></i> Rekapitulasi Presensi Siswa
-        </a>
-
-        <div class="setting-section-title">ℹ️ Aplikasi</div>
-        <button onclick="event.stopPropagation();showAbout()" style="width:100%;padding:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:var(--text-main);font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
-            <i class="fa-solid fa-circle-info" style="color:var(--accent-icon)"></i> Tentang Aplikasi
-        </button>
-
-        <button class="btn-save-settings" onclick="saveSettings()">
-            <i class="fa-solid fa-floppy-disk"></i> &nbsp;SIMPAN PENGATURAN
-        </button>
+<!-- TENTANG -->
+<div id="about-pop-up">
+  <div class="modal-card" style="max-height:82vh;overflow-y:auto">
+    <div class="mhdr">
+      <h3><i class="fa-solid fa-circle-info"></i> Tentang Aplikasi</h3>
+      <div class="btn-x" onclick="closeAbout()"><i class="fa-solid fa-xmark"></i></div>
     </div>
+    <p style="font-size:12px;line-height:1.7;color:var(--muted);margin-top:0">"Aplikasi Presensi Digital SMP Islam &amp; SMK Az-Zahro hadir sebagai solusi inovatif dalam mendukung digitalisasi pendidikan serta efisiensi administrasi sekolah. Dengan fokus mentransformasi presensi konvensional menjadi sistem otomatis berbasis QR Code, aplikasi ini memastikan pendataan kehadiran berjalan cepat dan akurat. Melalui integrasi langsung dengan cloud storage, seluruh data tersinkronisasi secara otomatis tanpa perlu rekapitulasi manual di akhir hari."</p>
+    <div style="background:rgba(255,255,255,.05);padding:13px;border-radius:13px;font-size:11px;border-left:3px solid var(--accent)">
+      <div style="text-align:center;font-size:13px;font-weight:bold;color:var(--accent);margin-bottom:4px">IT DIGITALIZATION</div>
+      <div style="text-align:center;font-weight:bold;margin-bottom:10px;font-size:10px;color:var(--muted)">SMP ISLAM AZ-ZAHRO &amp; SMK AZ-ZAHRO</div>
+      <p style="margin:4px 0;color:var(--text)"><strong>Created by ops:</strong> Rahmattullah</p>
+      <p style="margin:4px 0;color:var(--text)"><strong>Email:</strong> mas.rahmat.id@gmail.com</p>
+    </div>
+    <button class="btn-simpan" style="margin-top:14px" onclick="closeAbout()">TUTUP</button>
+  </div>
 </div>
 
-<!-- =================== MODAL TENTANG =================== -->
-<div id="about-pop-up" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10002;width:90%;max-width:340px">
-    <div class="modal-card" style="max-height:82vh;overflow-y:auto">
-        <div class="modal-header-row">
-            <h3><i class="fa-solid fa-circle-info"></i> Tentang Aplikasi</h3>
-            <button class="btn-close" onclick="closeAbout()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <p style="font-size:12px;line-height:1.7;color:var(--text-muted);margin-top:0">"Aplikasi Presensi Digital SMP Islam & SMK Az-Zahro hadir sebagai solusi inovatif dalam mendukung digitalisasi pendidikan serta efisiensi administrasi sekolah. Dengan fokus mentransformasi presensi konvensional menjadi sistem otomatis berbasis QR Code, aplikasi ini memastikan pendataan kehadiran berjalan cepat dan akurat. Melalui integrasi langsung dengan cloud storage, seluruh data tersinkronisasi secara otomatis tanpa perlu rekapitulasi manual di akhir hari."</p>
-        <div style="background:rgba(255,255,255,.05);padding:14px;border-radius:14px;font-size:11px;border-left:3px solid var(--accent-icon)">
-            <div style="text-align:center;font-size:13px;font-weight:bold;color:var(--accent-icon);margin-bottom:4px">IT DIGITALIZATION</div>
-            <div style="text-align:center;font-weight:bold;margin-bottom:12px;font-size:10px;color:var(--text-muted)">SMP ISLAM AZ-ZAHRO &amp; SMK AZ-ZAHRO</div>
-            <p style="margin:5px 0;color:var(--text-main)"><strong>Created by ops:</strong> Rahmattullah</p>
-            <p style="margin:5px 0;color:var(--text-main)"><strong>Email:</strong> mas.rahmat.id@gmail.com</p>
-        </div>
-        <button class="btn-save-settings" style="margin-top:14px" onclick="closeAbout()">TUTUP</button>
-    </div>
-</div>
-
-<!-- =================== PWA POPUP =================== -->
+<!-- PWA POPUP -->
 <div id="pwa-popup">
-    <div class="pwa-card">
-        <img src="icon-apk-presensi-azzahro.png" alt="App Icon">
-        <h3>Instal Aplikasi</h3>
-        <p>Pasang Aplikasi Presensi Digital Az-Zahro di layar utama Anda untuk akses lebih cepat.</p>
-        <div style="display:flex;gap:10px">
-            <button id="btnBatal" style="flex:1;background:transparent;color:var(--text-muted);border:1px solid rgba(255,255,255,.15);padding:11px;border-radius:12px;font-weight:700;cursor:pointer">Nanti</button>
-            <button id="btnInstalPop" style="flex:1;background:var(--btn-primary-bg);color:white;border:none;padding:11px;border-radius:12px;font-weight:800;cursor:pointer">Instal</button>
-        </div>
+  <div class="pwa-card">
+    <img src="icon-apk-presensi-azzahro.png" alt="App Icon">
+    <h3>Instal Aplikasi</h3>
+    <p>Pasang Aplikasi Presensi Digital Az-Zahro di layar utama untuk akses lebih cepat.</p>
+    <div style="display:flex;gap:10px">
+      <button id="btnBatal" style="flex:1;background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,.15);padding:10px;border-radius:11px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">Nanti</button>
+      <button id="btnInstalPop" style="flex:1;background:var(--btn-bg);color:white;border:none;padding:10px;border-radius:11px;font-weight:800;cursor:pointer;font-family:'Inter',sans-serif">Instal</button>
     </div>
+  </div>
 </div>
 
 <script>
 /* =====================================================
-   DAFTAR_TEMA — diambil dari index1, dipakai untuk
-   mewarnai semua elemen via CSS variables
-   ===================================================== */
+   DAFTAR_TEMA
+===================================================== */
 const DAFTAR_TEMA = {
-  'emerald': {
-    '--primary':'#198754',
-    '--body-bg':'linear-gradient(135deg,#051a0f 0%,#09331f 25%,#0d5a36 55%,#1a7a4a 75%,#0a4528 100%)',
-    '--body-solid-bg':'#07261a',
-    '--glow-1':'#198754','--glow-2':'#D4AF37','--glow-3':'#0ea56a',
-    '--header-bg':'linear-gradient(135deg,rgba(5,20,12,.97) 0%,rgba(9,51,31,.96) 35%,rgba(20,108,67,.93) 65%,rgba(14,82,52,.97) 100%)',
-    '--header-border':'rgba(212,175,55,.35)',
-    '--glass-bg':'linear-gradient(145deg,rgba(255,255,255,.14) 0%,rgba(25,135,84,.08) 50%,rgba(255,255,255,.06) 100%)',
-    '--badge-bg':'linear-gradient(135deg,rgba(25,135,84,.4) 0%,rgba(212,175,55,.28) 100%)',
-    '--badge-border':'rgba(212,175,55,.5)',
-    '--btn-primary-bg':'linear-gradient(135deg,#22a161 0%,#1a7a4a 40%,#146c43 70%,#0F5132 100%)',
-    '--btn-primary-hover':'linear-gradient(135deg,#2dbe78 0%,#22a161 40%,#198754 70%,#146c43 100%)',
-    '--btn-shadow':'rgba(20,108,67,.55)',
-    '--btn-glow':'0 0 28px rgba(25,135,84,.5),0 0 10px rgba(212,175,55,.2)',
-    '--nav-dock-bg':'linear-gradient(180deg,rgba(7,26,16,.97) 0%,rgba(5,18,10,.99) 100%)',
-    '--nav-dock-border':'rgba(212,175,55,.3)',
-    '--icon-circle-ready':'linear-gradient(135deg,rgba(26,122,74,.85) 0%,rgba(20,108,67,.75) 100%)',
-    '--icon-circle-ready-border':'rgba(212,175,55,.65)',
-    '--icon-circle-ready-shadow':'0 4px 20px rgba(25,135,84,.55),0 0 12px rgba(212,175,55,.2)',
-    '--icon-circle-aktif':'linear-gradient(135deg,#D4AF37 0%,#f0c830 60%,#ffe066 100%)',
-    '--icon-text-aktif':'#0F5132',
-    '--input-border':'rgba(255,255,255,.22)',
-    '--input-focus-border':'rgba(212,175,55,.75)',
-    '--input-focus-bg':'rgba(25,135,84,.18)',
-    '--text-muted':'#c8e6d4',
-    '--accent-icon':'#D4AF37',
-    '--scanner-border':'rgba(25,135,84,.8)',
-    '--scanner-glow':'rgba(25,135,84,.4)',
-    '--panel-accent-border':'rgba(212,175,55,.4)',
-    '--scrollbar-thumb':'rgba(212,175,55,.35)',
-    '--metaTheme':'#051a0f'
+  'emerald':{
+    '--primary':'#198754','--body-bg':'linear-gradient(135deg,#051a0f 0%,#09331f 25%,#0d5a36 55%,#1a7a4a 75%,#0a4528 100%)','--body-solid':'#07261a',
+    '--glow1':'#198754','--glow2':'#D4AF37','--glow3':'#0ea56a',
+    '--hdr-bg':'linear-gradient(135deg,rgba(5,20,12,.97) 0%,rgba(9,51,31,.96) 35%,rgba(20,108,67,.93) 65%,rgba(14,82,52,.97) 100%)','--hdr-border':'rgba(212,175,55,.35)',
+    '--glass':'linear-gradient(145deg,rgba(255,255,255,.14) 0%,rgba(25,135,84,.08) 50%,rgba(255,255,255,.06) 100%)','--glass-border':'rgba(255,255,255,.22)',
+    '--badge':'linear-gradient(135deg,rgba(25,135,84,.4) 0%,rgba(212,175,55,.28) 100%)','--badge-border':'rgba(212,175,55,.5)',
+    '--btn-bg':'linear-gradient(135deg,#22a161 0%,#1a7a4a 40%,#146c43 70%,#0F5132 100%)','--btn-glow':'0 0 28px rgba(25,135,84,.5),0 0 10px rgba(212,175,55,.2),0 4px 14px rgba(20,108,67,.55)',
+    '--nav-bg':'linear-gradient(180deg,rgba(7,26,16,.97) 0%,rgba(5,18,10,.99) 100%)','--nav-border':'rgba(212,175,55,.3)',
+    '--ic-ready':'linear-gradient(135deg,rgba(26,122,74,.85),rgba(20,108,67,.75))','--ic-ready-bdr':'rgba(212,175,55,.65)','--ic-ready-sh':'0 4px 20px rgba(25,135,84,.55),0 0 12px rgba(212,175,55,.2)',
+    '--ic-aktif':'linear-gradient(135deg,#D4AF37,#f0c830,#ffe066)','--ic-aktif-txt':'#0F5132',
+    '--inp-border':'rgba(255,255,255,.22)','--inp-focus-border':'rgba(212,175,55,.75)','--inp-focus-bg':'rgba(25,135,84,.18)',
+    '--muted':'#c8e6d4','--accent':'#D4AF37','--scan-border':'rgba(25,135,84,.9)','--scan-glow':'rgba(25,135,84,.5)','--scroll-thumb':'rgba(212,175,55,.35)','--meta':'#051a0f'
   },
-  'biru-ungu': {
-    '--primary':'#6366f1',
-    '--body-bg':'linear-gradient(135deg,#0b0f19 0%,#1a1040 30%,#2d1b69 60%,#1e1b4b 100%)',
-    '--body-solid-bg':'#0d1030',
-    '--glow-1':'#4f46e5','--glow-2':'#a78bfa','--glow-3':'#7c3aed',
-    '--header-bg':'linear-gradient(135deg,rgba(11,15,25,.97) 0%,rgba(30,27,75,.95) 40%,rgba(79,70,229,.35) 100%)',
-    '--header-border':'rgba(167,139,250,.35)',
-    '--glass-bg':'linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(99,102,241,.1) 50%,rgba(255,255,255,.05) 100%)',
-    '--badge-bg':'linear-gradient(135deg,rgba(99,102,241,.4) 0%,rgba(167,139,250,.28) 100%)',
-    '--badge-border':'rgba(167,139,250,.5)',
-    '--btn-primary-bg':'linear-gradient(135deg,#818cf8 0%,#6366f1 40%,#4f46e5 70%,#3730a3 100%)',
-    '--btn-primary-hover':'linear-gradient(135deg,#a5b4fc 0%,#818cf8 40%,#6366f1 100%)',
-    '--btn-shadow':'rgba(79,70,229,.55)',
-    '--btn-glow':'0 0 28px rgba(99,102,241,.5),0 0 10px rgba(167,139,250,.3)',
-    '--nav-dock-bg':'linear-gradient(180deg,rgba(11,15,25,.97) 0%,rgba(8,10,22,.99) 100%)',
-    '--nav-dock-border':'rgba(167,139,250,.3)',
-    '--icon-circle-ready':'linear-gradient(135deg,rgba(99,102,241,.85) 0%,rgba(79,70,229,.75) 100%)',
-    '--icon-circle-ready-border':'rgba(167,139,250,.65)',
-    '--icon-circle-ready-shadow':'0 4px 20px rgba(99,102,241,.55),0 0 12px rgba(167,139,250,.3)',
-    '--icon-circle-aktif':'linear-gradient(135deg,#a78bfa 0%,#c4b5fd 60%,#ddd6fe 100%)',
-    '--icon-text-aktif':'#1e1b4b',
-    '--input-border':'rgba(167,139,250,.25)',
-    '--input-focus-border':'rgba(167,139,250,.75)',
-    '--input-focus-bg':'rgba(99,102,241,.18)',
-    '--text-muted':'#c4b5fd',
-    '--accent-icon':'#a78bfa',
-    '--scanner-border':'rgba(99,102,241,.8)',
-    '--scanner-glow':'rgba(99,102,241,.4)',
-    '--panel-accent-border':'rgba(167,139,250,.4)',
-    '--scrollbar-thumb':'rgba(167,139,250,.35)',
-    '--metaTheme':'#0b0f19'
+  'biru-ungu':{
+    '--primary':'#6366f1','--body-bg':'linear-gradient(135deg,#0b0f19 0%,#1a1040 30%,#2d1b69 60%,#1e1b4b 100%)','--body-solid':'#0d1030',
+    '--glow1':'#4f46e5','--glow2':'#a78bfa','--glow3':'#7c3aed',
+    '--hdr-bg':'linear-gradient(135deg,rgba(11,15,25,.97) 0%,rgba(30,27,75,.95) 40%,rgba(79,70,229,.35) 100%)','--hdr-border':'rgba(167,139,250,.35)',
+    '--glass':'linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(99,102,241,.1) 50%,rgba(255,255,255,.05) 100%)','--glass-border':'rgba(255,255,255,.22)',
+    '--badge':'linear-gradient(135deg,rgba(99,102,241,.4) 0%,rgba(167,139,250,.28) 100%)','--badge-border':'rgba(167,139,250,.5)',
+    '--btn-bg':'linear-gradient(135deg,#818cf8 0%,#6366f1 40%,#4f46e5 70%,#3730a3 100%)','--btn-glow':'0 0 28px rgba(99,102,241,.5),0 0 10px rgba(167,139,250,.3),0 4px 14px rgba(79,70,229,.55)',
+    '--nav-bg':'linear-gradient(180deg,rgba(11,15,25,.97) 0%,rgba(8,10,22,.99) 100%)','--nav-border':'rgba(167,139,250,.3)',
+    '--ic-ready':'linear-gradient(135deg,rgba(99,102,241,.85),rgba(79,70,229,.75))','--ic-ready-bdr':'rgba(167,139,250,.65)','--ic-ready-sh':'0 4px 20px rgba(99,102,241,.55),0 0 12px rgba(167,139,250,.3)',
+    '--ic-aktif':'linear-gradient(135deg,#a78bfa,#c4b5fd,#ddd6fe)','--ic-aktif-txt':'#1e1b4b',
+    '--inp-border':'rgba(167,139,250,.25)','--inp-focus-border':'rgba(167,139,250,.75)','--inp-focus-bg':'rgba(99,102,241,.18)',
+    '--muted':'#c4b5fd','--accent':'#a78bfa','--scan-border':'rgba(99,102,241,.9)','--scan-glow':'rgba(99,102,241,.4)','--scroll-thumb':'rgba(167,139,250,.35)','--meta':'#0b0f19'
   },
-  'electric-blue': {
-    '--primary':'#2f7dff',
-    '--body-bg':'linear-gradient(135deg,#0c1a3a 0%,#0a2460 30%,#1a3a8f 60%,#0c1a5c 100%)',
-    '--body-solid-bg':'#0a1430',
-    '--glow-1':'#2f7dff','--glow-2':'#00c6ff','--glow-3':'#cb3dff',
-    '--header-bg':'linear-gradient(135deg,rgba(12,26,58,.97) 0%,rgba(26,58,143,.92) 50%,rgba(47,125,255,.25) 100%)',
-    '--header-border':'rgba(0,198,255,.35)',
-    '--glass-bg':'linear-gradient(145deg,rgba(255,255,255,.12) 0%,rgba(47,125,255,.1) 50%,rgba(255,255,255,.05) 100%)',
-    '--badge-bg':'linear-gradient(135deg,rgba(47,125,255,.4) 0%,rgba(0,198,255,.25) 100%)',
-    '--badge-border':'rgba(0,198,255,.5)',
-    '--btn-primary-bg':'linear-gradient(135deg,#60a5fa 0%,#2f7dff 40%,#1a5ae8 70%,#1240b0 100%)',
-    '--btn-primary-hover':'linear-gradient(135deg,#93c5fd 0%,#60a5fa 40%,#2f7dff 100%)',
-    '--btn-shadow':'rgba(47,125,255,.55)',
-    '--btn-glow':'0 0 28px rgba(47,125,255,.6),0 0 10px rgba(0,198,255,.3)',
-    '--nav-dock-bg':'linear-gradient(180deg,rgba(10,20,48,.97) 0%,rgba(7,14,36,.99) 100%)',
-    '--nav-dock-border':'rgba(0,198,255,.3)',
-    '--icon-circle-ready':'linear-gradient(135deg,rgba(47,125,255,.85) 0%,rgba(26,90,232,.75) 100%)',
-    '--icon-circle-ready-border':'rgba(0,198,255,.65)',
-    '--icon-circle-ready-shadow':'0 4px 20px rgba(47,125,255,.6),0 0 16px rgba(0,198,255,.3)',
-    '--icon-circle-aktif':'linear-gradient(135deg,#00c6ff 0%,#60e0ff 60%,#b3f0ff 100%)',
-    '--icon-text-aktif':'#0c1a3a',
-    '--input-border':'rgba(0,198,255,.25)',
-    '--input-focus-border':'rgba(0,198,255,.75)',
-    '--input-focus-bg':'rgba(47,125,255,.18)',
-    '--text-muted':'#93c5fd',
-    '--accent-icon':'#00c6ff',
-    '--scanner-border':'rgba(47,125,255,.8)',
-    '--scanner-glow':'rgba(47,125,255,.5)',
-    '--panel-accent-border':'rgba(0,198,255,.4)',
-    '--scrollbar-thumb':'rgba(0,198,255,.35)',
-    '--metaTheme':'#0c1a3a'
+  'electric-blue':{
+    '--primary':'#2f7dff','--body-bg':'linear-gradient(135deg,#0c1a3a 0%,#0a2460 30%,#1a3a8f 60%,#0c1a5c 100%)','--body-solid':'#0a1430',
+    '--glow1':'#2f7dff','--glow2':'#00c6ff','--glow3':'#cb3dff',
+    '--hdr-bg':'linear-gradient(135deg,rgba(12,26,58,.97) 0%,rgba(26,58,143,.92) 50%,rgba(47,125,255,.25) 100%)','--hdr-border':'rgba(0,198,255,.35)',
+    '--glass':'linear-gradient(145deg,rgba(255,255,255,.12) 0%,rgba(47,125,255,.1) 50%,rgba(255,255,255,.05) 100%)','--glass-border':'rgba(255,255,255,.2)',
+    '--badge':'linear-gradient(135deg,rgba(47,125,255,.4) 0%,rgba(0,198,255,.25) 100%)','--badge-border':'rgba(0,198,255,.5)',
+    '--btn-bg':'linear-gradient(135deg,#60a5fa 0%,#2f7dff 40%,#1a5ae8 70%,#1240b0 100%)','--btn-glow':'0 0 28px rgba(47,125,255,.6),0 0 10px rgba(0,198,255,.3),0 4px 14px rgba(47,125,255,.55)',
+    '--nav-bg':'linear-gradient(180deg,rgba(10,20,48,.97) 0%,rgba(7,14,36,.99) 100%)','--nav-border':'rgba(0,198,255,.3)',
+    '--ic-ready':'linear-gradient(135deg,rgba(47,125,255,.85),rgba(26,90,232,.75))','--ic-ready-bdr':'rgba(0,198,255,.65)','--ic-ready-sh':'0 4px 20px rgba(47,125,255,.6),0 0 16px rgba(0,198,255,.3)',
+    '--ic-aktif':'linear-gradient(135deg,#00c6ff,#60e0ff,#b3f0ff)','--ic-aktif-txt':'#0c1a3a',
+    '--inp-border':'rgba(0,198,255,.25)','--inp-focus-border':'rgba(0,198,255,.75)','--inp-focus-bg':'rgba(47,125,255,.18)',
+    '--muted':'#93c5fd','--accent':'#00c6ff','--scan-border':'rgba(47,125,255,.9)','--scan-glow':'rgba(47,125,255,.5)','--scroll-thumb':'rgba(0,198,255,.35)','--meta':'#0c1a3a'
   },
-  'sunset-orange': {
-    '--primary':'#ea580c',
-    '--body-bg':'linear-gradient(135deg,#1a0f05 0%,#3a1c05 25%,#7c2d00 55%,#c2410c 75%,#431407 100%)',
-    '--body-solid-bg':'#180d03',
-    '--glow-1':'#ea580c','--glow-2':'#eab308','--glow-3':'#f97316',
-    '--header-bg':'linear-gradient(135deg,rgba(26,15,5,.97) 0%,rgba(58,28,5,.95) 35%,rgba(124,45,0,.88) 65%,rgba(90,30,0,.97) 100%)',
-    '--header-border':'rgba(234,179,8,.35)',
-    '--glass-bg':'linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(234,88,12,.09) 50%,rgba(255,255,255,.05) 100%)',
-    '--badge-bg':'linear-gradient(135deg,rgba(234,88,12,.4) 0%,rgba(234,179,8,.28) 100%)',
-    '--badge-border':'rgba(234,179,8,.5)',
-    '--btn-primary-bg':'linear-gradient(135deg,#fb923c 0%,#ea580c 40%,#c2410c 70%,#9a3412 100%)',
-    '--btn-primary-hover':'linear-gradient(135deg,#fdba74 0%,#fb923c 40%,#ea580c 100%)',
-    '--btn-shadow':'rgba(194,65,12,.55)',
-    '--btn-glow':'0 0 28px rgba(234,88,12,.5),0 0 10px rgba(234,179,8,.3)',
-    '--nav-dock-bg':'linear-gradient(180deg,rgba(26,15,5,.97) 0%,rgba(18,9,2,.99) 100%)',
-    '--nav-dock-border':'rgba(234,179,8,.3)',
-    '--icon-circle-ready':'linear-gradient(135deg,rgba(234,88,12,.85) 0%,rgba(194,65,12,.75) 100%)',
-    '--icon-circle-ready-border':'rgba(234,179,8,.65)',
-    '--icon-circle-ready-shadow':'0 4px 20px rgba(234,88,12,.55),0 0 12px rgba(234,179,8,.3)',
-    '--icon-circle-aktif':'linear-gradient(135deg,#eab308 0%,#facc15 60%,#fde047 100%)',
-    '--icon-text-aktif':'#1a0f05',
-    '--input-border':'rgba(234,179,8,.22)',
-    '--input-focus-border':'rgba(234,179,8,.75)',
-    '--input-focus-bg':'rgba(234,88,12,.18)',
-    '--text-muted':'#fed7aa',
-    '--accent-icon':'#eab308',
-    '--scanner-border':'rgba(234,88,12,.8)',
-    '--scanner-glow':'rgba(234,88,12,.4)',
-    '--panel-accent-border':'rgba(234,179,8,.4)',
-    '--scrollbar-thumb':'rgba(234,179,8,.35)',
-    '--metaTheme':'#1a0f05'
+  'sunset-orange':{
+    '--primary':'#ea580c','--body-bg':'linear-gradient(135deg,#1a0f05 0%,#3a1c05 25%,#7c2d00 55%,#c2410c 75%,#431407 100%)','--body-solid':'#180d03',
+    '--glow1':'#ea580c','--glow2':'#eab308','--glow3':'#f97316',
+    '--hdr-bg':'linear-gradient(135deg,rgba(26,15,5,.97) 0%,rgba(58,28,5,.95) 35%,rgba(124,45,0,.88) 65%,rgba(90,30,0,.97) 100%)','--hdr-border':'rgba(234,179,8,.35)',
+    '--glass':'linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(234,88,12,.09) 50%,rgba(255,255,255,.05) 100%)','--glass-border':'rgba(255,255,255,.2)',
+    '--badge':'linear-gradient(135deg,rgba(234,88,12,.4) 0%,rgba(234,179,8,.28) 100%)','--badge-border':'rgba(234,179,8,.5)',
+    '--btn-bg':'linear-gradient(135deg,#fb923c 0%,#ea580c 40%,#c2410c 70%,#9a3412 100%)','--btn-glow':'0 0 28px rgba(234,88,12,.5),0 0 10px rgba(234,179,8,.3),0 4px 14px rgba(194,65,12,.55)',
+    '--nav-bg':'linear-gradient(180deg,rgba(26,15,5,.97) 0%,rgba(18,9,2,.99) 100%)','--nav-border':'rgba(234,179,8,.3)',
+    '--ic-ready':'linear-gradient(135deg,rgba(234,88,12,.85),rgba(194,65,12,.75))','--ic-ready-bdr':'rgba(234,179,8,.65)','--ic-ready-sh':'0 4px 20px rgba(234,88,12,.55),0 0 12px rgba(234,179,8,.3)',
+    '--ic-aktif':'linear-gradient(135deg,#eab308,#facc15,#fde047)','--ic-aktif-txt':'#1a0f05',
+    '--inp-border':'rgba(234,179,8,.22)','--inp-focus-border':'rgba(234,179,8,.75)','--inp-focus-bg':'rgba(234,88,12,.18)',
+    '--muted':'#fed7aa','--accent':'#eab308','--scan-border':'rgba(234,88,12,.9)','--scan-glow':'rgba(234,88,12,.4)','--scroll-thumb':'rgba(234,179,8,.35)','--meta':'#1a0f05'
   },
-  'rose-galaxy': {
-    '--primary':'#ec4899',
-    '--body-bg':'linear-gradient(135deg,#1a0520 0%,#3d0f50 30%,#701a6e 60%,#3a0742 100%)',
-    '--body-solid-bg':'#150318',
-    '--glow-1':'#ec4899','--glow-2':'#a855f7','--glow-3':'#f472b6',
-    '--header-bg':'linear-gradient(135deg,rgba(26,5,32,.97) 0%,rgba(61,15,80,.95) 35%,rgba(147,51,234,.3) 65%,rgba(93,15,130,.97) 100%)',
-    '--header-border':'rgba(236,72,153,.35)',
-    '--glass-bg':'linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(236,72,153,.09) 50%,rgba(255,255,255,.05) 100%)',
-    '--badge-bg':'linear-gradient(135deg,rgba(236,72,153,.4) 0%,rgba(168,85,247,.28) 100%)',
-    '--badge-border':'rgba(236,72,153,.5)',
-    '--btn-primary-bg':'linear-gradient(135deg,#f472b6 0%,#ec4899 40%,#db2777 70%,#be185d 100%)',
-    '--btn-primary-hover':'linear-gradient(135deg,#fbcfe8 0%,#f472b6 40%,#ec4899 100%)',
-    '--btn-shadow':'rgba(219,39,119,.55)',
-    '--btn-glow':'0 0 28px rgba(236,72,153,.5),0 0 10px rgba(168,85,247,.3)',
-    '--nav-dock-bg':'linear-gradient(180deg,rgba(26,5,32,.97) 0%,rgba(18,2,22,.99) 100%)',
-    '--nav-dock-border':'rgba(236,72,153,.3)',
-    '--icon-circle-ready':'linear-gradient(135deg,rgba(236,72,153,.85) 0%,rgba(219,39,119,.75) 100%)',
-    '--icon-circle-ready-border':'rgba(236,72,153,.65)',
-    '--icon-circle-ready-shadow':'0 4px 20px rgba(236,72,153,.55),0 0 12px rgba(168,85,247,.3)',
-    '--icon-circle-aktif':'linear-gradient(135deg,#a855f7 0%,#c084fc 60%,#e879f9 100%)',
-    '--icon-text-aktif':'#1a0520',
-    '--input-border':'rgba(236,72,153,.25)',
-    '--input-focus-border':'rgba(236,72,153,.75)',
-    '--input-focus-bg':'rgba(236,72,153,.15)',
-    '--text-muted':'#f9a8d4',
-    '--accent-icon':'#f472b6',
-    '--scanner-border':'rgba(236,72,153,.8)',
-    '--scanner-glow':'rgba(236,72,153,.4)',
-    '--panel-accent-border':'rgba(236,72,153,.4)',
-    '--scrollbar-thumb':'rgba(236,72,153,.35)',
-    '--metaTheme':'#1a0520'
+  'rose-galaxy':{
+    '--primary':'#ec4899','--body-bg':'linear-gradient(135deg,#1a0520 0%,#3d0f50 30%,#701a6e 60%,#3a0742 100%)','--body-solid':'#150318',
+    '--glow1':'#ec4899','--glow2':'#a855f7','--glow3':'#f472b6',
+    '--hdr-bg':'linear-gradient(135deg,rgba(26,5,32,.97) 0%,rgba(61,15,80,.95) 35%,rgba(147,51,234,.3) 65%,rgba(93,15,130,.97) 100%)','--hdr-border':'rgba(236,72,153,.35)',
+    '--glass':'linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(236,72,153,.09) 50%,rgba(255,255,255,.05) 100%)','--glass-border':'rgba(255,255,255,.2)',
+    '--badge':'linear-gradient(135deg,rgba(236,72,153,.4) 0%,rgba(168,85,247,.28) 100%)','--badge-border':'rgba(236,72,153,.5)',
+    '--btn-bg':'linear-gradient(135deg,#f472b6 0%,#ec4899 40%,#db2777 70%,#be185d 100%)','--btn-glow':'0 0 28px rgba(236,72,153,.5),0 0 10px rgba(168,85,247,.3),0 4px 14px rgba(219,39,119,.55)',
+    '--nav-bg':'linear-gradient(180deg,rgba(26,5,32,.97) 0%,rgba(18,2,22,.99) 100%)','--nav-border':'rgba(236,72,153,.3)',
+    '--ic-ready':'linear-gradient(135deg,rgba(236,72,153,.85),rgba(219,39,119,.75))','--ic-ready-bdr':'rgba(236,72,153,.65)','--ic-ready-sh':'0 4px 20px rgba(236,72,153,.55),0 0 12px rgba(168,85,247,.3)',
+    '--ic-aktif':'linear-gradient(135deg,#a855f7,#c084fc,#e879f9)','--ic-aktif-txt':'#1a0520',
+    '--inp-border':'rgba(236,72,153,.25)','--inp-focus-border':'rgba(236,72,153,.75)','--inp-focus-bg':'rgba(236,72,153,.15)',
+    '--muted':'#f9a8d4','--accent':'#f472b6','--scan-border':'rgba(236,72,153,.9)','--scan-glow':'rgba(236,72,153,.4)','--scroll-thumb':'rgba(236,72,153,.35)','--meta':'#1a0520'
   },
-  'ocean-teal': {
-    '--primary':'#06b6d4',
-    '--body-bg':'linear-gradient(135deg,#032028 0%,#063040 25%,#0e6a80 55%,#0891b2 75%,#042a38 100%)',
-    '--body-solid-bg':'#031820',
-    '--glow-1':'#06b6d4','--glow-2':'#22d3ee','--glow-3':'#0ea5e9',
-    '--header-bg':'linear-gradient(135deg,rgba(3,32,40,.97) 0%,rgba(8,65,85,.95) 35%,rgba(14,116,144,.9) 65%,rgba(6,60,80,.97) 100%)',
-    '--header-border':'rgba(34,211,238,.35)',
-    '--glass-bg':'linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(6,182,212,.1) 50%,rgba(255,255,255,.05) 100%)',
-    '--badge-bg':'linear-gradient(135deg,rgba(6,182,212,.4) 0%,rgba(34,211,238,.25) 100%)',
-    '--badge-border':'rgba(34,211,238,.5)',
-    '--btn-primary-bg':'linear-gradient(135deg,#22d3ee 0%,#06b6d4 40%,#0891b2 70%,#0e7490 100%)',
-    '--btn-primary-hover':'linear-gradient(135deg,#67e8f9 0%,#22d3ee 40%,#06b6d4 100%)',
-    '--btn-shadow':'rgba(8,145,178,.55)',
-    '--btn-glow':'0 0 28px rgba(6,182,212,.5),0 0 10px rgba(34,211,238,.3)',
-    '--nav-dock-bg':'linear-gradient(180deg,rgba(3,32,40,.97) 0%,rgba(2,20,28,.99) 100%)',
-    '--nav-dock-border':'rgba(34,211,238,.3)',
-    '--icon-circle-ready':'linear-gradient(135deg,rgba(6,182,212,.85) 0%,rgba(8,145,178,.75) 100%)',
-    '--icon-circle-ready-border':'rgba(34,211,238,.65)',
-    '--icon-circle-ready-shadow':'0 4px 20px rgba(6,182,212,.55),0 0 12px rgba(34,211,238,.3)',
-    '--icon-circle-aktif':'linear-gradient(135deg,#22d3ee 0%,#67e8f9 60%,#a5f3fc 100%)',
-    '--icon-text-aktif':'#032028',
-    '--input-border':'rgba(34,211,238,.22)',
-    '--input-focus-border':'rgba(34,211,238,.75)',
-    '--input-focus-bg':'rgba(6,182,212,.18)',
-    '--text-muted':'#a5f3fc',
-    '--accent-icon':'#22d3ee',
-    '--scanner-border':'rgba(6,182,212,.8)',
-    '--scanner-glow':'rgba(6,182,212,.4)',
-    '--panel-accent-border':'rgba(34,211,238,.4)',
-    '--scrollbar-thumb':'rgba(34,211,238,.35)',
-    '--metaTheme':'#032028'
+  'ocean-teal':{
+    '--primary':'#06b6d4','--body-bg':'linear-gradient(135deg,#032028 0%,#063040 25%,#0e6a80 55%,#0891b2 75%,#042a38 100%)','--body-solid':'#031820',
+    '--glow1':'#06b6d4','--glow2':'#22d3ee','--glow3':'#0ea5e9',
+    '--hdr-bg':'linear-gradient(135deg,rgba(3,32,40,.97) 0%,rgba(8,65,85,.95) 35%,rgba(14,116,144,.9) 65%,rgba(6,60,80,.97) 100%)','--hdr-border':'rgba(34,211,238,.35)',
+    '--glass':'linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(6,182,212,.1) 50%,rgba(255,255,255,.05) 100%)','--glass-border':'rgba(255,255,255,.2)',
+    '--badge':'linear-gradient(135deg,rgba(6,182,212,.4) 0%,rgba(34,211,238,.25) 100%)','--badge-border':'rgba(34,211,238,.5)',
+    '--btn-bg':'linear-gradient(135deg,#22d3ee 0%,#06b6d4 40%,#0891b2 70%,#0e7490 100%)','--btn-glow':'0 0 28px rgba(6,182,212,.5),0 0 10px rgba(34,211,238,.3),0 4px 14px rgba(8,145,178,.55)',
+    '--nav-bg':'linear-gradient(180deg,rgba(3,32,40,.97) 0%,rgba(2,20,28,.99) 100%)','--nav-border':'rgba(34,211,238,.3)',
+    '--ic-ready':'linear-gradient(135deg,rgba(6,182,212,.85),rgba(8,145,178,.75))','--ic-ready-bdr':'rgba(34,211,238,.65)','--ic-ready-sh':'0 4px 20px rgba(6,182,212,.55),0 0 12px rgba(34,211,238,.3)',
+    '--ic-aktif':'linear-gradient(135deg,#22d3ee,#67e8f9,#a5f3fc)','--ic-aktif-txt':'#032028',
+    '--inp-border':'rgba(34,211,238,.22)','--inp-focus-border':'rgba(34,211,238,.75)','--inp-focus-bg':'rgba(6,182,212,.18)',
+    '--muted':'#a5f3fc','--accent':'#22d3ee','--scan-border':'rgba(6,182,212,.9)','--scan-glow':'rgba(6,182,212,.4)','--scroll-thumb':'rgba(34,211,238,.35)','--meta':'#032028'
   }
 };
 
 /* =====================================================
    TERAPKAN TEMA
-   ===================================================== */
-function pilihSistemTema(namaTheme) {
-    const t = DAFTAR_TEMA[namaTheme];
-    if (!t) return;
-    const root = document.documentElement;
-    Object.keys(t).forEach(k => {
-        if (k === '--metaTheme') {
-            document.getElementById('metaThemeColor').setAttribute('content', t[k]);
-        } else {
-            root.style.setProperty(k, t[k]);
-        }
-    });
-    // Update scanner scan line glow
-    document.documentElement.style.setProperty('--primary', t['--primary']);
-    localStorage.setItem('presensi_theme', namaTheme);
+===================================================== */
+function pilihTema(nama) {
+  const t = DAFTAR_TEMA[nama];
+  if (!t) return;
+  const r = document.documentElement;
+  Object.entries(t).forEach(([k,v]) => {
+    if (k === '--meta') document.getElementById('metaThemeColor').content = v;
+    else r.style.setProperty(k, v);
+  });
+  localStorage.setItem('presensi_theme', nama);
 }
 
 /* =====================================================
-   CLOCK — TOP NAV
-   ===================================================== */
+   CLOCK
+===================================================== */
 function updateClock() {
-    const now = new Date();
-    const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-    const hh = String(now.getHours()).padStart(2,'0');
-    const mm = String(now.getMinutes()).padStart(2,'0');
-    const ss = String(now.getSeconds()).padStart(2,'0');
-    document.getElementById('clock-top').innerText = `${hh}:${mm}:${ss}`;
-    document.getElementById('date-top').innerText = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
-    // Legacy clock-display for existing sendPresence/status logic compatibility
-    if (document.getElementById('clock-display'))
-        document.getElementById('clock-display').innerText = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} | ${hh}:${mm}:${ss}`.toUpperCase();
+  const n = new Date();
+  const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const h = String(n.getHours()).padStart(2,'0');
+  const m = String(n.getMinutes()).padStart(2,'0');
+  const s = String(n.getSeconds()).padStart(2,'0');
+  document.getElementById('clock-top').textContent = h+':'+m+':'+s;
+  document.getElementById('date-top').textContent = days[n.getDay()]+', '+n.getDate()+' '+months[n.getMonth()]+' '+n.getFullYear();
 }
 setInterval(updateClock, 1000);
 updateClock();
 
 /* =====================================================
-   MODAL SYSTEM — blokir klik latar saat modal buka
-   ===================================================== */
-function bukaModal(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.add('open');
-    document.body.classList.add('modal-open');
+   MODAL
+===================================================== */
+let activeModal = null;
+
+function bukaMod(id) {
+  if (activeModal) tutupMod(activeModal);
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('show');
+  activeModal = id;
 }
-function tutupModal(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.remove('open');
-    // Cek apakah ada modal lain yg masih buka
-    const masihBuka = document.querySelectorAll('.modal-overlay.open');
-    if (masihBuka.length === 0 && document.getElementById('modal-antrean').style.display !== 'flex' && document.getElementById('about-pop-up').style.display !== 'block') {
-        document.body.classList.remove('modal-open');
-    }
+
+function tutupMod(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('show');
+  if (activeModal === id) activeModal = null;
+  resetNav();
 }
 
 /* =====================================================
-   NAV DOCK LOGIC
-   ===================================================== */
-let navState = {}; // id => 'idle'|'ready'|'active'
-function navKlikAksi(el, aksi) {
-    event.stopPropagation();
-    const id = el.id;
-    const current = navState[id] || 'idle';
-    // Reset semua nav item lain
-    document.querySelectorAll('.nav-item').forEach(n => {
-        if (n.id !== id) { n.classList.remove('ready','active'); navState[n.id] = 'idle'; }
-    });
-    if (current === 'idle') {
-        el.classList.remove('active'); el.classList.add('ready');
-        navState[id] = 'ready';
-    } else if (current === 'ready') {
-        el.classList.remove('ready'); el.classList.add('active');
-        navState[id] = 'active';
-        jalankanAksiNav(aksi);
-    } else {
-        el.classList.remove('active'); el.classList.add('ready');
-        navState[id] = 'ready';
-    }
-}
-
-function jalankanAksiNav(aksi) {
-    if (aksi === 'tema') {
-        bukaModal('modalTema');
-    } else if (aksi === 'rekap') {
-        window.open('https://azzahrolocare.github.io/rekapitulasi-presensi-siswa/', '_blank');
-        resetNavItems();
-    } else if (aksi === 'offline') {
-        bukaModalAntrean(null);
-    } else if (aksi === 'pengaturan') {
-        applySettings();
-        bukaModal('modalPengaturan');
-    }
-}
-
-function resetNavItems() {
-    document.querySelectorAll('.nav-item').forEach(n => {
-        n.classList.remove('ready','active');
-        navState[n.id] = 'idle';
-    });
+   BODY CLICK → fullscreen jika tidak ada modal buka
+===================================================== */
+function onBodyClick() {
+  if (activeModal) return;
+  const antrOpen = document.getElementById('modal-antrean').style.display === 'flex';
+  const aboutOpen = document.getElementById('about-pop-up').style.display === 'block';
+  if (antrOpen || aboutOpen) return;
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(()=>{});
+    document.getElementById('fullscreen-info').style.display = 'none';
+  }
 }
 
 /* =====================================================
-   SETTINGS — LOGIC (dipertahankan dari file asli)
-   ===================================================== */
+   NAV DOCK
+===================================================== */
+const navState = {};
+
+function navKlik(el, aksi) {
+  const id = el.id;
+  const st = navState[id] || 'idle';
+  // Reset semua nav lain ke idle
+  document.querySelectorAll('.nav-it').forEach(n => {
+    if (n.id !== id) { n.classList.remove('ready','active'); navState[n.id]='idle'; }
+  });
+  if (st === 'idle') {
+    el.classList.add('ready'); navState[id]='ready';
+  } else if (st === 'ready') {
+    el.classList.remove('ready'); el.classList.add('active'); navState[id]='active';
+    jalankanNav(aksi);
+  } else {
+    el.classList.remove('active'); el.classList.add('ready'); navState[id]='ready';
+  }
+}
+
+function jalankanNav(aksi) {
+  if (aksi === 'tema') { bukaMod('mTema'); }
+  else if (aksi === 'rekap') { window.open('https://azzahrolocare.github.io/rekapitulasi-presensi-siswa/','_blank'); resetNav(); }
+  else if (aksi === 'offline') { bukaModalAntrean(null); }
+  else if (aksi === 'pengaturan') { applySettings(); bukaMod('mPengaturan'); }
+}
+
+function resetNav() {
+  document.querySelectorAll('.nav-it').forEach(n => { n.classList.remove('ready','active'); navState[n.id]='idle'; });
+}
+
+/* =====================================================
+   SETTINGS
+===================================================== */
 const rawURL = '';
 
 function applySettings() {
-    const config = JSON.parse(localStorage.getItem('absensiConfig')) || {
-        sound: 'notification/Notif01.mp3', theme: 'dark', primary: '#2ecc71',
-        logoSize: '65', fontSize: '0.9', textColor: '#ffffff', bgColor: '#121212',
-        useGrad: false, g1: '#121212', g2: '#1e1e1e', g3: '#000000', gDir: '180deg'
-    };
-    document.getElementById('sound-choice').value = config.sound;
-    document.getElementById('color-picker').value = config.primary;
-    document.getElementById('range-logo').value = config.logoSize;
-    document.getElementById('range-font').value = config.fontSize;
-    document.getElementById('color-bg').value = config.bgColor;
-    document.getElementById('gradient-toggle').checked = config.useGrad;
-    document.getElementById('grad-1').value = config.g1;
-    document.getElementById('grad-2').value = config.g2;
-    document.getElementById('grad-3').value = config.g3;
-    document.getElementById('grad-dir').value = config.gDir;
-    previewLayout();
+  const cfg = JSON.parse(localStorage.getItem('absensiConfig')) || {
+    sound:'notification/Notif01.mp3',primary:'#2ecc71',
+    logoSize:'65',fontSize:'0.9',bgColor:'#121212',
+    useGrad:false,g1:'#121212',g2:'#1e1e1e',g3:'#000000',gDir:'180deg'
+  };
+  document.getElementById('sound-choice').value = cfg.sound;
+  document.getElementById('color-picker').value = cfg.primary;
+  document.getElementById('range-logo').value = cfg.logoSize;
+  document.getElementById('range-font').value = cfg.fontSize;
+  document.getElementById('color-bg').value = cfg.bgColor;
+  document.getElementById('gradient-toggle').checked = cfg.useGrad;
+  document.getElementById('grad-1').value = cfg.g1;
+  document.getElementById('grad-2').value = cfg.g2;
+  document.getElementById('grad-3').value = cfg.g3;
+  document.getElementById('grad-dir').value = cfg.gDir;
+  previewLayout();
 }
 
 function previewLayout() {
-    const useGrad = document.getElementById('gradient-toggle').checked;
-    const primary = document.getElementById('color-picker').value;
-    const bgSolid = document.getElementById('color-bg').value;
-    const gradSection = document.getElementById('gradient-controls');
-    const logoSize = document.getElementById('range-logo').value;
-    const fontSize = document.getElementById('range-font').value;
-
-    document.documentElement.style.setProperty('--logo-size', logoSize + 'px');
-    document.documentElement.style.setProperty('--header-font-size', fontSize + 'rem');
-
-    if (useGrad) {
-        gradSection.style.display = 'block';
-        const g1 = document.getElementById('grad-1').value;
-        const g2 = document.getElementById('grad-2').value;
-        const g3 = document.getElementById('grad-3').value;
-        const gDir = document.getElementById('grad-dir').value;
-        document.documentElement.style.setProperty('--bg-gradient', `linear-gradient(${gDir}, ${g1} 0%, ${g2} 50%, ${g3} 100%)`);
-        if (document.getElementById('btn-rekap'))
-            document.getElementById('btn-rekap').style.background = `linear-gradient(45deg, ${primary}, ${g2})`;
-    } else {
-        gradSection.style.display = 'none';
-        if (document.getElementById('btn-rekap'))
-            document.getElementById('btn-rekap').style.background = document.documentElement.style.getPropertyValue('--btn-primary-bg') || primary;
-    }
+  const useGrad = document.getElementById('gradient-toggle').checked;
+  const gradSection = document.getElementById('gradient-controls');
+  document.documentElement.style.setProperty('--logo-size', document.getElementById('range-logo').value+'px');
+  document.documentElement.style.setProperty('--header-font-size', document.getElementById('range-font').value+'rem');
+  if (useGrad) {
+    gradSection.style.display='block';
+    const g1=document.getElementById('grad-1').value, g2=document.getElementById('grad-2').value,
+          g3=document.getElementById('grad-3').value, gDir=document.getElementById('grad-dir').value;
+    document.documentElement.style.setProperty('--bg-gradient',`linear-gradient(${gDir},${g1} 0%,${g2} 50%,${g3} 100%)`);
+  } else {
+    gradSection.style.display='none';
+    document.documentElement.style.setProperty('--bg-gradient','none');
+  }
 }
 
 function cancelSettings() { applySettings(); }
 
 function saveSettings() {
-    const config = {
-        sound: document.getElementById('sound-choice').value,
-        theme: 'dark',
-        primary: document.getElementById('color-picker').value,
-        logoSize: document.getElementById('range-logo').value,
-        fontSize: document.getElementById('range-font').value,
-        textColor: '#ffffff',
-        bgColor: document.getElementById('color-bg').value,
-        useGrad: document.getElementById('gradient-toggle').checked,
-        g1: document.getElementById('grad-1').value,
-        g2: document.getElementById('grad-2').value,
-        g3: document.getElementById('grad-3').value,
-        gDir: document.getElementById('grad-dir').value
-    };
-    localStorage.setItem('absensiConfig', JSON.stringify(config));
-    new Audio(rawURL + config.sound).play().catch(() => {});
-    tutupModal('modalPengaturan');
-    resetNavItems();
+  const cfg = {
+    sound:document.getElementById('sound-choice').value,
+    primary:document.getElementById('color-picker').value,
+    logoSize:document.getElementById('range-logo').value,
+    fontSize:document.getElementById('range-font').value,
+    bgColor:document.getElementById('color-bg').value,
+    useGrad:document.getElementById('gradient-toggle').checked,
+    g1:document.getElementById('grad-1').value,
+    g2:document.getElementById('grad-2').value,
+    g3:document.getElementById('grad-3').value,
+    gDir:document.getElementById('grad-dir').value
+  };
+  localStorage.setItem('absensiConfig', JSON.stringify(cfg));
+  new Audio(rawURL+cfg.sound).play().catch(()=>{});
+  tutupMod('mPengaturan');
 }
 
 /* =====================================================
-   TENTANG
-   ===================================================== */
+   ABOUT
+===================================================== */
 function showAbout() {
-    document.getElementById('about-pop-up').style.display = 'block';
-    document.getElementById('about-overlay').style.display = 'block';
+  document.getElementById('about-pop-up').style.display='block';
+  document.getElementById('about-overlay').style.display='block';
 }
 function closeAbout() {
-    document.getElementById('about-pop-up').style.display = 'none';
-    document.getElementById('about-overlay').style.display = 'none';
-}
-
-/* =====================================================
-   FULLSCREEN
-   ===================================================== */
-function toggleFullscreen() {
-    const modalsOpen = document.querySelectorAll('.modal-overlay.open').length > 0
-        || document.getElementById('modal-antrean').style.display === 'flex'
-        || document.getElementById('about-pop-up').style.display === 'block';
-    if (modalsOpen) return;
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(err => console.log(err));
-        document.getElementById('fullscreen-info').style.display = 'none';
-    }
+  document.getElementById('about-pop-up').style.display='none';
+  document.getElementById('about-overlay').style.display='none';
 }
 
 /* =====================================================
    STATUS UI
-   ===================================================== */
+===================================================== */
 function updateStatusUI(pesan, warna) {
-    const s = document.getElementById('status-kirim');
-    s.innerText = pesan;
-    s.style.backgroundColor = warna;
-    s.style.display = "block";
-    setTimeout(() => {
-        s.style.display = "none";
-        isProcessing = false;
-        detectedBarcodes.clear();
-    }, 4000);
+  const s = document.getElementById('status-kirim');
+  s.textContent = pesan;
+  s.style.backgroundColor = warna;
+  s.style.display = 'block';
+  setTimeout(()=>{ s.style.display='none'; isProcessing=false; detectedBarcodes.clear(); }, 4000);
 }
 
 /* =====================================================
-   INDEXEDDB — OFFLINE QUEUE (logika asli dipertahankan)
-   ===================================================== */
+   INDEXEDDB
+===================================================== */
 const dbName = "PresensiOfflineDB";
 let db;
-const requestDB = indexedDB.open(dbName, 1);
-requestDB.onupgradeneeded = (e) => {
-    db = e.target.result;
-    if (!db.objectStoreNames.contains("antrean")) {
-        db.createObjectStore("antrean", { keyPath: "id", autoIncrement: true });
-    }
+const reqDB = indexedDB.open(dbName, 1);
+reqDB.onupgradeneeded = e => {
+  db = e.target.result;
+  if (!db.objectStoreNames.contains("antrean"))
+    db.createObjectStore("antrean",{keyPath:"id",autoIncrement:true});
 };
-requestDB.onsuccess = (e) => {
-    db = e.target.result;
-    updateJumlahAntreanBadge();
-};
+reqDB.onsuccess = e => { db=e.target.result; updateBadge(); };
 
-function updateJumlahAntreanBadge() {
-    if (!db) return;
-    const transaction = db.transaction(["antrean"], "readonly");
-    const store = transaction.objectStore("antrean");
-    const req = store.count();
-    req.onsuccess = () => {
-        const jml = req.result;
-        const btn = document.getElementById('btn-float-offline');
-        document.getElementById('label-jumlah-antrean').innerText = jml;
-        if (jml > 0) btn.classList.add('ada-data');
-        else btn.classList.remove('ada-data');
-    };
+function updateBadge() {
+  if (!db) return;
+  const tx = db.transaction(["antrean"],"readonly");
+  tx.objectStore("antrean").count().onsuccess = e => {
+    const n = e.target.result;
+    document.getElementById('lbl-antrean').textContent = n;
+    const btn = document.getElementById('btn-float-offline');
+    n>0 ? btn.classList.add('ada') : btn.classList.remove('ada');
+  };
 }
 
-function bukaModalAntrean(e) {
-    if (e) e.stopPropagation();
-    const modal = document.getElementById('modal-antrean');
-    const container = document.getElementById('daftar-item-antrean');
-    document.getElementById('prog-cont').style.display = 'none';
-    document.getElementById('loading-text').style.display = 'none';
-    container.innerHTML = "<p style='text-align:center;color:var(--text-muted)'>Memuat data...</p>";
-    modal.style.display = 'flex';
-    document.body.classList.add('modal-open');
-    const transaction = db.transaction(["antrean"], "readonly");
-    const store = transaction.objectStore("antrean");
-    const req = store.getAll();
-    req.onsuccess = function() {
-        const items = req.result;
-        if (items.length === 0) {
-            container.innerHTML = "<p style='color:rgba(255,255,255,.4);text-align:center'>Tidak ada data offline.</p>";
-            document.getElementById('btn-kirim-manual').disabled = true;
-            document.getElementById('btn-kirim-manual').style.opacity = "0.5";
-            return;
-        }
-        const btnKirim = document.getElementById('btn-kirim-manual');
-        const textBtn = document.getElementById('text-btn-kirim');
-        btnKirim.disabled = false; btnKirim.style.opacity = "1";
-        btnKirim.style.background = "var(--btn-primary-bg)";
-        textBtn.innerText = "KIRIM"; textBtn.classList.remove('loading-dots');
-        container.innerHTML = items.map(item => `
-            <div style="background:rgba(255,255,255,.06);padding:10px 14px;border-radius:12px;margin-bottom:8px;border-left:3px solid #f39c12;">
-                <strong style="font-size:14px;color:var(--text-main)">${item.nama}</strong><br>
-                <small style="color:rgba(255,255,255,.5)">Keterangan: ${item.keterangan}</small>
-            </div>
-        `).join('');
-    };
+function bukaModalAntrean(ev) {
+  if (ev) ev.stopPropagation();
+  const modal = document.getElementById('modal-antrean');
+  const cont = document.getElementById('daftar-item-antrean');
+  document.getElementById('prog-cont').style.display='none';
+  document.getElementById('loading-text').style.display='none';
+  cont.innerHTML="<p style='text-align:center;color:rgba(255,255,255,.4)'>Memuat data...</p>";
+  modal.style.display='flex';
+  const tx=db.transaction(["antrean"],"readonly");
+  tx.objectStore("antrean").getAll().onsuccess = e => {
+    const items=e.target.result;
+    const btnK=document.getElementById('btn-kirim-manual');
+    const txtK=document.getElementById('text-btn-kirim');
+    if (items.length===0) {
+      cont.innerHTML="<p style='color:rgba(255,255,255,.4);text-align:center'>Tidak ada data offline.</p>";
+      btnK.disabled=true; btnK.style.opacity="0.5"; return;
+    }
+    btnK.disabled=false; btnK.style.opacity="1";
+    txtK.textContent="KIRIM"; txtK.classList.remove('loading-dots');
+    cont.innerHTML=items.map(it=>`<div style="background:rgba(255,255,255,.06);padding:10px 14px;border-radius:11px;margin-bottom:8px;border-left:3px solid #f39c12"><strong style="font-size:14px">${it.nama}</strong><br><small style="color:rgba(255,255,255,.45)">Keterangan: ${it.keterangan}</small></div>`).join('');
+  };
 }
 
 function tutupModalAntrean() {
-    document.getElementById('modal-antrean').style.display = 'none';
-    const masihBuka = document.querySelectorAll('.modal-overlay.open');
-    if (masihBuka.length === 0) document.body.classList.remove('modal-open');
-    resetNavItems();
+  document.getElementById('modal-antrean').style.display='none';
+  resetNav();
 }
 
 async function kirimManual() {
-    if (!navigator.onLine) {
-        updateStatusUI("ⓘ ANDA SEDANG OFFLINE!\nSILAKAN HUBUNGKAN KE INTERNET TERLEBIH DAHULU", "#e67e22");
-        return;
-    }
-    const btnKirim = document.getElementById('btn-kirim-manual');
-    const textBtn = document.getElementById('text-btn-kirim');
-    const btnTutup = document.getElementById('btn-tutup-antrean');
-    const progCont = document.getElementById('prog-cont');
-    const progBar = document.getElementById('prog-bar');
-    const loadText = document.getElementById('loading-text');
-    const tot
+  if (!navigator.onLine) { updateStatusUI("ⓘ ANDA SEDANG OFFLINE!\nSILAKAN HUBUNGKAN KE INTERNET TERLEBIH DAHULU","#e67e22"); return; }
+  const btnK=document.getElementById('btn-kirim-manual'), txtK=document.getElementById('text-btn-kirim'),
+        btnT=document.getElementById('btn-tutup-antrean'), progC=document.getElementById('prog-cont'),
+        progB=document.getElementById('prog-bar'), loadT=document.getElementById('loading-text'),
+        totT=document.getElementById('total-send'), curT=document.getElementById('current-send');
+  btnK.disabled=true; btnK.style.opacity="0.6"; btnK.style.background="#555";
+  txtK.textContent="MENGIRIM"; txtK.classList.add('loading-dots'); btnT.disabled=true;
+  const data = await new Promise(res=>{ const tx=db.transaction(["antrean"],"readwrite"); tx.objectStore("antrean").getAll().onsuccess=e=>res(e.target.result); });
+  if (data.length===0) { btnK.disabled=false; btnT.disabled=false; return; }
+  progC.style.display='block'; loadT.style.display='block'; totT.textContent=data.length;
+  for (let i=0;i<data.length;i++) {
+    const item=data[i]; curT.textContent=i+1;
+    progB.style.width=((i+1)/data.length*100)+"%";
+    await fetch(`${scriptURL}?nama=${encodeURIComponent(item.nama)}&keterangan=${encodeURIComponent(item.keterangan)}`,{method:'GET',mode:'no-cors'});
+    const delTx=db.transaction(["antrean"],"readwrite"); delTx.objectStore("antrean").delete(item.id);
+    await new Promise(r=>setTimeout(r,100));
+  }
+  new Audio(rawURL+'notification/succes-data-offline.mp3').play().catch(()=>{});
+  updateBadge();
+  updateStatusUI("✔ SEMUA DATA BERHASIL TERKIRIM!","var(--primary)");
+  setTimeout(()=>{
+    tutupModalAntrean(); btnK.disabled=false; btnT.disabled=false;
+    btnK.style.opacity="1"; btnK.style.background="var(--btn-bg)";
+    txtK.textContent="KIRIM"; txtK.classList.remove('loading-dots');
+  },1500);
+}
+
+/* =====================================================
+   SEND PRESENCE / QR LOGIC
+===================================================== */
+const scriptURL='https://script.google.com/macros/s/AKfycbwCXbDTuaFkN7GlcXJxaFgDaKPEp2G9vySF1IKfWxUCTuEOCYt39nMmlEmI25pz4PSd/exec';
+let isProcessing=false, detectedBarcodes=new Set(), scanTimer=null;
+
+function sendPresence(nama) {
+  const ket=document.getElementById('keterangan').value;
+  if (!ket) { updateStatusUI("✖ PILIH KETERANGAN DULU!","#e74c3c"); isProcessing=false; document.getElementById('selection-overlay').style.display='none'; return; }
+  document.getElementById('last-name-display').value=nama;
+  const cfg=JSON.parse(localStorage.getItem('absensiConfig'))||{sound:'notification/Notif01.mp3'};
+  new Audio(rawURL+cfg.sound).play().catch(()=>{});
+  if (navigator.onLine) {
+    updateStatusUI("✔ TERKIRIM: "+nama,"var(--primary)");
+    fetch(`${scriptURL}?nama=${encodeURIComponent(nama)}&keterangan=${encodeURIComponent(ket)}`,{method:'GET',mode:'no-cors',cache:'no-store'});
+  } else { simpanKeOffline({nama,keterangan:ket}); }
+  document.getElementById('selection-overlay').style.display='none';
+}
+
+function simpanKeOffline(data) {
+  if (!db) return;
+  const cfg=JSON.parse(localStorage.getItem('absensiConfig'))||{sound:'notification/Notif01.mp3'};
+  new Audio(rawURL+cfg.sound).play().catch(()=>{});
+  const tx=db.transaction(["antrean"],"readwrite"); tx.objectStore("antrean").add(data);
+  tx.oncomplete=()=>{ updateBadge(); updateStatusUI("☁ OFFLINE: "+data.nama+"\nDATA TERSIMPAN DI ANTREAN","#f39c12"); };
+}
+
+async function sinkronkanData() {
+  if (!db||!navigator.onLine) return;
+  const tx=db.transaction(["antrean"],"readonly");
+  tx.objectStore("antrean").count().onsuccess=e=>{ if(e.target.result>0) updateStatusUI("ⓘ ADA DATA OFFLINE!\nSILAKAN KIRIM DARI MENU OFFLINE","#f39c12"); };
+}
+window.addEventListener('online', sinkronkanData);
+
+function handleScan(txt) {
+  if (isProcessing) return;
+  detectedBarcodes.add(txt.trim());
+  if (scanTimer) clearTimeout(scanTimer);
+  scanTimer=setTimeout(()=>{
+    const res=Array.from(detectedBarcodes);
+    if (res.length>1) {
+      isProcessing=true;
+      const ov=document.getElementById('selection-overlay');
+      ov.innerHTML=`<p style="color:white;font-size:12px;font-weight:bold;margin-bottom:10px">TERDETEKSI ${res.length} BARCODE. PILIH NAMA:</p>`;
+      res.forEach(nama=>{ const b=document.createElement('div'); b.className='barcode-option'; b.textContent=nama; b.onclick=e=>{e.stopPropagation();sendPresence(nama);}; ov.appendChild(b); });
+      const batal=document.createElement('div'); batal.className='barcode-option'; batal.style.background='rgba(127,140,141,.6)'; batal.textContent='BATAL — SCAN ULANG';
+      batal.onclick=e=>{e.stopPropagation();ov.style.display='none';isProcessing=false;detectedBarcodes.clear();};
+      ov.appendChild(batal); ov.style.display='flex';
+    } else if (res.length===1) { isProcessing=true; sendPresence(res[0]); }
+  },300);
+}
+
+const html5QrCode = new Html5Qrcode("reader");
+html5QrCode.start({facingMode:"environment"},{fps:20,qrbox:{width:260,height:260}},handleScan).catch(e=>console.error(e));
+
+/* =====================================================
+   PWA
+===================================================== */
+let pwaPrompt;
+window.addEventListener('beforeinstallprompt', e=>{
+  e.preventDefault(); pwaPrompt=e;
+  setTimeout(()=>{ document.getElementById('pwa-popup').style.display='flex'; },2000);
+});
+document.getElementById('btnInstalPop').onclick=async()=>{
+  if (!pwaPrompt) return;
+  document.getElementById('pwa-popup').style.display='none';
+  pwaPrompt.prompt(); pwaPrompt=null;
+};
+document.getElementById('btnBatal').onclick=()=>{ document.getElementById('pwa-popup').style.display='none'; };
+
+/* =====================================================
+   INIT
+===================================================== */
+window.addEventListener('DOMContentLoaded',()=>{
+  pilihTema(localStorage.getItem('presensi_theme')||'emerald');
+  applySettings();
+});
+</script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').then(()=>console.log("SW Aktif!"));
+}
+</script>
+</body>
+</html>
