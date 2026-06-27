@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekap Presensi Siswa - SMP/SMK Azzahro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        th, td { 
+            min-width: 24px; 
+            text-align: center; 
+            border: 1px solid #e2e8f0;
+            padding: 4px 2px;
+        }
+        .name-col { min-width: 150px; text-align: left; padding-left: 8px; }
+        .gender-col { min-width: 30px; text-align: center; }
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            background-color: #f8fafc;
+            z-index: 10;
+        }
+        .sticky-col-2 {
+            position: sticky;
+            left: 150px;
+            background-color: #f8fafc;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans p-2 md:p-4 max-h-screen overflow-y-auto">
+
+    <div class="w-full mx-auto bg-white p-4 rounded-xl shadow-md border border-slate-100">
+        
+        <div id="headerDinamis" class="hidden flex items-center justify-between border-b pb-3 mb-4 gap-4">
+            <img src="https://github.com/masrahmat-id/absensi-barcode-online-smp-smk-azzahro/raw/main/logo-smp-azzahro.png" 
+                 alt="Logo SMP Azzahro" class="h-12 w-auto object-contain flex-shrink-0">
+            
+            <div class="text-center flex-1">
+                <h1 id="txtS1" class="text-lg font-bold uppercase tracking-wide text-slate-800">DAFTAR HADIR SISWA</h1>
+                <h2 id="txtS2" class="text-base font-bold uppercase text-slate-700">NAMA SEKOLAH</h2>
+                <p id="txtS3" class="text-xs font-semibold text-slate-500 uppercase tracking-wide">TAHUN PELAJARAN</p>
+                <p id="txtS4" class="text-xs font-bold text-blue-600 uppercase mt-0.5">NAMA KELAS - BULAN TAHUN</p>
+            </div>
+            
+            <img src="https://github.com/masrahmat-id/absensi-barcode-online-smp-smk-azzahro/raw/main/logo-smk-azzahro.png" 
+                 alt="Logo SMK Azzahro" class="h-12 w-auto object-contain flex-shrink-0">
+        </div>
+
+        <div id="headerDefault" class="text-center border-b pb-3 mb-4">
+            <h1 class="text-xl font-bold text-slate-700 tracking-wide">REKAP PRESENSI SISWA SMPI/SMK AZZAHRO</h1>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
+            <div class="w-full sm:w-auto flex flex-wrap items-center gap-4">
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <label for="pilihKelas" class="font-semibold text-slate-600 text-xs whitespace-nowrap">Pilih Kelas:</label>
+                    <select id="pilihKelas" class="bg-white border border-slate-300 text-slate-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1.5 w-full sm:w-40 shadow-sm font-medium">
+                        <option value="KELAS 07" selected>KELAS 07</option>
+                        <option value="KELAS 08">KELAS 08</option>
+                        <option value="KELAS 09">KELAS 09</option>
+                        <option value="KELAS 10">KELAS 10</option>
+                        <option value="KELAS 11">KELAS 11</option>
+                        <option value="KELAS 12">KELAS 12</option>
+                    </select>
+                </div>
+                
+                <button id="btnMuat" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-xs px-4 py-1.5 shadow transition-all duration-200 active:scale-95">
+                    Muat Data
+                </button>
+                
+                <div id="loadingStatus" class="hidden text-xs text-blue-600 font-semibold flex items-center gap-2">
+                    <svg class="animate-spin h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Sedang mengambil data dari Server Az-Zahro...
+                </div>
+            </div>
+
+            <div id="bulanTahunOtomatis" class="w-full sm:w-auto text-right font-bold text-slate-700 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm text-xs tracking-wider uppercase">
+                -
+            </div>
+        </div>
+
+        <div class="w-full overflow-x-auto border border-slate-200 rounded-lg shadow-inner mb-4">
+            <table class="w-full text-[10px] text-slate-600 border-collapse table-fixed">
+                <thead class="text-slate-700 uppercase font-bold bg-slate-100 sticky top-0 z-20">
+                    <tr id="barisHari">
+                        <th rowspan="2" class="bg-slate-200 text-slate-700 name-col sticky-col border-r-2 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Nama Siswa</th>
+                        <th rowspan="2" class="bg-slate-200 text-slate-700 gender-col sticky-col-2 border-r-2 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">JK</th>
+                        <th colspan="4" class="bg-emerald-50 text-emerald-800 text-center font-bold border-l-2">Keterangan</th>
+                        <th rowspan="2" class="bg-amber-50 text-amber-800 text-center font-bold border-l-2 min-w-[35px]">%</th>
+                    </tr>
+                    <tr id="barisTanggal">
+                        <th class="bg-emerald-100 text-emerald-700 font-bold border-l-2">H</th>
+                        <th class="bg-emerald-100 text-emerald-700 font-bold">I</th>
+                        <th class="bg-emerald-100 text-emerald-700 font-bold">S</th>
+                        <th class="bg-emerald-100 text-emerald-700 font-bold">A</th>
+                    </tr>
+                </thead>
+                <tbody id="bodyTabelPresensi" class="divide-y divide-slate-200 bg-white">
+                    <tr>
+                        <td colspan="38" class="text-center py-6 text-slate-400 italic text-xs">
+                            Silakan pilih kelas di atas terlebih dahulu, kemudian klik tombol "Muat Data".
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="areaBawahRekap" class="hidden mt-6 border-t pt-4 text-xs text-slate-700 font-medium">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                
+                <div class="space-y-3">
+                    <div>
+                        <span class="font-bold text-slate-500 uppercase tracking-wider block mb-1 text-[10px]">KET :</span>
+                        <div class="flex flex-wrap gap-2 text-[10px]">
+                            <span class="bg-slate-100 border px-2 py-1 rounded shadow-sm font-semibold"><span class="text-emerald-600 font-black text-xs mr-1">●</span> : HADIR</span>
+                            <span class="bg-slate-100 border px-2 py-1 rounded shadow-sm font-semibold"><span class="text-amber-600 font-bold mr-1">S</span> : SAKIT</span>
+                            <span class="bg-slate-100 border px-2 py-1 rounded shadow-sm font-semibold"><span class="text-blue-600 font-bold mr-1">I</span> : IJIN</span>
+                            <span class="bg-slate-100 border px-2 py-1 rounded shadow-sm font-semibold"><span class="text-red-600 font-bold mr-1">A</span> : ALFA</span>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t pt-2">
+                        <span class="font-bold text-slate-500 uppercase tracking-wider block mb-1 text-[10px]">Jumlah Siswa :</span>
+                        <div class="flex flex-wrap gap-2 text-[10px]">
+                            <span class="bg-blue-50 border border-blue-200 px-2 py-1 rounded shadow-sm font-bold text-blue-800">L : <span id="valL">-</span></span>
+                            <span class="bg-pink-50 border border-pink-200 px-2 py-1 rounded shadow-sm font-bold text-pink-800">P : <span id="valP">-</span></span>
+                            <span class="bg-slate-100 border border-slate-300 px-2 py-1 rounded shadow-sm font-bold text-slate-800">Jumlah : <span id="valJumlah">-</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-center text-[10px] tracking-wide">
+                    <div class="flex flex-col justify-between h-28">
+                        <div id="waliJabatan" class="font-bold uppercase text-slate-800">Wali Kelas</div>
+                        <div class="h-12"></div> 
+                        <div id="waliNama" class="font-bold underline text-slate-900 text-xs">Nama Wali Kelas</div>
+                    </div>
+
+                    <div class="flex flex-col justify-between h-28 border-l pl-2">
+                        <div>
+                            <div id="txtKabupaten" class="italic text-slate-500 mb-0.5">Kabupaten, Tanggal</div>
+                            <div id="kepalaJabatan" class="font-bold uppercase text-slate-800">Mengetahui, Kepala Sekolah</div>
+                        </div>
+                        <div class="h-12"></div> 
+                        <div id="kepalaNama" class="font-bold underline text-slate-900 text-xs">Nama Kepala Sekolah</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbwzJeGPQLKAYIOMUWht45sHz3Vv-JBOJ9jfeFZ434ANaT8sPSe2JQI441YoZBrdqV9a/exec";
+        
+        const barisHari = document.getElementById('barisHari');
+        const barisTanggal = document.getElementById('barisTanggal');
+        const refHari = barisHari.children[2]; 
+        const refTanggal = barisTanggal.children[0]; 
+
+        // Menyimpan status index mana saja yang merupakan hari minggu
+        let indexHariMinggu = [];
+
+        for (let t = 1; t <= 31; t++) {
+            const thHari = document.createElement('th');
+            thHari.className = "bg-blue-50 text-blue-800 text-[8px] font-semibold p-0.5 min-w-[22px]";
+            thHari.id = `kolomHari-${t}`;
+            thHari.innerText = "-"; 
+            barisHari.insertBefore(thHari, refHari);
+
+            const thTanggal = document.createElement('th');
+            thTanggal.className = "bg-slate-50 text-slate-700 font-bold text-[9px] p-0.5";
+            thTanggal.id = `kolomTanggal-${t}`;
+            thTanggal.innerText = t;
+            barisTanggal.insertBefore(thTanggal, refTanggal);
+        }
+
+        // Fungsi membuat nama bulan otomatis sesuai lokal Indonesia
+        function setBulanTahunOtomatis() {
+            const namaBulan = [
+                "JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", 
+                "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"
+            ];
+            const tglSekarang = new Date();
+            const bulan = namaBulan[tglSekarang.getMonth()];
+            const tahun = tglSekarang.getFullYear();
+            
+            document.getElementById('bulanTahunOtomatis').innerText = `${bulan} ${tahun}`;
+        }
+
+        document.getElementById('btnMuat').addEventListener('click', async () => {
+            const kelas = document.getElementById('pilihKelas').value;
+            if (!kelas) {
+                alert('Peringatan: Silakan pilih salah satu kelas terlebih dahulu!');
+                return;
+            }
+
+            const loading = document.getElementById('loadingStatus');
+            const tbody = document.getElementById('bodyTabelPresensi');
+            const areaBawah = document.getElementById('areaBawahRekap');
+            const hDefault = document.getElementById('headerDefault');
+            const hDinamis = document.getElementById('headerDinamis');
+            
+            loading.classList.remove('hidden');
+            tbody.innerHTML = `<tr><td colspan="38" class="text-center py-6 text-blue-600 font-semibold text-xs animate-pulse">Menghubungkan ke Server Az-Zahro, mohon tunggu...</td></tr>`;
+            areaBawah.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${API_URL}?action=getRekap&kelas=${encodeURIComponent(kelas)}`);
+                const result = await response.json();
+
+                if (result.status === "error") {
+                    throw new Error(result.message);
+                }
+
+                // Reset status hari minggu sebelum memproses data baru
+                indexHariMinggu = [];
+
+                if (result.hari && result.hari.length > 0) {
+                    for (let hIdx = 1; hIdx <= 31; hIdx++) {
+                        const elHari = document.getElementById(`kolomHari-${hIdx}`);
+                        const elTanggal = document.getElementById(`kolomTanggal-${hIdx}`);
+                        const teksHari = result.hari[hIdx - 1] || "-";
+                        
+                        if (elHari) {
+                            elHari.innerText = teksHari;
+                            
+                            // Cek jika hari tersebut adalah Minggu / Min
+                            if (teksHari.toLowerCase().includes("minggu") || teksHari.toLowerCase().includes("min")) {
+                                indexHariMinggu.push(hIdx - 1); // Simpan index (0-30)
+                                elHari.className = "bg-red-100 text-red-700 text-[8px] font-bold p-0.5 min-w-[22px]";
+                                if (elTanggal) {
+                                    elTanggal.className = "bg-red-100 text-red-700 font-bold text-[9px] p-0.5";
+                                }
+                            } else {
+                                // Kembalikan ke warna default jika bukan hari Minggu
+                                elHari.className = "bg-blue-50 text-blue-800 text-[8px] font-semibold p-0.5 min-w-[22px]";
+                                if (elTanggal) {
+                                    elTanggal.className = "bg-slate-50 text-slate-700 font-bold text-[9px] p-0.5";
+                                }
+                            }
+                        }
+                    }
+                }
+
+                renderTable(result.data);
+                
+                // ISI COMPONENT BAWAH DENGAN NILAI KOORDINAT SEL PASTI
+                if (result.infoBawah) {
+                    document.getElementById('valL').innerText = result.infoBawah.L || "0";
+                    document.getElementById('valP').innerText = result.infoBawah.P || "0";
+                    document.getElementById('valJumlah').innerText = result.infoBawah.Jumlah || "0";
+                    
+                    document.getElementById('waliJabatan').innerText = result.infoBawah.waliJabatan || "Wali Kelas";
+                    document.getElementById('waliNama').innerText = result.infoBawah.waliNama || "-";
+                    
+                    document.getElementById('txtKabupaten').innerText = result.infoBawah.kabupaten || "";
+                    document.getElementById('kepalaJabatan').innerText = result.infoBawah.kepalaJabatan || "Kepala Sekolah";
+                    document.getElementById('kepalaNama').innerText = result.infoBawah.kepalaNama || "-";
+                    
+                    areaBawah.classList.remove('hidden');
+                }
+
+                // AMBIL DATA HEADER DARI S1 s.d S4 SECARA DINAMIS
+                if (result.infoHeader) {
+                    document.getElementById('txtS1').innerText = result.infoHeader.S1 || "DAFTAR HADIR SISWA";
+                    document.getElementById('txtS2').innerText = result.infoHeader.S2 || "";
+                    document.getElementById('txtS3').innerText = result.infoHeader.S3 || "";
+                    document.getElementById('txtS4').innerText = result.infoHeader.S4 || "";
+                    
+                    hDefault.classList.add('hidden');
+                    hDinamis.classList.remove('hidden');
+                }
+
+            } catch (error) {
+                console.error(error);
+                tbody.innerHTML = `<tr><td colspan="38" class="text-center py-6 text-red-600 font-medium text-xs">Gagal memuat data rekap. Pastikan script terbaru sudah di-deploy ulang.</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        });
+
+        function renderTable(dataSiswa) {
+            const tbody = document.getElementById('bodyTabelPresensi');
+            tbody.innerHTML = "";
+
+            if (!dataSiswa || dataSiswa.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="38" class="text-center py-6 text-slate-400 italic text-xs">Tidak ditemukan data siswa pada rentang baris 8-37.</td></tr>`;
+                return;
+            }
+
+            dataSiswa.forEach((siswa, index) => {
+                const tr = document.createElement('tr');
+                tr.className = index % 2 === 0 ? "bg-white hover:bg-slate-50" : "bg-slate-50/50 hover:bg-slate-50";
+
+                const tdNama = document.createElement('td');
+                tdNama.className = "name-col sticky-col border-r-2 font-semibold text-slate-700 bg-inherit shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] text-[10px]";
+                tdNama.innerText = siswa.nama || "-";
+                tr.appendChild(tdNama);
+
+                const tdJK = document.createElement('td');
+                tdJK.className = "gender-col sticky-col-2 border-r-2 text-slate-500 bg-inherit shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] text-[9px]";
+                tdJK.innerText = siswa.jk || "-";
+                tr.appendChild(tdJK);
+
+                for (let j = 0; j < 31; j++) {
+                    const tdPresensi = document.createElement('td');
+                    const status = (siswa.presensi[j] || "").toUpperCase().trim();
+                    
+                    // Set base class, berikan background merah transparan tipis jika hari minggu
+                    let baseClass = "font-bold text-[9px] p-0.5 border shadow-sm";
+                    if (indexHariMinggu.includes(j)) {
+                        baseClass += " bg-red-50/50";
+                    }
+                    
+                    tdPresensi.className = baseClass;
+                    
+                    if (status === 'H' || status === '●') tdPresensi.className += " text-emerald-600 bg-emerald-50/30";
+                    else if (status === 'I') tdPresensi.className += " text-blue-600 bg-blue-50/30";
+                    else if (status === 'S') tdPresensi.className += " text-amber-600 bg-amber-50/30";
+                    else if (status === 'A') tdPresensi.className += " text-red-600 bg-red-100/70";
+
+                    tdPresensi.innerText = status;
+                    tr.appendChild(tdPresensi);
+                }
+
+                const rekapKeys = ['hadir', 'izin', 'sakit', 'alfa'];
+                rekapKeys.forEach((key, kIdx) => {
+                    const tdRekap = document.createElement('td');
+                    tdRekap.className = `font-bold bg-slate-50 text-[9px] text-slate-700 ${kIdx === 0 ? 'border-l-2' : ''}`;
+                    tdRekap.innerText = siswa.rekap[key] !== undefined ? siswa.rekap[key] : 0;
+                    tr.appendChild(tdRekap);
+                });
+
+                const tdPersen = document.createElement('td');
+                tdPersen.className = "font-bold text-blue-700 bg-blue-50/70 border-l-2 text-center text-[9px]";
+                tdPersen.innerText = siswa.persentase || "0%";
+                tr.appendChild(tdPersen);
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Otomatis klik tombol "Muat Data" dan setup bulan saat halaman pertama kali dibuka
+        window.addEventListener('DOMContentLoaded', () => {
+            setBulanTahunOtomatis();
+            document.getElementById('btnMuat').click();
+        });
+    </script>
+</body>
+</html>
