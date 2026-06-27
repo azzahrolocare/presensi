@@ -106,10 +106,10 @@ body::before{
   padding:10px 16px;min-height:68px;gap:10px;
 }
 .nav-logos{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
-.nav-logos img{width:42px;height:42px;object-fit:contain;border-radius:8px;flex-shrink:0}
+.nav-logos img{width:var(--logo-size, 42px);height:var(--logo-size, 42px);object-fit:contain;border-radius:8px;flex-shrink:0}
 .nav-school{display:flex;flex-direction:column;min-width:0}
-.nav-school h1{font-family:'Playfair Display',Georgia,serif;font-size:13.5px;font-weight:700;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nav-school p{font-size:9px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-school h1{font-family:'Playfair Display',Georgia,serif;font-size:var(--header-font-size, 13.5px);font-weight:700;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-school p{font-size:calc(var(--header-font-size, 13.5px) * 0.66);font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nav-clock{text-align:right;flex-shrink:0}
 .nav-clock .time{font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.05em;font-variant-numeric:tabular-nums}
 .nav-clock .date{font-size:8.5px;font-weight:500;color:var(--muted);margin-top:2px;letter-spacing:.03em;text-transform:uppercase}
@@ -307,7 +307,6 @@ body::before{
 }
 .s-row label{font-weight:600;font-size:12px;color:var(--text)}
 .s-row input[type=range]{flex-grow:1;height:4px;accent-color:var(--primary);cursor:pointer}
-.s-row input[type=color]{border:none;width:30px;height:24px;background:none;cursor:pointer;border-radius:5px}
 .s-row select{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:var(--text);padding:4px 7px;font-size:11px;outline:none}
 .s-row select option{background:#111827;color:#fff}
 .btn-simpan{
@@ -328,14 +327,6 @@ body::before{
   transition:filter .25s;
 }
 .btn-rekap-a:hover{filter:brightness(1.1)}
-/* toggle */
-.tog{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0}
-.tog input{opacity:0;width:0;height:0}
-.tog-sl{position:absolute;inset:0;background:rgba(255,255,255,.15);border-radius:22px;cursor:pointer;transition:.3s}
-.tog-sl::before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background:rgba(255,255,255,.7);border-radius:50%;transition:.3s}
-input:checked+.tog-sl{background:var(--primary)}
-input:checked+.tog-sl::before{transform:translateX(18px);background:#fff}
-#gradient-controls{display:none;border-top:1px dashed rgba(255,255,255,.1);margin-top:8px;padding-top:8px}
 
 /* ── OFFLINE MODAL ── */
 #modal-antrean{
@@ -563,6 +554,7 @@ input:checked+.tog-sl::before{transform:translateX(18px);background:#fff}
       <h3><i class="fa-solid fa-sliders"></i> Pengaturan</h3>
       <div class="btn-x" onclick="cancelSettings();tutupMod('mPengaturan')"><i class="fa-solid fa-xmark"></i></div>
     </div>
+    
     <div class="s-title">🔔 Suara Notifikasi</div>
     <div class="s-row">
       <label>Pilih Suara</label>
@@ -583,33 +575,11 @@ input:checked+.tog-sl::before{transform:translateX(18px);background:#fff}
         <option value="notification/kiw-kiw-original.mp3">Kiw-kiw Original</option>
       </select>
     </div>
+    
     <div class="s-title">🖼️ Tampilan Logo &amp; Font</div>
     <div class="s-row"><label>Ukuran Logo</label><input type="range" id="range-logo" min="40" max="110" oninput="previewLayout()"></div>
     <div class="s-row"><label>Ukuran Font</label><input type="range" id="range-font" min="0.5" max="1.5" step="0.05" oninput="previewLayout()"></div>
-    <div class="s-title">🎨 Warna Kustom</div>
-    <div class="s-row">
-      <label>Warna Garis</label><input type="color" id="color-picker" oninput="previewLayout()">
-      <label>Warna Latar</label><input type="color" id="color-bg" oninput="previewLayout()">
-    </div>
-    <div class="s-row">
-      <label>Gunakan Gradien</label>
-      <label class="tog"><input type="checkbox" id="gradient-toggle" onchange="previewLayout()"><span class="tog-sl"></span></label>
-    </div>
-    <div id="gradient-controls">
-      <div class="s-row">
-        <label>Atas</label><input type="color" id="grad-1" oninput="previewLayout()">
-        <label>Tengah</label><input type="color" id="grad-2" oninput="previewLayout()">
-        <label>Bawah</label><input type="color" id="grad-3" oninput="previewLayout()">
-      </div>
-      <div class="s-row">
-        <label>Arah</label>
-        <select id="grad-dir" onchange="previewLayout()">
-          <option value="180deg">Vertikal</option>
-          <option value="90deg">Horizontal</option>
-          <option value="45deg">Diagonal</option>
-        </select>
-      </div>
-    </div>
+    
     <div class="s-title">🔗 Tautan &amp; Info</div>
     <a href="https://azzahrolocare.github.io/rekapitulasi-presensi-siswa/" target="_blank" class="btn-rekap-a" id="btn-rekap" onclick="event.stopPropagation()">
       <i class="fa-solid fa-chart-pie"></i> Rekapitulasi Presensi Siswa
@@ -617,6 +587,7 @@ input:checked+.tog-sl::before{transform:translateX(18px);background:#fff}
     <button onclick="event.stopPropagation();showAbout()" style="width:100%;margin-top:8px;padding:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:var(--text);font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Inter',sans-serif">
       <i class="fa-solid fa-circle-info" style="color:var(--accent)"></i> Tentang Aplikasi
     </button>
+    
     <button class="btn-simpan" onclick="saveSettings()"><i class="fa-solid fa-floppy-disk"></i> &nbsp;SIMPAN</button>
   </div>
 </div>
@@ -628,7 +599,7 @@ input:checked+.tog-sl::before{transform:translateX(18px);background:#fff}
       <h3><i class="fa-solid fa-circle-info"></i> Tentang Aplikasi</h3>
       <div class="btn-x" onclick="closeAbout()"><i class="fa-solid fa-xmark"></i></div>
     </div>
-    <p style="font-size:12px;line-height:1.7;color:var(--muted);margin-top:0">"Aplikasi Presensi Digital SMP Islam &amp; SMK Az-Zahro hadir sebagai solusi inovatif dalam mendukung digitalisasi pendidikan serta efisiensi administrasi sekolah. Dengan fokus mentransformasi presensi konvensional menjadi sistem otomatis berbasis QR Code, aplikasi ini memastikan pendataan kehadiran berjalan cepat dan akurat. Melalui integrasi langsung dengan cloud storage, seluruh data tersinkronisasi secara otomatis tanpa perlu rekapitulasi manual di akhir hari."</p>
+    <p style="font-size:12px;line-height:1.7;color:var(--muted);margin-top:0">"Aplikasi Presensi Digital SMP Islam &amp; SMK Az-Zahro hadir sebagai solusi inovatif dalam mendukung digitalisasi pendidikan serta efisiensi administrasi sekolah. Dengan focus mentransformasi presensi konvensional menjadi sistem otomatis berbasis QR Code, aplikasi ini memastikan pendataan kehadiran berjalan cepat dan akurat. Melalui integrasi langsung dengan cloud storage, seluruh data tersinkronisasi secara otomatis tanpa perlu rekapitulasi manual di akhir hari."</p>
     <div style="background:rgba(255,255,255,.05);padding:13px;border-radius:13px;font-size:11px;border-left:3px solid var(--accent)">
       <div style="text-align:center;font-size:13px;font-weight:bold;color:var(--accent);margin-bottom:4px">IT DIGITALIZATION</div>
       <div style="text-align:center;font-weight:bold;margin-bottom:10px;font-size:10px;color:var(--muted)">SMP ISLAM AZ-ZAHRO &amp; SMK AZ-ZAHRO</div>
@@ -810,7 +781,6 @@ const navState = {};
 function navKlik(el, aksi) {
   const id = el.id;
   const st = navState[id] || 'idle';
-  // Reset semua nav lain ke idle
   document.querySelectorAll('.nav-it').forEach(n => {
     if (n.id !== id) { n.classList.remove('ready','active'); navState[n.id]='idle'; }
   });
@@ -842,37 +812,17 @@ const rawURL = '';
 
 function applySettings() {
   const cfg = JSON.parse(localStorage.getItem('absensiConfig')) || {
-    sound:'notification/Notif01.mp3',primary:'#2ecc71',
-    logoSize:'65',fontSize:'0.9',bgColor:'#121212',
-    useGrad:false,g1:'#121212',g2:'#1e1e1e',g3:'#000000',gDir:'180deg'
+    sound:'notification/Notif01.mp3', logoSize:'65', fontSize:'0.9'
   };
   document.getElementById('sound-choice').value = cfg.sound;
-  document.getElementById('color-picker').value = cfg.primary;
   document.getElementById('range-logo').value = cfg.logoSize;
   document.getElementById('range-font').value = cfg.fontSize;
-  document.getElementById('color-bg').value = cfg.bgColor;
-  document.getElementById('gradient-toggle').checked = cfg.useGrad;
-  document.getElementById('grad-1').value = cfg.g1;
-  document.getElementById('grad-2').value = cfg.g2;
-  document.getElementById('grad-3').value = cfg.g3;
-  document.getElementById('grad-dir').value = cfg.gDir;
   previewLayout();
 }
 
 function previewLayout() {
-  const useGrad = document.getElementById('gradient-toggle').checked;
-  const gradSection = document.getElementById('gradient-controls');
   document.documentElement.style.setProperty('--logo-size', document.getElementById('range-logo').value+'px');
   document.documentElement.style.setProperty('--header-font-size', document.getElementById('range-font').value+'rem');
-  if (useGrad) {
-    gradSection.style.display='block';
-    const g1=document.getElementById('grad-1').value, g2=document.getElementById('grad-2').value,
-          g3=document.getElementById('grad-3').value, gDir=document.getElementById('grad-dir').value;
-    document.documentElement.style.setProperty('--bg-gradient',`linear-gradient(${gDir},${g1} 0%,${g2} 50%,${g3} 100%)`);
-  } else {
-    gradSection.style.display='none';
-    document.documentElement.style.setProperty('--bg-gradient','none');
-  }
 }
 
 function cancelSettings() { applySettings(); }
@@ -880,15 +830,8 @@ function cancelSettings() { applySettings(); }
 function saveSettings() {
   const cfg = {
     sound:document.getElementById('sound-choice').value,
-    primary:document.getElementById('color-picker').value,
     logoSize:document.getElementById('range-logo').value,
-    fontSize:document.getElementById('range-font').value,
-    bgColor:document.getElementById('color-bg').value,
-    useGrad:document.getElementById('gradient-toggle').checked,
-    g1:document.getElementById('grad-1').value,
-    g2:document.getElementById('grad-2').value,
-    g3:document.getElementById('grad-3').value,
-    gDir:document.getElementById('grad-dir').value
+    fontSize:document.getElementById('range-font').value
   };
   localStorage.setItem('absensiConfig', JSON.stringify(cfg));
   new Audio(rawURL+cfg.sound).play().catch(()=>{});
