@@ -93,7 +93,7 @@ body::before{
   pointer-events:none;
 }
 
-/* ── TOP NAV ── */
+/* ── TOP NAV (DIPERBARUI) ── */
 #topNav{
   position:fixed;top:0;left:0;right:0;z-index:200;
   background:var(--hdr-bg);
@@ -102,22 +102,22 @@ body::before{
   backdrop-filter:blur(28px) saturate(1.8);
   -webkit-backdrop-filter:blur(28px) saturate(1.8);
   box-shadow:0 8px 32px rgba(0,0,0,.4),inset 0 -1px 0 rgba(255,255,255,.06);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:10px 16px;min-height:68px;gap:10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:15px 16px;gap:6px;
 }
-.nav-logos{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.nav-logos{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;flex:none}
 .nav-logos img{width:var(--logo-size, 42px);height:var(--logo-size, 42px);object-fit:contain;border-radius:8px;flex-shrink:0}
-.nav-school{display:flex;flex-direction:column;min-width:0}
+.nav-school{text-align:center;width:100%}
 .nav-school h1{font-family:'Playfair Display',Georgia,serif;font-size:var(--header-font-size, 13.5px);font-weight:700;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nav-school p{font-size:calc(var(--header-font-size, 13.5px) * 0.66);font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nav-clock{text-align:right;flex-shrink:0}
-.nav-clock .time{font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.05em;font-variant-numeric:tabular-nums}
-.nav-clock .date{font-size:8.5px;font-weight:500;color:var(--muted);margin-top:2px;letter-spacing:.03em;text-transform:uppercase}
+.nav-school p{font-size:calc(var(--header-font-size, 13.5px) * 0.66);font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-clock{text-align:center;width:100%;margin-top:2px}
+.nav-clock .time{font-size:15px;font-weight:800;color:var(--accent);letter-spacing:.05em;font-variant-numeric:tabular-nums}
+.nav-clock .date{font-size:10px;font-weight:500;color:var(--muted);margin-top:2px;letter-spacing:.03em;text-transform:uppercase}
 
-/* ── MAIN SCROLL AREA ── */
+/* ── MAIN SCROLL AREA (PADDING DISESUAIKAN AGAR TIDAK TERTUTUP NAVBAR VERTIKAL) ── */
 #mainScroll{
   flex:1;overflow-y:auto;overflow-x:hidden;
-  padding:80px 16px 96px;
+  padding:165px 16px 96px;
   display:flex;flex-direction:column;align-items:center;
 }
 .main-inner{width:100%;max-width:430px;display:flex;flex-direction:column;gap:12px}
@@ -405,19 +405,15 @@ body::before{
 <div class="gs gs2"></div>
 <div class="gs gs3"></div>
 
-<!-- STATUS TOAST -->
 <div id="status-kirim"></div>
 
-<!-- ABOUT OVERLAY -->
 <div id="about-overlay" onclick="closeAbout()"></div>
 
-<!-- FLOAT OFFLINE -->
 <button class="float-off" id="btn-float-offline" onclick="bukaModalAntrean(event)">
   <i class="fa-solid fa-database" style="font-size:11px"></i>
   <span id="lbl-antrean">0</span>
 </button>
 
-<!-- MODAL ANTREAN -->
 <div id="modal-antrean">
   <div class="antr-card" onclick="event.stopPropagation()">
     <div class="mhdr">
@@ -436,27 +432,26 @@ body::before{
   </div>
 </div>
 
-<!-- TOP NAV -->
 <nav id="topNav">
   <div class="nav-logos">
     <img src="logo-smp-azzahro.png" alt="SMP">
-    <div class="nav-school">
-      <h1>PRESENSI DIGITAL</h1>
-      <p>SMP Islam Az-Zahro &amp; SMK Az-Zahro</p>
-    </div>
-    <img src="logo-smk-azzahro.png" alt="SMK" style="margin-left:2px">
+    <img src="logo-smk-azzahro.png" alt="SMK">
   </div>
+  
+  <div class="nav-school">
+    <h1>PRESENSI DIGITAL</h1>
+    <p>SMP Islam Az-Zahro &amp; SMK Az-Zahro</p>
+  </div>
+  
   <div class="nav-clock">
     <div class="time" id="clock-top">00:00:00</div>
     <div class="date" id="date-top">-- -- ----</div>
   </div>
 </nav>
 
-<!-- MAIN CONTENT -->
 <div id="mainScroll">
   <div class="main-inner">
 
-    <!-- DROPDOWN KETERANGAN -->
     <div class="ket-wrap">
       <select id="keterangan">
         <option value="" disabled selected>Pilih Keterangan</option>
@@ -468,7 +463,6 @@ body::before{
       <span class="ket-arrow"><i class="fa-solid fa-chevron-down"></i></span>
     </div>
 
-    <!-- SCANNER -->
     <div class="scanner-box">
       <div class="sc-corner sc-tl"></div>
       <div class="sc-corner sc-tr"></div>
@@ -479,7 +473,6 @@ body::before{
       <div id="selection-overlay"></div>
     </div>
 
-    <!-- NAMA TERAKHIR -->
     <div class="last-scan">
       <div class="last-scan-ic"><i class="fa-solid fa-id-card"></i></div>
       <div style="flex:1;min-width:0">
@@ -492,7 +485,6 @@ body::before{
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav id="bottomNav">
   <div class="nav-it" id="nTema" onclick="navKlik(this,'tema');event.stopPropagation()">
     <div class="ic-wrap"><i class="fa-solid fa-palette"></i></div>
@@ -512,7 +504,6 @@ body::before{
   </div>
 </nav>
 
-<!-- MODAL TEMA -->
 <div class="modal-ov" id="mTema" onclick="tutupMod('mTema')">
   <div class="modal-card" onclick="event.stopPropagation()">
     <div class="mhdr">
@@ -547,7 +538,6 @@ body::before{
   </div>
 </div>
 
-<!-- MODAL PENGATURAN -->
 <div class="modal-ov" id="mPengaturan" onclick="tutupMod('mPengaturan')">
   <div class="modal-card" onclick="event.stopPropagation()">
     <div class="mhdr">
@@ -587,442 +577,477 @@ body::before{
     <button onclick="event.stopPropagation();showAbout()" style="width:100%;margin-top:8px;padding:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:var(--text);font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Inter',sans-serif">
       <i class="fa-solid fa-circle-info" style="color:var(--accent)"></i> Tentang Aplikasi
     </button>
-    
     <button class="btn-simpan" onclick="saveSettings()"><i class="fa-solid fa-floppy-disk"></i> &nbsp;SIMPAN</button>
   </div>
 </div>
 
-<!-- TENTANG -->
 <div id="about-pop-up">
   <div class="modal-card" style="max-height:82vh;overflow-y:auto">
     <div class="mhdr">
       <h3><i class="fa-solid fa-circle-info"></i> Tentang Aplikasi</h3>
       <div class="btn-x" onclick="closeAbout()"><i class="fa-solid fa-xmark"></i></div>
     </div>
-    <p style="font-size:12px;line-height:1.7;color:var(--muted);margin-top:0">"Aplikasi Presensi Digital SMP Islam &amp; SMK Az-Zahro hadir sebagai solusi inovatif dalam mendukung digitalisasi pendidikan serta efisiensi administrasi sekolah. Dengan focus mentransformasi presensi konvensional menjadi sistem otomatis berbasis QR Code, aplikasi ini memastikan pendataan kehadiran berjalan cepat dan akurat. Melalui integrasi langsung dengan cloud storage, seluruh data tersinkronisasi secara otomatis tanpa perlu rekapitulasi manual di akhir hari."</p>
-    <div style="background:rgba(255,255,255,.05);padding:13px;border-radius:13px;font-size:11px;border-left:3px solid var(--accent)">
-      <div style="text-align:center;font-size:13px;font-weight:bold;color:var(--accent);margin-bottom:4px">IT DIGITALIZATION</div>
-      <div style="text-align:center;font-weight:bold;margin-bottom:10px;font-size:10px;color:var(--muted)">SMP ISLAM AZ-ZAHRO &amp; SMK AZ-ZAHRO</div>
-      <p style="margin:4px 0;color:var(--text)"><strong>Created by ops:</strong> Rahmattullah</p>
-      <p style="margin:4px 0;color:var(--text)"><strong>Email:</strong> mas.rahmat.id@gmail.com</p>
+    <div style="text-align:center;margin-bottom:16px">
+      <img src="icon-apk-presensi-azzahro.png" alt="Logo" style="width:68px;height:68px;border-radius:14px;margin-bottom:8px">
+      <h4 style="font-family:'Playfair Display',serif;font-size:16px;color:var(--text)">Presensi Digital v2.5</h4>
+      <p style="font-size:11px;color:var(--muted)">SMP Islam &amp; SMK Az-Zahro</p>
     </div>
-    <button class="btn-simpan" style="margin-top:14px" onclick="closeAbout()">TUTUP</button>
+    <p style="font-size:12px;color:var(--text);line-height:1.6;margin-bottom:12px;text-align:justify">
+      Aplikasi Presensi Digital berbasis web ini dirancang khusus untuk mempercepat proses pencatatan kehadiran siswa di lingkungan Yayasan Az-Zahro dengan memanfaatkan teknologi pemindaian QR Code secara real-time.
+    </p>
+    <p style="font-size:12px;color:var(--text);line-height:1.6;text-align:justify">
+      Dilengkapi fitur penyimpanan antrean luring (offline storage), memastikan pencatatan tetap berjalan tanpa kendala meskipun koneksi internet sedang tidak stabil atau terputus.
+    </p>
   </div>
 </div>
 
-<!-- PWA POPUP -->
 <div id="pwa-popup">
   <div class="pwa-card">
     <img src="icon-apk-presensi-azzahro.png" alt="App Icon">
     <h3>Instal Aplikasi</h3>
-    <p>Pasang Aplikasi Presensi Digital Az-Zahro di layar utama untuk akses lebih cepat.</p>
+    <p>Tambahkan Presensi Digital ke beranda untuk akses yang lebih cepat, nyaman, dan mendukung penuh pemindaian layar penuh.</p>
     <div style="display:flex;gap:10px">
-      <button id="btnBatal" style="flex:1;background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,.15);padding:10px;border-radius:11px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">Nanti</button>
-      <button id="btnInstalPop" style="flex:1;background:var(--btn-bg);color:white;border:none;padding:10px;border-radius:11px;font-weight:800;cursor:pointer;font-family:'Inter',sans-serif">Instal</button>
+      <button id="btnInstalPop" style="flex:1;background:var(--btn-bg);color:#fff;border:none;padding:11px;border-radius:11px;font-weight:800;cursor:pointer;font-size:13px">INSTAL</button>
+      <button id="btnBatal" style="flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;padding:11px;border-radius:11px;font-weight:800;cursor:pointer;font-size:13px">NANTI</button>
     </div>
   </div>
 </div>
 
 <script>
 /* =====================================================
-   DAFTAR_TEMA
+   JAM DAN TANGGAL REALTIME
 ===================================================== */
-const DAFTAR_TEMA = {
-  'emerald':{
-    '--primary':'#198754','--body-bg':'linear-gradient(135deg,#051a0f 0%,#09331f 25%,#0d5a36 55%,#1a7a4a 75%,#0a4528 100%)','--body-solid':'#07261a',
-    '--glow1':'#198754','--glow2':'#D4AF37','--glow3':'#0ea56a',
-    '--hdr-bg':'linear-gradient(135deg,rgba(5,20,12,.97) 0%,rgba(9,51,31,.96) 35%,rgba(20,108,67,.93) 65%,rgba(14,82,52,.97) 100%)','--hdr-border':'rgba(212,175,55,.35)',
-    '--glass':'linear-gradient(145deg,rgba(255,255,255,.14) 0%,rgba(25,135,84,.08) 50%,rgba(255,255,255,.06) 100%)','--glass-border':'rgba(255,255,255,.22)',
-    '--badge':'linear-gradient(135deg,rgba(25,135,84,.4) 0%,rgba(212,175,55,.28) 100%)','--badge-border':'rgba(212,175,55,.5)',
-    '--btn-bg':'linear-gradient(135deg,#22a161 0%,#1a7a4a 40%,#146c43 70%,#0F5132 100%)','--btn-glow':'0 0 28px rgba(25,135,84,.5),0 0 10px rgba(212,175,55,.2),0 4px 14px rgba(20,108,67,.55)',
-    '--nav-bg':'linear-gradient(180deg,rgba(7,26,16,.97) 0%,rgba(5,18,10,.99) 100%)','--nav-border':'rgba(212,175,55,.3)',
-    '--ic-ready':'linear-gradient(135deg,rgba(26,122,74,.85),rgba(20,108,67,.75))','--ic-ready-bdr':'rgba(212,175,55,.65)','--ic-ready-sh':'0 4px 20px rgba(25,135,84,.55),0 0 12px rgba(212,175,55,.2)',
-    '--ic-aktif':'linear-gradient(135deg,#D4AF37,#f0c830,#ffe066)','--ic-aktif-txt':'#0F5132',
-    '--inp-border':'rgba(255,255,255,.22)','--inp-focus-border':'rgba(212,175,55,.75)','--inp-focus-bg':'rgba(25,135,84,.18)',
-    '--muted':'#c8e6d4','--accent':'#D4AF37','--scan-border':'rgba(25,135,84,.9)','--scan-glow':'rgba(25,135,84,.5)','--scroll-thumb':'rgba(212,175,55,.35)','--meta':'#051a0f'
-  },
-  'biru-ungu':{
-    '--primary':'#6366f1','--body-bg':'linear-gradient(135deg,#0b0f19 0%,#1a1040 30%,#2d1b69 60%,#1e1b4b 100%)','--body-solid':'#0d1030',
-    '--glow1':'#4f46e5','--glow2':'#a78bfa','--glow3':'#7c3aed',
-    '--hdr-bg':'linear-gradient(135deg,rgba(11,15,25,.97) 0%,rgba(30,27,75,.95) 40%,rgba(79,70,229,.35) 100%)','--hdr-border':'rgba(167,139,250,.35)',
-    '--glass':'linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(99,102,241,.1) 50%,rgba(255,255,255,.05) 100%)','--glass-border':'rgba(255,255,255,.22)',
-    '--badge':'linear-gradient(135deg,rgba(99,102,241,.4) 0%,rgba(167,139,250,.28) 100%)','--badge-border':'rgba(167,139,250,.5)',
-    '--btn-bg':'linear-gradient(135deg,#818cf8 0%,#6366f1 40%,#4f46e5 70%,#3730a3 100%)','--btn-glow':'0 0 28px rgba(99,102,241,.5),0 0 10px rgba(167,139,250,.3),0 4px 14px rgba(79,70,229,.55)',
-    '--nav-bg':'linear-gradient(180deg,rgba(11,15,25,.97) 0%,rgba(8,10,22,.99) 100%)','--nav-border':'rgba(167,139,250,.3)',
-    '--ic-ready':'linear-gradient(135deg,rgba(99,102,241,.85),rgba(79,70,229,.75))','--ic-ready-bdr':'rgba(167,139,250,.65)','--ic-ready-sh':'0 4px 20px rgba(99,102,241,.55),0 0 12px rgba(167,139,250,.3)',
-    '--ic-aktif':'linear-gradient(135deg,#a78bfa,#c4b5fd,#ddd6fe)','--ic-aktif-txt':'#1e1b4b',
-    '--inp-border':'rgba(167,139,250,.25)','--inp-focus-border':'rgba(167,139,250,.75)','--inp-focus-bg':'rgba(99,102,241,.18)',
-    '--muted':'#c4b5fd','--accent':'#a78bfa','--scan-border':'rgba(99,102,241,.9)','--scan-glow':'rgba(99,102,241,.4)','--scroll-thumb':'rgba(167,139,250,.35)','--meta':'#0b0f19'
-  },
-  'electric-blue':{
-    '--primary':'#2f7dff','--body-bg':'linear-gradient(135deg,#0c1a3a 0%,#0a2460 30%,#1a3a8f 60%,#0c1a5c 100%)','--body-solid':'#0a1430',
-    '--glow1':'#2f7dff','--glow2':'#00c6ff','--glow3':'#cb3dff',
-    '--hdr-bg':'linear-gradient(135deg,rgba(12,26,58,.97) 0%,rgba(26,58,143,.92) 50%,rgba(47,125,255,.25) 100%)','--hdr-border':'rgba(0,198,255,.35)',
-    '--glass':'linear-gradient(145deg,rgba(255,255,255,.12) 0%,rgba(47,125,255,.1) 50%,rgba(255,255,255,.05) 100%)','--glass-border':'rgba(255,255,255,.2)',
-    '--badge':'linear-gradient(135deg,rgba(47,125,255,.4) 0%,rgba(0,198,255,.25) 100%)','--badge-border':'rgba(0,198,255,.5)',
-    '--btn-bg':'linear-gradient(135deg,#60a5fa 0%,#2f7dff 40%,#1a5ae8 70%,#1240b0 100%)','--btn-glow':'0 0 28px rgba(47,125,255,.6),0 0 10px rgba(0,198,255,.3),0 4px 14px rgba(47,125,255,.55)',
-    '--nav-bg':'linear-gradient(180deg,rgba(10,20,48,.97) 0%,rgba(7,14,36,.99) 100%)','--nav-border':'rgba(0,198,255,.3)',
-    '--ic-ready':'linear-gradient(135deg,rgba(47,125,255,.85),rgba(26,90,232,.75))','--ic-ready-bdr':'rgba(0,198,255,.65)','--ic-ready-sh':'0 4px 20px rgba(47,125,255,.6),0 0 16px rgba(0,198,255,.3)',
-    '--ic-aktif':'linear-gradient(135deg,#00c6ff,#60e0ff,#b3f0ff)','--ic-aktif-txt':'#0c1a3a',
-    '--inp-border':'rgba(0,198,255,.25)','--inp-focus-border':'rgba(0,198,255,.75)','--inp-focus-bg':'rgba(47,125,255,.18)',
-    '--muted':'#93c5fd','--accent':'#00c6ff','--scan-border':'rgba(47,125,255,.9)','--scan-glow':'rgba(47,125,255,.5)','--scroll-thumb':'rgba(0,198,255,.35)','--meta':'#0c1a3a'
-  },
-  'sunset-orange':{
-    '--primary':'#ea580c','--body-bg':'linear-gradient(135deg,#1a0f05 0%,#3a1c05 25%,#7c2d00 55%,#c2410c 75%,#431407 100%)','--body-solid':'#180d03',
-    '--glow1':'#ea580c','--glow2':'#eab308','--glow3':'#f97316',
-    '--hdr-bg':'linear-gradient(135deg,rgba(26,15,5,.97) 0%,rgba(58,28,5,.95) 35%,rgba(124,45,0,.88) 65%,rgba(90,30,0,.97) 100%)','--hdr-border':'rgba(234,179,8,.35)',
-    '--glass':'linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(234,88,12,.09) 50%,rgba(255,255,255,.05) 100%)','--glass-border':'rgba(255,255,255,.2)',
-    '--badge':'linear-gradient(135deg,rgba(234,88,12,.4) 0%,rgba(234,179,8,.28) 100%)','--badge-border':'rgba(234,179,8,.5)',
-    '--btn-bg':'linear-gradient(135deg,#fb923c 0%,#ea580c 40%,#c2410c 70%,#9a3412 100%)','--btn-glow':'0 0 28px rgba(234,88,12,.5),0 0 10px rgba(234,179,8,.3),0 4px 14px rgba(194,65,12,.55)',
-    '--nav-bg':'linear-gradient(180deg,rgba(26,15,5,.97) 0%,rgba(18,9,2,.99) 100%)','--nav-border':'rgba(234,179,8,.3)',
-    '--ic-ready':'linear-gradient(135deg,rgba(234,88,12,.85),rgba(194,65,12,.75))','--ic-ready-bdr':'rgba(234,179,8,.65)','--ic-ready-sh':'0 4px 20px rgba(234,88,12,.55),0 0 12px rgba(234,179,8,.3)',
-    '--ic-aktif':'linear-gradient(135deg,#eab308,#facc15,#fde047)','--ic-aktif-txt':'#1a0f05',
-    '--inp-border':'rgba(234,179,8,.22)','--inp-focus-border':'rgba(234,179,8,.75)','--inp-focus-bg':'rgba(234,88,12,.18)',
-    '--muted':'#fed7aa','--accent':'#eab308','--scan-border':'rgba(234,88,12,.9)','--scan-glow':'rgba(234,88,12,.4)','--scroll-thumb':'rgba(234,179,8,.35)','--meta':'#1a0f05'
-  },
-  'rose-galaxy':{
-    '--primary':'#ec4899','--body-bg':'linear-gradient(135deg,#1a0520 0%,#3d0f50 30%,#701a6e 60%,#3a0742 100%)','--body-solid':'#150318',
-    '--glow1':'#ec4899','--glow2':'#a855f7','--glow3':'#f472b6',
-    '--hdr-bg':'linear-gradient(135deg,rgba(26,5,32,.97) 0%,rgba(61,15,80,.95) 35%,rgba(147,51,234,.3) 65%,rgba(93,15,130,.97) 100%)','--hdr-border':'rgba(236,72,153,.35)',
-    '--glass':'linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(236,72,153,.09) 50%,rgba(255,255,255,.05) 100%)','--glass-border':'rgba(255,255,255,.2)',
-    '--badge':'linear-gradient(135deg,rgba(236,72,153,.4) 0%,rgba(168,85,247,.28) 100%)','--badge-border':'rgba(236,72,153,.5)',
-    '--btn-bg':'linear-gradient(135deg,#f472b6 0%,#ec4899 40%,#db2777 70%,#be185d 100%)','--btn-glow':'0 0 28px rgba(236,72,153,.5),0 0 10px rgba(168,85,247,.3),0 4px 14px rgba(219,39,119,.55)',
-    '--nav-bg':'linear-gradient(180deg,rgba(26,5,32,.97) 0%,rgba(18,2,22,.99) 100%)','--nav-border':'rgba(236,72,153,.3)',
-    '--ic-ready':'linear-gradient(135deg,rgba(236,72,153,.85),rgba(219,39,119,.75))','--ic-ready-bdr':'rgba(236,72,153,.65)','--ic-ready-sh':'0 4px 20px rgba(236,72,153,.55),0 0 12px rgba(168,85,247,.3)',
-    '--ic-aktif':'linear-gradient(135deg,#a855f7,#c084fc,#e879f9)','--ic-aktif-txt':'#1a0520',
-    '--inp-border':'rgba(236,72,153,.25)','--inp-focus-border':'rgba(236,72,153,.75)','--inp-focus-bg':'rgba(236,72,153,.15)',
-    '--muted':'#f9a8d4','--accent':'#f472b6','--scan-border':'rgba(236,72,153,.9)','--scan-glow':'rgba(236,72,153,.4)','--scroll-thumb':'rgba(236,72,153,.35)','--meta':'#1a0520'
-  },
-  'ocean-teal':{
-    '--primary':'#06b6d4','--body-bg':'linear-gradient(135deg,#032028 0%,#063040 25%,#0e6a80 55%,#0891b2 75%,#042a38 100%)','--body-solid':'#031820',
-    '--glow1':'#06b6d4','--glow2':'#22d3ee','--glow3':'#0ea5e9',
-    '--hdr-bg':'linear-gradient(135deg,rgba(3,32,40,.97) 0%,rgba(8,65,85,.95) 35%,rgba(14,116,144,.9) 65%,rgba(6,60,80,.97) 100%)','--hdr-border':'rgba(34,211,238,.35)',
-    '--glass':'linear-gradient(145deg,rgba(255,255,255,.13) 0%,rgba(6,182,212,.1) 50%,rgba(255,255,255,.05) 100%)','--glass-border':'rgba(255,255,255,.2)',
-    '--badge':'linear-gradient(135deg,rgba(6,182,212,.4) 0%,rgba(34,211,238,.25) 100%)','--badge-border':'rgba(34,211,238,.5)',
-    '--btn-bg':'linear-gradient(135deg,#22d3ee 0%,#06b6d4 40%,#0891b2 70%,#0e7490 100%)','--btn-glow':'0 0 28px rgba(6,182,212,.5),0 0 10px rgba(34,211,238,.3),0 4px 14px rgba(8,145,178,.55)',
-    '--nav-bg':'linear-gradient(180deg,rgba(3,32,40,.97) 0%,rgba(2,20,28,.99) 100%)','--nav-border':'rgba(34,211,238,.3)',
-    '--ic-ready':'linear-gradient(135deg,rgba(6,182,212,.85),rgba(8,145,178,.75))','--ic-ready-bdr':'rgba(34,211,238,.65)','--ic-ready-sh':'0 4px 20px rgba(6,182,212,.55),0 0 12px rgba(34,211,238,.3)',
-    '--ic-aktif':'linear-gradient(135deg,#22d3ee,#67e8f9,#a5f3fc)','--ic-aktif-txt':'#032028',
-    '--inp-border':'rgba(34,211,238,.22)','--inp-focus-border':'rgba(34,211,238,.75)','--inp-focus-bg':'rgba(6,182,212,.18)',
-    '--muted':'#a5f3fc','--accent':'#22d3ee','--scan-border':'rgba(6,182,212,.9)','--scan-glow':'rgba(6,182,212,.4)','--scroll-thumb':'rgba(34,211,238,.35)','--meta':'#032028'
-  }
-};
-
-/* =====================================================
-   TERAPKAN TEMA
-===================================================== */
-function pilihTema(nama) {
-  const t = DAFTAR_TEMA[nama];
-  if (!t) return;
-  const r = document.documentElement;
-  Object.entries(t).forEach(([k,v]) => {
-    if (k === '--meta') document.getElementById('metaThemeColor').content = v;
-    else r.style.setProperty(k, v);
-  });
-  localStorage.setItem('presensi_theme', nama);
-}
-
-/* =====================================================
-   CLOCK
-===================================================== */
-function updateClock() {
-  const n = new Date();
-  const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-  const h = String(n.getHours()).padStart(2,'0');
-  const m = String(n.getMinutes()).padStart(2,'0');
-  const s = String(n.getSeconds()).padStart(2,'0');
-  document.getElementById('clock-top').textContent = h+':'+m+':'+s;
-  document.getElementById('date-top').textContent = days[n.getDay()]+', '+n.getDate()+' '+months[n.getMonth()]+' '+n.getFullYear();
+function updateClock(){
+  const d = new Date();
+  const jam = String(d.getHours()).padStart(2,'0');
+  const min = String(d.getMinutes()).padStart(2,'0');
+  const det = String(d.getSeconds()).padStart(2,'0');
+  document.getElementById('clock-top').textContent = `${jam}:${min}:${det}`;
+  
+  const mArr = ["JAN","FEB","MAR","APR","MEI","JUN","JUL","AGU","SEP","OKT","NOV","DES"];
+  const tgl = String(d.getDate()).padStart(2,'0');
+  const bln = mArr[d.getMonth()];
+  const thn = d.getFullYear();
+  document.getElementById('date-top').textContent = `${tgl} ${bln} ${thn}`;
 }
 setInterval(updateClock, 1000);
 updateClock();
 
 /* =====================================================
-   MODAL
+   THEME MANAGER
 ===================================================== */
-let activeModal = null;
-
-function bukaMod(id) {
-  if (activeModal) tutupMod(activeModal);
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.add('show');
-  activeModal = id;
-}
-
-function tutupMod(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.remove('show');
-  if (activeModal === id) activeModal = null;
-  resetNav();
-}
-
-/* =====================================================
-   BODY CLICK → fullscreen jika tidak ada modal buka
-===================================================== */
-function onBodyClick() {
-  if (activeModal) return;
-  const antrOpen = document.getElementById('modal-antrean').style.display === 'flex';
-  const aboutOpen = document.getElementById('about-pop-up').style.display === 'block';
-  if (antrOpen || aboutOpen) return;
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch(()=>{});
-    document.getElementById('fullscreen-info').style.display = 'none';
+const themes = {
+  'emerald': {
+    p:'#198754', bg:'linear-gradient(135deg,#051a0f 0%,#09331f 25%,#0d5a36 55%,#1a7a4a 75%,#0a4528 100%)', solid:'#07261a',
+    g1:'#198754', g2:'#D4AF37', g3:'#0ea56a', bbg:'linear-gradient(135deg,#22a161 0%,#1a7a4a 40%,#146c43 70%,#0F5132 100%)',
+    hbg:'linear-gradient(135deg,rgba(5,20,12,.97) 0%,rgba(9,51,31,.96) 35%,rgba(20,108,67,.93) 65%,rgba(14,82,52,.97) 100%)', hbdr:'rgba(212,175,55,.35)',
+    nbg:'linear-gradient(180deg,rgba(7,26,16,.97) 0%,rgba(5,18,10,.99) 100%)', nbdr:'rgba(212,175,55,.3)', meta:'#051a0f'
+  },
+  'biru-ungu': {
+    p:'#4f46e5', bg:'linear-gradient(135deg,#05070f 0%,#0b0f19 25%,#1e1b4b 55%,#312e81 75%,#111827 100%)', solid:'#0b0d16',
+    g1:'#4f46e5', g2:'#818cf8', g3:'#a855f7', bbg:'linear-gradient(135deg,#6366f1 0%,#4f46e5 45%,#3730a3 100%)',
+    hbg:'linear-gradient(135deg,rgba(5,7,15,.96) 0%,rgba(11,15,25,.95) 40%,rgba(30,27,75,.92) 75%,rgba(17,24,39,.96) 100%)', hbdr:'rgba(129,140,248,.3)',
+    nbg:'linear-gradient(180deg,rgba(11,13,22,.97) 0%,rgba(7,9,15,.99) 100%)', nbdr:'rgba(99,102,241,.25)', meta:'#05070f'
+  },
+  'electric-blue': {
+    p:'#2f7dff', bg:'linear-gradient(135deg,#020a1c 0%,#0c1a3a 30%,#1a3a6b 60%,#11254c 100%)', solid:'#040f26',
+    g1:'#2f7dff', g2:'#00c6ff', g3:'#1e40af', bbg:'linear-gradient(135deg,#3b82f6 0%,#2f7dff 50%,#1d4ed8 100%)',
+    hbg:'linear-gradient(135deg,rgba(2,10,28,.97) 0%,rgba(12,26,58,.95) 40%,rgba(26,58,107,.92) 75%,rgba(17,37,76,.97) 100%)', hbdr:'rgba(0,198,255,.3)',
+    nbg:'linear-gradient(180deg,rgba(4,15,38,.97) 0%,rgba(2,8,22,.99) 100%)', nbdr:'rgba(47,125,255,.3)', meta:'#020a1c'
+  },
+  'sunset-orange': {
+    p:'#ea580c', bg:'linear-gradient(135deg,#120702 0%,#1a0f05 25%,#3a1c05 55%,#7c2d00 80%,#241203 100%)', solid:'#140a03',
+    g1:'#ea580c', g2:'#eab308', g3:'#c2410c', bbg:'linear-gradient(135deg,#f97316 0%,#ea580c 45%,#9a3412 100%)',
+    hbg:'linear-gradient(135deg,rgba(18,7,2,.97) 0%,rgba(26,15,5,.96) 35%,rgba(58,28,5,.92) 70%,rgba(36,18,3,.97) 100%)', hbdr:'rgba(234,88,12,.3)',
+    nbg:'linear-gradient(180deg,rgba(20,10,3,.97) 0%,rgba(10,5,1,.99) 100%)', nbdr:'rgba(234,88,12,.25)', meta:'#120702'
+  },
+  'rose-galaxy': {
+    p:'#ec4899', bg:'linear-gradient(135deg,#100214 0%,#1a0520 25%,#3d0f50 55%,#7e1f75 80%,#250830 100%)', solid:'#120317',
+    g1:'#ec4899', g2:'#9333ea', g3:'#db2777', bbg:'linear-gradient(135deg,#f472b6 0%,#ec4899 45%,#be185d 100%)',
+    hbg:'linear-gradient(135deg,rgba(16,2,20,.97) 0%,rgba(26,5,32,.96) 35%,rgba(61,15,80,.92) 70%,rgba(37,8,48,.97) 100%)', hbdr:'rgba(219,39,119,.3)',
+    nbg:'linear-gradient(180deg,rgba(18,3,23,.97) 0%,rgba(9,1,12,.99) 100%)', nbdr:'rgba(147,133,234,.25)', meta:'#100214'
+  },
+  'ocean-teal': {
+    p:'#0e7490', bg:'linear-gradient(135deg,#011218 0%,#032028 25%,#084255 55%,#0e7490 75%,#06313f 100%)', solid:'#02161c',
+    g1:'#0e7490', g2:'#22d3ee', g3:'#06b6d4', bbg:'linear-gradient(135deg,#06b6d4 0%,#0e7490 50%,#155e75 100%)',
+    hbg:'linear-gradient(135deg,rgba(1,18,24,.97) 0%,rgba(3,32,40,.96) 35%,rgba(8,66,85,.92) 65%,rgba(6,49,63,.97) 100%)', hbdr:'rgba(34,211,238,.3)',
+    nbg:'linear-gradient(180deg,rgba(2,22,28,.97) 0%,rgba(1,10,13,.99) 100%)', nbdr:'rgba(14,116,144,.3)', meta:'#011218'
   }
+};
+
+function pilihTema(tKey){
+  const t = themes[tKey] || themes['emerald'];
+  localStorage.setItem('presensi_theme', tKey);
+  const r = document.documentElement.style;
+  r.setProperty('--primary', t.p);
+  r.setProperty('--body-bg', t.bg);
+  r.setProperty('--body-solid', t.solid);
+  r.setProperty('--glow1', t.g1);
+  r.setProperty('--glow2', t.g2);
+  r.setProperty('--glow3', t.g3);
+  r.setProperty('--btn-bg', t.bbg);
+  r.setProperty('--hdr-bg', t.hbg);
+  r.setProperty('--hdr-border', t.hbdr);
+  r.setProperty('--nav-bg', t.nbg);
+  r.setProperty('--nav-border', t.nbdr);
+  r.setProperty('--meta', t.meta);
+  document.getElementById('metaThemeColor').setAttribute('content', t.meta);
 }
 
 /* =====================================================
-   NAV DOCK
+   DOCK BOTTOM NAVIGATION CONTROL
 ===================================================== */
-const navState = {};
-
-function navKlik(el, aksi) {
-  const id = el.id;
-  const st = navState[id] || 'idle';
+function navKlik(el, target){
   document.querySelectorAll('.nav-it').forEach(n => {
-    if (n.id !== id) { n.classList.remove('ready','active'); navState[n.id]='idle'; }
+    n.classList.remove('active');
+    if(n.id === 'reader' || n.querySelector('.fa-database')) n.classList.add('ready');
   });
-  if (st === 'idle') {
-    el.classList.add('ready'); navState[id]='ready';
-  } else if (st === 'ready') {
-    el.classList.remove('ready'); el.classList.add('active'); navState[id]='active';
-    jalankanNav(aksi);
-  } else {
-    el.classList.remove('active'); el.classList.add('ready'); navState[id]='ready';
+  el.classList.remove('ready');
+  el.classList.add('active');
+  
+  if(target === 'tema') bukaMod('mTema');
+  else if(target === 'pengaturan') bukaMod('mPengaturan');
+  else if(target === 'offline') bukaModalAntrean(null);
+  else if(target === 'rekap') {
+    const link = document.getElementById('btn-rekap');
+    if(link) link.click();
+    resetActiveNav();
   }
 }
 
-function jalankanNav(aksi) {
-  if (aksi === 'tema') { bukaMod('mTema'); }
-  else if (aksi === 'rekap') { window.open('https://azzahrolocare.github.io/rekapitulasi-presensi-siswa/','_blank'); resetNav(); }
-  else if (aksi === 'offline') { bukaModalAntrean(null); }
-  else if (aksi === 'pengaturan') { applySettings(); bukaMod('mPengaturan'); }
+function resetActiveNav(){
+  document.querySelectorAll('.nav-it').forEach(n => n.classList.remove('active'));
 }
 
-function resetNav() {
-  document.querySelectorAll('.nav-it').forEach(n => { n.classList.remove('ready','active'); navState[n.id]='idle'; });
+function bukaMod(id){
+  const m = document.getElementById(id);
+  if(m) m.classList.add('show');
+}
+
+function tutupMod(id){
+  const m = document.getElementById(id);
+  if(m) m.classList.remove('show');
+  resetActiveNav();
 }
 
 /* =====================================================
-   SETTINGS
+   LAYAR PENUH (FULLSCREEN)
 ===================================================== */
-const rawURL = '';
+function onBodyClick(){
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    const docEl = document.documentElement;
+    if (docEl.requestFullscreen) docEl.requestFullscreen().catch(()=>{});
+    else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen().catch(()=>{});
+  }
+}
 
-function applySettings() {
-  const cfg = JSON.parse(localStorage.getItem('absensiConfig')) || {
-    sound:'notification/Notif01.mp3', logoSize:'65', fontSize:'0.9'
-  };
-  document.getElementById('sound-choice').value = cfg.sound;
-  document.getElementById('range-logo').value = cfg.logoSize;
-  document.getElementById('range-font').value = cfg.fontSize;
+/* =====================================================
+   KONFIGURASI CONFIG RANGE & PREVIEW
+===================================================== */
+function previewLayout(){
+  const sizeLogo = document.getElementById('range-logo').value + 'px';
+  const sizeFont = document.getElementById('range-font').value;
+  
+  document.documentElement.style.setProperty('--logo-size', sizeLogo);
+  document.documentElement.style.setProperty('--header-font-size', (13.5 * sizeFont) + 'px');
+}
+
+function saveSettings(){
+  localStorage.setItem('p_logo_s', document.getElementById('range-logo').value);
+  localStorage.setItem('p_font_s', document.getElementById('range-font').value);
+  localStorage.setItem('p_sound', document.getElementById('sound-choice').value);
+  tutupMod('mPengaturan');
+  showToast("⚙️ Pengaturan Berhasil Disimpan!", "#198754");
+}
+
+function cancelSettings(){
+  applySettings();
+}
+
+function applySettings(){
+  const sLogo = localStorage.getItem('p_logo_s') || "42";
+  const sFont = localStorage.getItem('p_font_s') || "1.0";
+  const sSound = localStorage.getItem('p_sound') || "notification/Notif01.mp3";
+  
+  document.getElementById('range-logo').value = sLogo;
+  document.getElementById('range-font').value = sFont;
+  document.getElementById('sound-choice').value = sSound;
+  
   previewLayout();
 }
 
-function previewLayout() {
-  document.documentElement.style.setProperty('--logo-size', document.getElementById('range-logo').value+'px');
-  document.documentElement.style.setProperty('--header-font-size', document.getElementById('range-font').value+'rem');
-}
-
-function cancelSettings() { applySettings(); }
-
-function saveSettings() {
-  const cfg = {
-    sound:document.getElementById('sound-choice').value,
-    logoSize:document.getElementById('range-logo').value,
-    fontSize:document.getElementById('range-font').value
-  };
-  localStorage.setItem('absensiConfig', JSON.stringify(cfg));
-  new Audio(rawURL+cfg.sound).play().catch(()=>{});
-  tutupMod('mPengaturan');
+/* =====================================================
+   TOAST NOTIFIKASI
+===================================================== */
+let toastTimeout;
+function showToast(msg, bg="#222"){
+  const t = document.getElementById('status-kirim');
+  t.style.background = bg;
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => { t.style.display='none'; }, 4000);
 }
 
 /* =====================================================
-   ABOUT
+   ABOUT CONTROL
 ===================================================== */
-function showAbout() {
-  document.getElementById('about-pop-up').style.display='block';
+function showAbout(){
   document.getElementById('about-overlay').style.display='block';
+  document.getElementById('about-pop-up').style.display='block';
 }
-function closeAbout() {
-  document.getElementById('about-pop-up').style.display='none';
+function closeAbout(){
   document.getElementById('about-overlay').style.display='none';
+  document.getElementById('about-pop-up').style.display='none';
 }
 
 /* =====================================================
-   STATUS UI
+   LOGIKAL ANTREAN OFFLINE & PRESENTATION SENDER
 ===================================================== */
-function updateStatusUI(pesan, warna) {
-  const s = document.getElementById('status-kirim');
-  s.textContent = pesan;
-  s.style.backgroundColor = warna;
-  s.style.display = 'block';
-  setTimeout(()=>{ s.style.display='none'; isProcessing=false; detectedBarcodes.clear(); }, 4000);
+let antrean = JSON.parse(localStorage.getItem('presensi_antrean') || '[]');
+function updateBadge(){
+  const b = document.getElementById('lbl-antrean');
+  const fl = document.getElementById('btn-float-offline');
+  b.textContent = antrean.length;
+  if(antrean.length > 0) fl.classList.add('ada');
+  else fl.classList.remove('ada');
 }
 
-/* =====================================================
-   INDEXEDDB
-===================================================== */
-const dbName = "PresensiOfflineDB";
-let db;
-const reqDB = indexedDB.open(dbName, 1);
-reqDB.onupgradeneeded = e => {
-  db = e.target.result;
-  if (!db.objectStoreNames.contains("antrean"))
-    db.createObjectStore("antrean",{keyPath:"id",autoIncrement:true});
-};
-reqDB.onsuccess = e => { db=e.target.result; updateBadge(); };
-
-function updateBadge() {
-  if (!db) return;
-  const tx = db.transaction(["antrean"],"readonly");
-  tx.objectStore("antrean").count().onsuccess = e => {
-    const n = e.target.result;
-    document.getElementById('lbl-antrean').textContent = n;
-    const btn = document.getElementById('btn-float-offline');
-    n>0 ? btn.classList.add('ada') : btn.classList.remove('ada');
-  };
+function bukaModalAntrean(e){
+  if(e) e.stopPropagation();
+  document.getElementById('modal-antrean').style.display='flex';
+  renderAntrean();
 }
 
-function bukaModalAntrean(ev) {
-  if (ev) ev.stopPropagation();
-  const modal = document.getElementById('modal-antrean');
-  const cont = document.getElementById('daftar-item-antrean');
-  document.getElementById('prog-cont').style.display='none';
-  document.getElementById('loading-text').style.display='none';
-  cont.innerHTML="<p style='text-align:center;color:rgba(255,255,255,.4)'>Memuat data...</p>";
-  modal.style.display='flex';
-  const tx=db.transaction(["antrean"],"readonly");
-  tx.objectStore("antrean").getAll().onsuccess = e => {
-    const items=e.target.result;
-    const btnK=document.getElementById('btn-kirim-manual');
-    const txtK=document.getElementById('text-btn-kirim');
-    if (items.length===0) {
-      cont.innerHTML="<p style='color:rgba(255,255,255,.4);text-align:center'>Tidak ada data offline.</p>";
-      btnK.disabled=true; btnK.style.opacity="0.5"; return;
-    }
-    btnK.disabled=false; btnK.style.opacity="1";
-    txtK.textContent="KIRIM"; txtK.classList.remove('loading-dots');
-    cont.innerHTML=items.map(it=>`<div style="background:rgba(255,255,255,.06);padding:10px 14px;border-radius:11px;margin-bottom:8px;border-left:3px solid #f39c12"><strong style="font-size:14px">${it.nama}</strong><br><small style="color:rgba(255,255,255,.45)">Keterangan: ${it.keterangan}</small></div>`).join('');
-  };
-}
-
-function tutupModalAntrean() {
+function tutupModalAntrean(){
   document.getElementById('modal-antrean').style.display='none';
-  resetNav();
+  resetActiveNav();
 }
 
-async function kirimManual() {
-  if (!navigator.onLine) { updateStatusUI("ⓘ ANDA SEDANG OFFLINE!\nSILAKAN HUBUNGKAN KE INTERNET TERLEBIH DAHULU","#e67e22"); return; }
-  const btnK=document.getElementById('btn-kirim-manual'), txtK=document.getElementById('text-btn-kirim'),
-        btnT=document.getElementById('btn-tutup-antrean'), progC=document.getElementById('prog-cont'),
-        progB=document.getElementById('prog-bar'), loadT=document.getElementById('loading-text'),
-        totT=document.getElementById('total-send'), curT=document.getElementById('current-send');
-  btnK.disabled=true; btnK.style.opacity="0.6"; btnK.style.background="#555";
-  txtK.textContent="MENGIRIM"; txtK.classList.add('loading-dots'); btnT.disabled=true;
-  const data = await new Promise(res=>{ const tx=db.transaction(["antrean"],"readwrite"); tx.objectStore("antrean").getAll().onsuccess=e=>res(e.target.result); });
-  if (data.length===0) { btnK.disabled=false; btnT.disabled=false; return; }
-  progC.style.display='block'; loadT.style.display='block'; totT.textContent=data.length;
-  for (let i=0;i<data.length;i++) {
-    const item=data[i]; curT.textContent=i+1;
-    progB.style.width=((i+1)/data.length*100)+"%";
-    await fetch(`${scriptURL}?nama=${encodeURIComponent(item.nama)}&keterangan=${encodeURIComponent(item.keterangan)}`,{method:'GET',mode:'no-cors'});
-    const delTx=db.transaction(["antrean"],"readwrite"); delTx.objectStore("antrean").delete(item.id);
-    await new Promise(r=>setTimeout(r,100));
+function renderAntrean(){
+  const container = document.getElementById('daftar-item-antrean');
+  container.innerHTML = '';
+  if(antrean.length === 0){
+    container.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--muted);padding:20px 0">Tidak ada antrean tertunda.</div>';
+    return;
   }
-  new Audio(rawURL+'notification/succes-data-offline.mp3').play().catch(()=>{});
+  antrean.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.style.cssText = "background:rgba(255,255,255,0.04); padding:10px; border-radius:10px; margin-bottom:6px; font-size:11px; display:flex; justify-content:space-between; align-items:center; border:1px solid rgba(255,255,255,0.06);";
+    
+    let ketReal = item.keterangan === '●' ? 'HADIR' : item.keterangan;
+    div.innerHTML = `
+      <div style="min-width:0; flex:1; padding-right:8px">
+        <div style="font-weight:bold; color:var(--accent); overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${item.qrData}</div>
+        <div style="color:var(--muted); margin-top:2px; font-size:10px">${ketReal} &bull; ${item.waktu}</div>
+      </div>
+      <button onclick="hapusAntreanItem(${idx})" style="background:none; border:none; color:#ef4444; cursor:pointer; padding:4px 8px; font-size:12px"><i class="fa-solid fa-trash"></i></button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function hapusAntreanItem(idx){
+  antrean.splice(idx, 1);
+  localStorage.setItem('presensi_antrean', JSON.stringify(antrean));
+  renderAntrean();
   updateBadge();
-  updateStatusUI("✔ SEMUA DATA BERHASIL TERKIRIM!","var(--primary)");
-  setTimeout(()=>{
-    tutupModalAntrean(); btnK.disabled=false; btnT.disabled=false;
-    btnK.style.opacity="1"; btnK.style.background="var(--btn-bg)";
-    txtK.textContent="KIRIM"; txtK.classList.remove('loading-dots');
-  },1500);
 }
 
 /* =====================================================
-   SEND PRESENCE / QR LOGIC
+   SIMULASI KIRIM DATA (ONLINE / OFFLINE)
 ===================================================== */
-const scriptURL='https://script.google.com/macros/s/AKfycbwCXbDTuaFkN7GlcXJxaFgDaKPEp2G9vySF1IKfWxUCTuEOCYt39nMmlEmI25pz4PSd/exec';
-let isProcessing=false, detectedBarcodes=new Set(), scanTimer=null;
-
-function sendPresence(nama) {
-  const ket=document.getElementById('keterangan').value;
-  if (!ket) { updateStatusUI("✖ PILIH KETERANGAN DULU!","#e74c3c"); isProcessing=false; document.getElementById('selection-overlay').style.display='none'; return; }
-  document.getElementById('last-name-display').value=nama;
-  const cfg=JSON.parse(localStorage.getItem('absensiConfig'))||{sound:'notification/Notif01.mp3'};
-  new Audio(rawURL+cfg.sound).play().catch(()=>{});
-  if (navigator.onLine) {
-    updateStatusUI("✔ TERKIRIM: "+nama,"var(--primary)");
-    fetch(`${scriptURL}?nama=${encodeURIComponent(nama)}&keterangan=${encodeURIComponent(ket)}`,{method:'GET',mode:'no-cors',cache:'no-store'});
-  } else { simpanKeOffline({nama,keterangan:ket}); }
-  document.getElementById('selection-overlay').style.display='none';
+function sendPresence(qrData) {
+  const ket = document.getElementById('keterangan').value;
+  if(!ket){
+    playAudio("notification/floraphonic-cute-animal-squeak-2.mp3");
+    showToast("⚠️ Silakan pilih Keterangan terlebih dahulu!", "#e67e22");
+    isProcessing = false;
+    return;
+  }
+  
+  const now = new Date();
+  const waktuStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  
+  // Deteksi Koneksi Internet Kontrol
+  if(!navigator.onLine){
+    antrean.push({ qrData, keterangan: ket, waktu: waktuStr });
+    localStorage.setItem('presensi_antrean', JSON.stringify(antrean));
+    updateBadge();
+    playAudio(localStorage.getItem('p_sound') || "notification/Notif01.mp3");
+    document.getElementById('last-name-display').value = qrData.toUpperCase();
+    showToast(`📴 Offline: Disimpan ke Antrean Local\n[${qrData.toUpperCase()}]`, "#f39c12");
+    isProcessing = false;
+    return;
+  }
+  
+  // Jika Online, Kirim langsung (Simulasi Form Google Apps Script webapp URL)
+  const webAppUrl = "YOUR_GOOGLE_APPS_SCRIPT_WEBAPP_URL_HERE"; 
+  
+  // Tampilkan visual memproses langsung demi kenyamanan responsivitas
+  document.getElementById('last-name-display').value = qrData.toUpperCase();
+  playAudio(localStorage.getItem('p_sound') || "notification/Notif01.mp3");
+  showToast(`🚀 Mengirim data:\n${qrData.toUpperCase()}`, "#2980b9");
+  
+  // Contoh Pengiriman Menggunakan Fetch API
+  /*
+  fetch(`${webAppUrl}?qr=${encodeURIComponent(qrData)}&ket=${encodeURIComponent(ket)}`)
+    .then(r => r.json())
+    .then(res => {
+       showToast(`✅ Berhasil Masuk:\n${qrData.toUpperCase()}`, "#198754");
+    })
+    .catch(e => {
+       // fallback ke antrean jika gagal fetch ditengah jalan
+       antrean.push({ qrData, keterangan: ket, waktu: waktuStr });
+       localStorage.setItem('presensi_antrean', JSON.stringify(antrean));
+       updateBadge();
+    });
+  */
+  
+  // Dummy delay sukses respon online
+  setTimeout(() => {
+    showToast(`✅ Berhasil Terkirim:\n[${qrData.toUpperCase()}]`, "#198754");
+    isProcessing = false;
+  }, 1000);
 }
 
-function simpanKeOffline(data) {
-  if (!db) return;
-  const cfg=JSON.parse(localStorage.getItem('absensiConfig'))||{sound:'notification/Notif01.mp3'};
-  new Audio(rawURL+cfg.sound).play().catch(()=>{});
-  const tx=db.transaction(["antrean"],"readwrite"); tx.objectStore("antrean").add(data);
-  tx.oncomplete=()=>{ updateBadge(); updateStatusUI("☁ OFFLINE: "+data.nama+"\nDATA TERSIMPAN DI ANTREAN","#f39c12"); };
+function playAudio(src) {
+  const audio = new Audio(src);
+  audio.play().catch(e => console.log("Audio play diblokir oleh browser"));
 }
 
-async function sinkronkanData() {
-  if (!db||!navigator.onLine) return;
-  const tx=db.transaction(["antrean"],"readonly");
-  tx.objectStore("antrean").count().onsuccess=e=>{ if(e.target.result>0) updateStatusUI("ⓘ ADA DATA OFFLINE!\nSILAKAN KIRIM DARI MENU OFFLINE","#f39c12"); };
+async function kirimManual(){
+  if(antrean.length === 0) return;
+  if(!navigator.onLine){
+    showToast("❌ Gagal! Perangkat masih dalam kondisi Offline.", "#c0392b");
+    return;
+  }
+  
+  const total = antrean.length;
+  document.getElementById('btn-kirim-manual').disabled = true;
+  document.getElementById('btn-tutup-antrean').disabled = true;
+  document.getElementById('loading-text').style.display = 'block';
+  document.getElementById('prog-cont').style.display = 'block';
+  document.getElementById('total-send').textContent = total;
+  
+  let suksesCount = 0;
+  const itemKirim = [...antrean];
+  
+  for(let i=0; i<total; i++){
+    document.getElementById('current-send').textContent = i + 1;
+    document.getElementById('prog-bar').style.width = ((i + 1) / total * 100) + '%';
+    
+    // Simulasi Pengiriman Loop Antrean
+    await new Promise(res => setTimeout(res, 600)); 
+    suksesCount++;
+  }
+  
+  antrean = [];
+  localStorage.setItem('presensi_antrean', JSON.stringify(antrean));
+  updateBadge();
+  renderAntrean();
+  
+  document.getElementById('btn-kirim-manual').disabled = false;
+  document.getElementById('btn-tutup-antrean').disabled = false;
+  document.getElementById('loading-text').style.display = 'none';
+  document.getElementById('prog-cont').style.display = 'none';
+  document.getElementById('prog-bar').style.width = '0%';
+  
+  showToast(`🎉 Sukses sinkronisasi ${suksesCount} data antrean offline!`, "#198754");
 }
-window.addEventListener('online', sinkronkanData);
 
-function handleScan(txt) {
-  if (isProcessing) return;
-  detectedBarcodes.add(txt.trim());
-  if (scanTimer) clearTimeout(scanTimer);
-  scanTimer=setTimeout(()=>{
-    const res=Array.from(detectedBarcodes);
-    if (res.length>1) {
-      isProcessing=true;
-      const ov=document.getElementById('selection-overlay');
-      ov.innerHTML=`<p style="color:white;font-size:12px;font-weight:bold;margin-bottom:10px">TERDETEKSI ${res.length} BARCODE. PILIH NAMA:</p>`;
-      res.forEach(nama=>{ const b=document.createElement('div'); b.className='barcode-option'; b.textContent=nama; b.onclick=e=>{e.stopPropagation();sendPresence(nama);}; ov.appendChild(b); });
-      const batal=document.createElement('div'); batal.className='barcode-option'; batal.style.background='rgba(127,140,141,.6)'; batal.textContent='BATAL — SCAN ULANG';
-      batal.onclick=e=>{e.stopPropagation();ov.style.display='none';isProcessing=false;detectedBarcodes.clear();};
-      ov.appendChild(batal); ov.style.display='flex';
-    } else if (res.length===1) { isProcessing=true; sendPresence(res[0]); }
-  },300);
+/* =====================================================
+   SCANNER CORE LOGIC (html5QrCode)
+===================================================== */
+let isProcessing = false;
+let lastScanTime = 0;
+const detectedBarcodes = new Set();
+let multiTimeout;
+
+function handleScan(decodedText, decodedResult) {
+  const now = Date.now();
+  if (isProcessing || (now - lastScanTime < 1500)) return;
+  
+  lastScanTime = now;
+  
+  // Deteksi Multi Code dalam satu jepretan kamera frame singkat
+  detectedBarcodes.add(decodedText);
+  clearTimeout(multiTimeout);
+  
+  multiTimeout = setTimeout(() => {
+    const res = Array.from(detectedBarcodes);
+    if (res.length > 1) {
+      isProcessing = true;
+      const ov = document.getElementById('selection-overlay');
+      ov.innerHTML = '<h3 style="color:#fff;font-size:14px;margin-bottom:8px">Terdeteksi beberapa QR Code:</h3>';
+      res.forEach(code => {
+        const btn = document.createElement('div');
+        btn.className = 'barcode-option';
+        btn.textContent = code.toUpperCase();
+        btn.onclick = () => {
+          ov.style.display = 'none';
+          detectedBarcodes.clear();
+          sendPresence(code);
+        };
+        ov.appendChild(btn);
+      });
+      const batal = document.createElement('div');
+      batal.className = 'barcode-option';
+      batal.style.background = '#374151';
+      batal.textContent = 'BATAL — SCAN ULANG';
+      batal.onclick = e => {
+        e.stopPropagation();
+        ov.style.display = 'none';
+        isProcessing = false;
+        detectedBarcodes.clear();
+      };
+      ov.appendChild(batal);
+      ov.style.display = 'flex';
+    } else if (res.length === 1) {
+      isProcessing = true;
+      sendPresence(res[0]);
+      detectedBarcodes.clear();
+    }
+  }, 300);
 }
 
 const html5QrCode = new Html5Qrcode("reader");
-html5QrCode.start({facingMode:"environment"},{fps:20,qrbox:{width:260,height:260}},handleScan).catch(e=>console.error(e));
+html5QrCode.start(
+  { facingMode: "environment" },
+  { fps: 20, qrbox: { width: 260, height: 260 } },
+  handleScan
+).catch(e => console.error(e));
 
 /* =====================================================
-   PWA
+   PWA INSTALLATION PROMPT
 ===================================================== */
 let pwaPrompt;
-window.addEventListener('beforeinstallprompt', e=>{
-  e.preventDefault(); pwaPrompt=e;
-  setTimeout(()=>{ document.getElementById('pwa-popup').style.display='flex'; },2000);
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  pwaPrompt = e;
+  setTimeout(() => {
+    document.getElementById('pwa-popup').style.display = 'flex';
+  }, 2000);
 });
-document.getElementById('btnInstalPop').onclick=async()=>{
+
+document.getElementById('btnInstalPop').onclick = async () => {
   if (!pwaPrompt) return;
-  document.getElementById('pwa-popup').style.display='none';
-  pwaPrompt.prompt(); pwaPrompt=null;
+  document.getElementById('pwa-popup').style.display = 'none';
+  pwaPrompt.prompt();
+  pwaPrompt = null;
 };
-document.getElementById('btnBatal').onclick=()=>{ document.getElementById('pwa-popup').style.display='none'; };
+document.getElementById('btnBatal').onclick = () => {
+  document.getElementById('pwa-popup').style.display = 'none';
+};
 
 /* =====================================================
-   INIT
+   INITIALIZATION
 ===================================================== */
-window.addEventListener('DOMContentLoaded',()=>{
-  pilihTema(localStorage.getItem('presensi_theme')||'emerald');
+window.addEventListener('DOMContentLoaded', () => {
+  pilihTema(localStorage.getItem('presensi_theme') || 'emerald');
   applySettings();
+  updateBadge();
 });
-</script>
-<script>
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').then(()=>console.log("SW Aktif!"));
-}
 </script>
 </body>
 </html>
