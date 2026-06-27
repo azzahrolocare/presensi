@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rekap Presensi Siswa - SMP/SMK Azzahro</title>
+    
+    <!-- WARNA STATUS BAR BARU -->
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Mengunci ukuran kolom agar konsisten satu layar */
         th, td { 
             min-width: 38px; 
             max-width: 38px;
@@ -15,7 +20,6 @@
             padding: 6px 2px;
             white-space: nowrap;
         }
-        /* Pembatasan ketat kolom nama agar TIDAK tumpang tindih */
         .name-col { 
             min-width: 180px; 
             max-width: 180px; 
@@ -28,7 +32,6 @@
         .rekap-col { min-width: 35px; max-width: 35px; }
         .persen-col { min-width: 50px; max-width: 50px; }
 
-        /* Mengunci warna latar belakang agar TIDAK TRANSPARAN saat digeser */
         .sticky-col {
             position: sticky;
             left: 0;
@@ -47,32 +50,14 @@
 
         /* --- ANIMASI ROTASI HP 3D KEREN --- */
         @keyframes rotate3DDevice {
-            0% {
-                transform: rotate(0deg) rotateY(0deg);
-            }
-            20% {
-                transform: rotate(0deg) rotateY(0deg);
-            }
-            40% {
+            0%, 20%, 90%, 100% { transform: rotate(0deg) rotateY(0deg); }
+            40%, 70% {
                 transform: rotate(-90deg) rotateY(15deg);
                 box-shadow: 15px -15px 30px rgba(0,0,0,0.4);
             }
-            70% {
-                transform: rotate(-90deg) rotateY(15deg);
-                box-shadow: 15px -15px 30px rgba(0,0,0,0.4);
-            }
-            90% {
-                transform: rotate(0deg) rotateY(0deg);
-            }
-            100% {
-                transform: rotate(0deg) rotateY(0deg);
-            }
         }
         
-        .phone-container {
-            perspective: 600px;
-        }
-        
+        .phone-container { perspective: 600px; }
         .animate-phone-3d {
             animation: rotate3DDevice 3.5s infinite ease-in-out;
             transform-style: preserve-3d;
@@ -82,8 +67,8 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans p-2 md:p-4 max-h-screen overflow-y-auto">
 
+    <!-- OVERLAY PAKSA ROTASI RESPONSIVE & ANIMASI 3D KEREN -->
     <div id="rotateOverlay" class="hidden fixed inset-0 bg-slate-900/95 backdrop-blur-md z-50 flex flex-col items-center justify-center text-center p-6 text-white transition-all duration-500">
-        
         <div class="phone-container w-32 h-44 mb-8 flex items-center justify-center">
             <div class="animate-phone-3d w-20 h-36 border-[3px] border-slate-400 bg-slate-800 rounded-2xl relative flex flex-col items-center justify-between p-2">
                 <div class="w-8 h-1 bg-slate-500 rounded-full mt-0.5"></div>
@@ -114,8 +99,9 @@
         </button>
     </div>
 
+    <!-- AREA UTAMA APLIKASI -->
     <div class="max-w-7xl mx-auto bg-white p-4 md:p-6 rounded-xl shadow-md border border-slate-100 relative">
-        
+        <!-- Header Dinamis -->
         <div id="headerDinamis" class="hidden flex items-center justify-between border-b pb-4 mb-4 gap-4">
             <img src="https://github.com/masrahmat-id/absensi-barcode-online-smp-smk-azzahro/raw/main/logo-smp-azzahro.png" alt="Logo SMP Azzahro" class="h-12 w-auto object-contain flex-shrink-0">
             <div class="text-center flex-1">
@@ -131,6 +117,7 @@
             <h1 class="text-lg md:text-xl font-bold text-slate-700 tracking-wide">REKAP PRESENSI SISWA SMPI/SMK AZZAHRO</h1>
         </div>
 
+        <!-- Filter Kelas -->
         <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
             <div class="w-full sm:w-auto flex flex-wrap items-center gap-3">
                 <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -165,6 +152,7 @@
             </div>
         </div>
 
+        <!-- AREA UTAMA TABEL -->
         <div class="relative border border-slate-200 rounded-lg shadow-inner bg-white">
             <div id="containerTabel" class="overflow-x-auto no-scrollbar scroll-smooth">
                 <table class="w-full text-[11px] text-slate-600 border-collapse">
@@ -192,6 +180,7 @@
             </div>
         </div>
 
+        <!-- Area Bottom Rekap -->
         <div id="areaBawahRekap" class="hidden mt-6 border-t pt-4 text-xs text-slate-700 font-medium">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                 <div class="space-y-3">
@@ -229,7 +218,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <script>
@@ -243,10 +231,8 @@
 
         let indexHariMinggu = [];
 
-        // --- SISTEM DETEKSI OTOMATIS ORIENTASI LAYAR ---
         function checkOrientation() {
             const overlay = document.getElementById('rotateOverlay');
-            // Hanya aktif di layar kecil (HP) jika posisi Portrait (tinggi > lebar)
             if (window.innerHeight > window.innerWidth && window.innerWidth < 768) {
                 overlay.classList.remove('hidden');
                 overlay.classList.add('flex');
@@ -258,17 +244,14 @@
 
         function requestFullScreenAndRotate() {
             const docElm = document.documentElement;
-            
-            // Mengaktifkan Fullscreen browser
             if (docElm.requestFullscreen) docElm.requestFullscreen();
             else if (docElm.mozRequestFullScreen) docElm.mozRequestFullScreen();
             else if (docElm.webkitRequestFullScreen) docElm.webkitRequestFullScreen();
             else if (docElm.msRequestFullscreen) docElm.msRequestFullscreen();
 
-            // Kunci orientasi ke Lanskap jika didukung oleh sistem perangkat keras perangkat
             if (screen.orientation && screen.orientation.lock) {
                 screen.orientation.lock('landscape').catch((err) => {
-                    console.log("Kunci rotasi otomatis sistem tidak dapat diubah dari kode web: ", err);
+                    console.log("Kunci rotasi ditolak: ", err);
                 });
             }
         }
@@ -276,7 +259,6 @@
         window.addEventListener('resize', checkOrientation);
         window.addEventListener('orientationchange', checkOrientation);
 
-        // --- LOGIKA GESER TABEL MOUSE (Drag to Scroll) ---
         let isDown = false;
         let startX;
         let scrollLeft;
@@ -300,7 +282,6 @@
             containerTabel.scrollLeft = scrollLeft - walk;
         });
 
-        // Generate Elemen Tanggal 1 s.d 31
         for (let t = 1; t <= 31; t++) {
             const thHari = document.createElement('th');
             thHari.className = "bg-blue-50 text-blue-800 text-[9px] font-semibold p-1 min-w-[38px] max-w-[38px]";
