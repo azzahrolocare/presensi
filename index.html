@@ -95,44 +95,75 @@ body::before{
 
 /* ── TOP NAV ── */
 #topNav{
-  position:fixed;top:0;left:0;right:0;z-index:200;
+  position:relative;z-index:200;
   background:var(--hdr-bg);
   border-bottom:1px solid var(--hdr-border);
-  border-radius:0 0 26px 26px;
+  border-radius:0 0 22px 22px;
   backdrop-filter:blur(28px) saturate(1.8);
   -webkit-backdrop-filter:blur(28px) saturate(1.8);
   box-shadow:0 8px 32px rgba(0,0,0,.4),inset 0 -1px 0 rgba(255,255,255,.06);
   display:flex;align-items:center;justify-content:center;
-  padding: calc(10px + env(safe-area-inset-top)) 16px 10px 16px;
-  min-height: calc(68px + env(safe-area-inset-top));
+  /* fixed height - NEVER shrinks regardless of logo/font slider */
+  height:72px;
+  flex-shrink:0;
+  /* push content below device notch/camera */
+  padding-top:env(safe-area-inset-top, 0px);
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-bottom:0;
 }
-.nav-logos{display:flex;align-items:center;justify-content:center;gap:10px;width:100%}
-.nav-logos img{width:var(--logo-size, 44px);height:var(--logo-size, 44px);object-fit:contain;border-radius:8px;flex-shrink:0}
-.nav-school{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
-.nav-school h1{font-family:'Playfair Display',Georgia,serif;font-size:var(--header-font-size, 14px);font-weight:700;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nav-school p{font-size:calc(var(--header-font-size, 14px) * 0.66);font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-logos{
+  display:flex;align-items:center;justify-content:center;
+  gap:10px;width:100%;
+  /* content is clipped to the fixed 72px bar */
+  overflow:hidden;
+}
+.nav-logos img{
+  /* logo size controlled by slider var, but capped so it never overflows the bar */
+  width:clamp(32px, var(--logo-size, 44px), 52px);
+  height:clamp(32px, var(--logo-size, 44px), 52px);
+  object-fit:contain;border-radius:8px;flex-shrink:0;
+}
+.nav-school{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0;flex:1}
+.nav-school h1{
+  font-family:'Playfair Display',Georgia,serif;
+  /* font size controlled by slider var, capped so it never overflows bar */
+  font-size:clamp(11px, var(--header-font-size, 14px), 17px);
+  font-weight:700;color:var(--text);line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.nav-school p{
+  font-size:clamp(8px, calc(var(--header-font-size, 14px) * 0.66), 12px);
+  font-weight:500;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.04em;margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
 
 /* ── RESPONSIVE HEADER ── */
 @media (max-width:360px){
-  #topNav{padding:8px 10px;min-height:60px}
+  #topNav{height:64px}
 }
 
-/* ── MAIN SCROLL AREA ── */
+/* ── MAIN CONTENT AREA ── */
 #mainScroll{
-  flex:1;overflow-y:auto;overflow-x:hidden;
-  padding:calc(80px + env(safe-area-inset-top)) 16px 96px;
-  display:flex;flex-direction:column;align-items:center;
+  flex:1;
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  align-items:center;
+  padding:10px 12px 10px;
+  min-height:0;
 }
-.main-inner{width:100%;max-width:600px;display:flex;flex-direction:column;gap:12px}
-
-@media (min-width:600px){
-  #mainScroll{padding:calc(90px + env(safe-area-inset-top)) 24px 100px;}
-  .scanner-box{min-height:380px}
+.main-inner{
+  width:100%;max-width:600px;
+  display:flex;flex-direction:column;
+  gap:8px;
+  height:100%;
+  min-height:0;
 }
-@media (min-width:900px){
-  #mainScroll{padding:calc(96px + env(safe-area-inset-top)) 32px 100px;}
-  .main-inner{max-width:720px}
-  .scanner-box{min-height:460px}
+/* scanner expands to fill all leftover space */
+.scanner-box{
+  flex:1;
+  min-height:0;
 }
 
 /* ── DROPDOWN KETERANGAN ── */
@@ -142,9 +173,9 @@ body::before{
   background:var(--glass);
   backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
   border:1.5px solid var(--inp-border);
-  border-radius:16px;color:var(--text);
-  font-size:15px;font-weight:700;font-family:'Inter',sans-serif;
-  padding:14px 46px 14px 18px;outline:none;cursor:pointer;
+  border-radius:14px;color:var(--text);
+  font-size:14px;font-weight:700;font-family:'Inter',sans-serif;
+  padding:10px 46px 10px 16px;outline:none;cursor:pointer;
   box-shadow:var(--glass-shadow);transition:border-color .25s,background .25s;
 }
 .ket-wrap select:focus{border-color:var(--inp-focus-border);background:var(--inp-focus-bg)}
@@ -159,7 +190,7 @@ body::before{
   width:100%;border-radius:22px;overflow:hidden;
   border:2.5px solid var(--scan-border);
   box-shadow:0 0 0 1px rgba(255,255,255,.07),0 12px 40px rgba(0,0,0,.5),0 0 50px var(--scan-glow);
-  background:#000;min-height:300px;position:relative;
+  background:#000;position:relative;
   display:flex;align-items:center;justify-content:center;
   transition:border-color .4s,box-shadow .4s;
 }
@@ -175,8 +206,8 @@ body::before{
   box-shadow:0 0 14px var(--primary),0 0 5px var(--accent);
   animation:scanLine 2.5s ease-in-out infinite;
 }
-#reader{width:100%;height:100%}
-#reader video{object-fit:cover!important;min-height:300px}
+#reader{width:100%;height:100%;position:absolute;inset:0}
+#reader video{width:100%!important;height:100%!important;object-fit:cover!important}
 #selection-overlay{
   position:absolute;inset:0;
   background:rgba(0,0,0,.9);z-index:100;
@@ -193,12 +224,13 @@ body::before{
 
 /* ── LAST SCAN PANEL ── */
 .last-scan{
-  display:flex;align-items:center;gap:12px;
+  display:flex;align-items:center;gap:10px;
   background:var(--glass);
   backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
   border:1.5px solid var(--inp-border);
-  border-radius:16px;padding:12px 16px;
+  border-radius:14px;padding:9px 14px;
   box-shadow:var(--glass-shadow);
+  flex-shrink:0;
 }
 .last-scan-ic{
   width:38px;height:38px;border-radius:10px;flex-shrink:0;
@@ -216,15 +248,16 @@ body::before{
 
 /* ── BOTTOM NAV DOCK ── */
 #bottomNav{
-  position:fixed;bottom:0;left:0;right:0;
-  height:78px;z-index:200;
+  position:relative;
+  height:72px;flex-shrink:0;z-index:200;
   background:var(--nav-bg);
   backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
   border-top:1px solid var(--nav-border);
-  border-radius:28px 28px 0 0;
+  border-radius:22px 22px 0 0;
   box-shadow:0 -10px 40px rgba(0,0,0,.4);
   display:flex;align-items:center;justify-content:space-around;
   padding:0 8px;
+  padding-bottom:env(safe-area-inset-bottom, 0px);
 }
 .nav-it{
   display:flex;flex-direction:column;align-items:center;
@@ -358,7 +391,7 @@ body::before{
 
 /* ── STATUS TOAST ── */
 #status-kirim{
-  position:fixed;top:78px;left:50%;transform:translateX(-50%);
+  position:fixed;top:calc(72px + env(safe-area-inset-top, 0px) + 6px);left:50%;transform:translateX(-50%);
   width:88%;max-width:400px;padding:15px 18px;
   border-radius:16px;z-index:700;display:none;
   color:white;text-align:center;font-weight:800;font-size:13px;line-height:1.45;
@@ -438,7 +471,7 @@ body::before{
     <img src="logo-smp-azzahro.png" alt="SMP">
     <div class="nav-school">
       <h1>PRESENSI DIGITAL</h1>
-      <p>SMP Islam Az-Zahro<br>SMK Az-Zahro</p>
+      <p>SMP Islam Az-Zahro &amp; SMK Az-Zahro</p>
     </div>
     <img src="logo-smk-azzahro.png" alt="SMK">
   </div>
@@ -803,6 +836,7 @@ function applySettings() {
 function previewLayout() {
   const logoVal = document.getElementById('range-logo').value;
   const fontVal = document.getElementById('range-font').value;
+  // clamp applied in CSS via clamp(), JS just sets the variable
   document.documentElement.style.setProperty('--logo-size', logoVal + 'px');
   document.documentElement.style.setProperty('--header-font-size', fontVal + 'px');
 }
