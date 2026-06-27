@@ -53,7 +53,7 @@
         /* Mengubah kursor tabel agar mengindikasikan bisa digeser */
         #containerTabel {
             cursor: grab;
-            user-select: none; /* Mencegah teks terblok secara tidak sengaja saat digeser */
+            user-select: none;
         }
         #containerTabel:active {
             cursor: grabbing;
@@ -85,7 +85,7 @@
             <div class="w-full sm:w-auto flex flex-wrap items-center gap-3">
                 <div class="flex items-center gap-2 w-full sm:w-auto">
                     <label for="pilihKelas" class="font-semibold text-slate-600 text-xs whitespace-nowrap">Pilih Kelas:</label>
-                    <select id="pilihKelas" class="bg-white border border-slate-300 text-slate-900 text-xs rounded-lg block p-2 w-full sm:w-40 shadow-sm font-medium">
+                    <select id="pilihKelas" onchange="muatData()" class="bg-white border border-slate-300 text-slate-900 text-xs rounded-lg block p-2 w-full sm:w-40 shadow-sm font-medium focus:ring-blue-500 focus:border-blue-500">
                         <option value="KELAS 07" selected>KELAS 07</option>
                         <option value="KELAS 08">KELAS 08</option>
                         <option value="KELAS 09">KELAS 09</option>
@@ -95,8 +95,11 @@
                     </select>
                 </div>
                 
-                <button id="btnMuat" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-xs px-4 py-2 shadow transition-all duration-200">
-                    Muat Data
+                <button id="btnRefresh" onclick="muatData()" class="w-full sm:w-auto bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-lg text-xs px-3 py-2 shadow transition-all duration-200 flex items-center justify-center gap-1.5" title="Refresh Data">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    Refresh Data
                 </button>
                 
                 <div id="loadingStatus" class="hidden text-xs text-blue-600 font-semibold flex items-center gap-2">
@@ -131,7 +134,7 @@
                     <tbody id="bodyTabelPresensi" class="divide-y divide-slate-200 bg-white">
                         <tr>
                             <td colspan="37" class="text-center py-10 text-slate-400 italic text-xs">
-                                Silakan pilih kelas di atas terlebih dahulu, kemudian klik tombol "Muat Data".
+                                Silakan pilih kelas di atas untuk menampilkan data rekap.
                             </td>
                         </tr>
                     </tbody>
@@ -190,26 +193,21 @@
 
         let indexHariMinggu = [];
 
-        // FITUR TAMBAHAN: Logika Geser Menggunakan Kursor Tikus (Drag to Scroll)
+        // Logika Geser Menggunakan Kursor Tikus (Drag to Scroll)
         let isDown = false;
         let startX;
         let scrollLeft;
 
         containerTabel.addEventListener('mousedown', (e) => {
             isDown = true;
-            // Ubah ke scroll-auto agar pergeseran kursor terasa instan tanpa delay
             containerTabel.classList.remove('scroll-smooth');
             startX = e.pageX - containerTabel.offsetLeft;
             scrollLeft = containerTabel.scrollLeft;
         });
 
-        containerTabel.addEventListener('mouseleave', () => {
-            isDown = false;
-        });
-
+        containerTabel.addEventListener('mouseleave', () => { isDown = false; });
         containerTabel.addEventListener('mouseup', () => {
             isDown = false;
-            // Kembalikan ke smooth jika ada sistem otomatisasi trigger scroll di kemudian hari
             containerTabel.classList.add('scroll-smooth');
         });
 
@@ -217,7 +215,7 @@
             if (!isDown) return;
             e.preventDefault();
             const x = e.pageX - containerTabel.offsetLeft;
-            const walk = (x - startX) * 1.5; // Angka 1.5 menetapkan kecepatan sensitivitas geser
+            const walk = (x - startX) * 1.5; 
             containerTabel.scrollLeft = scrollLeft - walk;
         });
 
@@ -242,7 +240,8 @@
             document.getElementById('bulanTahunOtomatis').innerText = `${namaBulan[tglSekarang.getMonth()]} ${tglSekarang.getFullYear()}`;
         }
 
-        document.getElementById('btnMuat').addEventListener('click', async () => {
+        // FUNGSI UTAMA UNTUK MEMUAT / REFRESH DATA (Dipicu otomatis oleh dropdown & tombol)
+        async function muatData() {
             const kelas = document.getElementById('pilihKelas').value;
             if (!kelas) return;
 
@@ -312,7 +311,7 @@
             } finally {
                 loading.classList.add('hidden');
             }
-        });
+        }
 
         function renderTable(dataSiswa) {
             const tbody = document.getElementById('bodyTabelPresensi');
@@ -369,7 +368,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             setBulanTahunOtomatis();
-            document.getElementById('btnMuat').click();
+            muatData(); // Otomatis muat kelas awal (KELAS 07) saat halaman dimuat
         });
     </script>
 </body>
