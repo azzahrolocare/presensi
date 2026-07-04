@@ -10,24 +10,24 @@
   "scope": "./",
   "icons": [
     {
-      "src": "icon-apk-presensi-azzahro.png",
+      "src": "icon-presensi.png",
       "type": "image/png",
       "sizes": "180x180"
     },
     {
-      "src": "icon-apk-presensi-azzahro.png",
+      "src": "icon-presensi.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any"
     },
     {
-      "src": "icon-apk-presensi-azzahro.png",
+      "src": "icon-presensi.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
     },
     {
-      "src": "icon-apk-presensi-azzahro.png",
+      "src": "icon-presensi.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
