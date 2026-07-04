@@ -38,25 +38,32 @@ jobs:
         cd cordova-app
         cordova platform add android
         
-        # Tambahkan plugin penting untuk kenyamanan webview dan performa fullscreen
+        # Tambahkan plugin inti UI dan Navigasi
         cordova plugin add cordova-plugin-statusbar
         cordova plugin add cordova-plugin-splashscreen
         cordova plugin add cordova-plugin-inappbrowser
+        
+        # Tambahkan plugin untuk akses Kamera dan Izin Android resmi
+        cordova plugin add cordova-plugin-camera
+        cordova plugin add cordova-plugin-android-permissions
 
     - name: Copy Web Assets to Cordova
       run: |
         # Bersihkan folder www bawaan cordova
         rm -rf cordova-app/www/*
         
-        # Salin semua file dari root repositori (kecuali folder cordova-app dan .github) ke www
+        # Salin semua file dari root repositori ke www
         rsync -av --exclude='cordova-app' --exclude='.github' --exclude='.git' ./ cordova-app/www/
 
-    - name: Configure Cordova config.xml
+    - name: Configure Cordova config.xml & Permissions
       run: |
         cd cordova-app
         # Mengatur agar aplikasi fullscreen dan orientasi portrait
         sed -i '/<\/widget>/i <preference name="Fullscreen" value="true" \/>' config.xml
         sed -i '/<\/widget>/i <preference name="Orientation" value="portrait" \/>' config.xml
+        
+        # Suntikkan dekorasi izin kamera langsung ke dalam manifest android via config.xml
+        sed -i '/<\/widget>/i <platform name="android"><config-file target="AndroidManifest.xml" parent="/*"><uses-permission android:name="android.permission.CAMERA" \/><uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" \/><uses-feature android:name="android.hardware.camera" \/><uses-feature android:name="android.hardware.camera.autofocus" \/><\/config-file><\/platform>' config.xml
         
         # Set icon menggunakan icon-presensi.png
         if [ -f "www/icon-presensi.png" ]; then
@@ -66,7 +73,6 @@ jobs:
     - name: Build Android APK (Debug Signed)
       run: |
         cd cordova-app
-        # Menggunakan build debug agar otomatis ditandatangani dengan debug keystore standar yang valid untuk instalasi internal
         cordova build android --debug -- --packageType=apk
 
     - name: Upload APK Artifact
