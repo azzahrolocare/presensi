@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget id="com.azzahro.presensi" version="1.0.0" xmlns="http://www.w3.org/ns/widgets">
+    <name>Presensi</name>
+
+    <content src="https://azzahro.web.id/presensi/index.html" />
+    <allow-navigation href="*" />
+    <access origin="*" />
+
+    <preference name="Fullscreen" value="true" />
+    <preference name="StatusBarOverlaysWebView" value="true" />
+    <preference name="Orientation" value="portrait" />
+
+    <platform name="android">
+        <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application/activity[@android:name='MainActivity']">
+            <activity android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        </edit-config>
+    </platform>
+</widget>
