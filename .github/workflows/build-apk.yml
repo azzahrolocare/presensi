@@ -38,12 +38,10 @@ jobs:
         cd cordova-app
         cordova platform add android
         
-        # Tambahkan plugin inti UI dan Navigasi
+        # Tambahkan plugin inti UI, Kamera, dan Navigasi
         cordova plugin add cordova-plugin-statusbar
         cordova plugin add cordova-plugin-splashscreen
         cordova plugin add cordova-plugin-inappbrowser
-        
-        # Tambahkan plugin untuk akses Kamera dan Izin Android resmi
         cordova plugin add cordova-plugin-camera
         cordova plugin add cordova-plugin-android-permissions
 
@@ -52,23 +50,27 @@ jobs:
         # Bersihkan folder www bawaan cordova
         rm -rf cordova-app/www/*
         
-        # Salin semua file dari root repositori ke www
-        rsync -av --exclude='cordova-app' --exclude='.github' --exclude='.git' ./ cordova-app/www/
+        # Salin file web utama saja ke folder www cordova agar tidak bentrok dengan patch lama
+        cp -r index.html offline.html rekapitulasi.html sw.js manifest.json *.png cordova-app/www/ 2>/dev/null || true
+        
+        # Jika ada folder tambahan seperti notification, ikut disalin
+        if [ -d "notification" ]; then cp -r notification cordova-app/www/; fi
 
-    - name: Configure Cordova config.xml & Permissions
+    - name: Configure Cordova config.xml (Aman & Bersih)
       run: |
         cd cordova-app
-        # Mengatur agar aplikasi fullscreen dan orientasi portrait
-        sed -i '/<\/widget>/i <preference name="Fullscreen" value="true" \/>' config.xml
-        sed -i '/<\/widget>/i <preference name="Orientation" value="portrait" \/>' config.xml
         
-        # Suntikkan dekorasi izin kamera langsung ke dalam manifest android via config.xml
-        sed -i '/<\/widget>/i <platform name="android"><config-file target="AndroidManifest.xml" parent="/*"><uses-permission android:name="android.permission.CAMERA" \/><uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" \/><uses-feature android:name="android.hardware.camera" \/><uses-feature android:name="android.hardware.camera.autofocus" \/><\/config-file><\/platform>' config.xml
+        # Set Fullscreen dan Orientation
+        sed -i '/<\/widget>/i \    <preference name="Fullscreen" value="true" \/>' config.xml
+        sed -i '/<\/widget>/i \    <preference name="Orientation" value="portrait" \/>' config.xml
         
-        # Set icon menggunakan icon-presensi.png
+        # Set Icon Aplikasi
         if [ -f "www/icon-presensi.png" ]; then
-          sed -i '/<\/widget>/i <icon src="www/icon-presensi.png" \/>' config.xml
+          sed -i '/<\/widget>/i \    <icon src="www/icon-presensi.png" \/>' config.xml
         fi
+        
+        # Tambahkan konfigurasi izin kamera Android secara rapi
+        sed -i '/<\/widget>/i \    <platform name="android">\n        <config-file target="AndroidManifest.xml" parent="/*">\n            <uses-permission android:name="android.permission.CAMERA" \/>\n            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" \/>\n            <uses-feature android:name="android.hardware.camera" \/>\n            <uses-feature android:name="android.hardware.camera.autofocus" \/>\n        <\/config-file>\n    <\/platform>' config.xml
 
     - name: Build Android APK (Debug Signed)
       run: |
