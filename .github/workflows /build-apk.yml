@@ -34,18 +34,22 @@ jobs:
     - name: Install Cordova
       run: npm install -g cordova
 
-    # 4. Buat Proyek dan Struktur Konfigurasi (Digabung agar satu direktori kerja)
+    # 4. Buat Proyek dan Struktur Konfigurasi (SOLUSI FIX AGAR JADI APK)
     - name: Create Cordova App and Generate Config
       run: |
         # 1. Buat proyek dasar Cordova
         cordova create apk-project com.azzahro.presensi "Presensi Az-Zahro"
         cd apk-project
         
+        # PENTING: Buat file index.html dummy di folder www agar Cordova tidak error/salah build
+        mkdir -p www
+        echo "<html><head><script>window.location.href='https://azzahro.web.id/presensi/';</script></head><body>Loading...</body></html>" > www/index.html
+        
         # 2. Manajemen Aset Ikon
         mkdir -p res/icon/android
         curl -L -o res/icon/android/icon.png https://azzahro.web.id/presensi/icon-presensi.png
 
-        # 3. Tulis Ulang config.xml (Sebelum menambahkan platform agar terkonfigurasi dengan benar)
+        # 3. Tulis Ulang config.xml
         cat << 'EOF' > config.xml
         <?xml version='1.0' encoding='utf-8'?>
         <widget id="com.azzahro.presensi" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
@@ -53,16 +57,21 @@ jobs:
             <description>Aplikasi Presensi Digital Az-Zahro</description>
             <author email="dev@azzahro.web.id" href="https://azzahro.web.id">Az-Zahro Team</author>
             
+            <!-- URL Tujuan Utama Aplikasi Anda -->
             <content src="https://azzahro.web.id/presensi/" />
             
+            <!-- Pengaturan Keamanan & Navigasi -->
             <access origin="*" />
-            <allow-navigation href="*" />
-            <allow-intent href="*" />
+            <allow-navigation href="http://*/*" />
+            <allow-navigation href="https://*/*" />
+            <allow-navigation href="https://azzahro.web.id/*" />
+            <allow-intent href="http://*/*" />
+            <allow-intent href="https://*/*" />
             
             <preference name="StayInApp" value="true" />
             <preference name="Fullscreen" value="true" />
 
-            <!-- Android Modern Splash Screen (Android 12+) -->
+            <!-- Android Modern Splash Screen -->
             <preference name="SplashScreenDelay" value="3000" />
             <preference name="AutoHideSplashScreen" value="true" />
             <preference name="FadeSplashScreen" value="true" />
@@ -72,11 +81,12 @@ jobs:
             <platform name="android">
                 <icon src="res/icon/android/icon.png" />
                 <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/icon/android/icon.png" />
+                <preference name="MixedContentMode" value="0" />
             </platform>
         </widget>
         EOF
 
-        # 4. Tambahkan platform Android setelah config.xml diperbarui
+        # 4. Tambahkan platform Android setelah config & www siap
         cordova platform add android
 
     # 5. Proses Kompilasi Menjadi Android APK
