@@ -50,17 +50,17 @@ jobs:
         # Bersihkan folder www bawaan cordova
         rm -rf cordova-app/www/*
         
-        # Salin file web utama saja ke folder www cordova agar tidak bentrok dengan patch lama
+        # Salin file web utama secara aman
         cp -r index.html offline.html rekapitulasi.html sw.js manifest.json *.png cordova-app/www/ 2>/dev/null || true
         
         # Jika ada folder tambahan seperti notification, ikut disalin
         if [ -d "notification" ]; then cp -r notification cordova-app/www/; fi
 
-    - name: Configure Cordova config.xml (Aman & Bersih)
+    - name: Configure Cordova config.xml (Metode Blok Aman)
       run: |
         cd cordova-app
         
-        # Set Fullscreen dan Orientation
+        # Set Fullscreen dan Orientation dasar menggunakan sed sederhana tunggal
         sed -i '/<\/widget>/i \    <preference name="Fullscreen" value="true" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="Orientation" value="portrait" \/>' config.xml
         
@@ -69,8 +69,20 @@ jobs:
           sed -i '/<\/widget>/i \    <icon src="www/icon-presensi.png" \/>' config.xml
         fi
         
-        # Tambahkan konfigurasi izin kamera Android secara rapi
-        sed -i '/<\/widget>/i \    <platform name="android">\n        <config-file target="AndroidManifest.xml" parent="/*">\n            <uses-permission android:name="android.permission.CAMERA" \/>\n            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" \/>\n            <uses-feature android:name="android.hardware.camera" \/>\n            <uses-feature android:name="android.hardware.camera.autofocus" \/>\n        <\/config-file>\n    <\/platform>' config.xml
+        # Buat blok konfigurasi izin kamera Android secara utuh dan aman tanpa mengganggu baris lain
+        cat << 'EOF' > android_permissions.xml
+            <platform name="android">
+                <config-file target="AndroidManifest.xml" parent="/*">
+                    <uses-permission android:name="android.permission.CAMERA" />
+                    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+                    <uses-feature android:name="android.hardware.camera" />
+                    <uses-feature android:name="android.hardware.camera.autofocus" />
+                </config-file>
+            </platform>
+        EOF
+        
+        # Masukkan blok izin di atas tepat sebelum tag penutup </widget>
+        sed -i '/<\/widget>/e cat android_permissions.xml' config.xml
 
     - name: Build Android APK (Debug Signed)
       run: |
@@ -80,5 +92,5 @@ jobs:
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Presensi-Az-Zahro
+        name: Presensi-Az-Zahro-APK
         path: cordova-app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
