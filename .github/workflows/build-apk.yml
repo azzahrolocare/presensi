@@ -1,0 +1,28 @@
+name: Build Cordova APK
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - run: npm install -g cordova
+      - run: |
+          npm install
+          cordova plugin add cordova-plugin-statusbar cordova-plugin-fullscreen
+          cordova platform add android
+      - run: cordova build android --release -- --packageType=apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: presensi-apk
+          path: platforms/android/app/build/outputs/apk/release/*.apk
