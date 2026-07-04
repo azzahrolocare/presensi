@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Mengambil kode dari repositori Anda (Isi sesuai Screenshot_20260704-191818.jpg)
+    # 1. Mengambil kode dari repositori Anda
     - name: Checkout Source Code
       uses: actions/checkout@v4
 
@@ -34,16 +34,20 @@ jobs:
     - name: Install Cordova
       run: npm install -g cordova
 
-    # 4. Inisialisasi dan Konfigurasi Cordova langsung di Root Repositori
-    - name: Configure Cordova App
+    # 4. Buat Proyek Cordova Terpisah (Solusi Bersih)
+    - name: Create Cordova App and Generate Config
       run: |
-        # Membuat folder www dan memindahkan file website Anda ke dalamnya (Standar Cordova)
-        mkdir -p www
+        # Buat proyek terpisah agar tidak tabrakan dengan file root repo Anda
+        cordova create apk-project com.azzahro.presensi "Presensi Az-Zahro"
+        cd apk-project
         
-        # Pindahkan semua file bawaan repo ke folder www (kecuali folder .github dan www itu sendiri)
-        find . -maxdepth 1 ! -name '.' ! -name '..' ! -name '.github' ! -name 'www' -exec mv {} www/ \;
+        # Buat folder untuk ikon bawaan Android
+        mkdir -p res/icon/android
+        
+        # Ambil ikon dari root repositori Anda yang sudah dicheckout tadi
+        cp ../icon-presensi.png res/icon/android/icon.png
 
-        # Buat file config.xml langsung di root
+        # Tulis ulang config.xml dengan benar di dalam apk-project
         cat << 'EOF' > config.xml
         <?xml version='1.0' encoding='utf-8'?>
         <widget id="com.azzahro.presensi" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
@@ -51,10 +55,10 @@ jobs:
             <description>Aplikasi Presensi Digital Az-Zahro</description>
             <author email="dev@azzahro.web.id" href="https://azzahro.web.id">Az-Zahro Team</author>
             
-            <!-- Mengarahkan content langsung ke website utama agar sinkron -->
+            <!-- URL webview tujuan utama Anda -->
             <content src="https://azzahro.web.id/presensi/" />
             
-            <!-- Keamanan Navigasi Webview -->
+            <!-- Pencegahan agar webview tidak terlempar ke luar aplikasi -->
             <access origin="*" />
             <allow-navigation href="http://*/*" />
             <allow-navigation href="https://*/*" />
@@ -73,25 +77,30 @@ jobs:
             <preference name="AndroidWindowSplashScreenBackground" value="#FFFFFF" />
             
             <platform name="android">
-                <!-- Menggunakan ikon yang sudah ada di repo Anda (berdasarkan screenshot) -->
-                <icon src="www/icon-presensi.png" />
-                <preference name="AndroidWindowSplashScreenAnimatedIcon" value="www/icon-presensi.png" />
+                <icon src="res/icon/android/icon.png" />
+                <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/icon/android/icon.png" />
                 <preference name="MixedContentMode" value="0" />
             </platform>
         </widget>
         EOF
 
-        # Tambahkan platform Android
+        # Tambahkan platform android setelah config.xml siap
         cordova platform add android
 
-    # 5. Kompilasi APK (Tanpa masuk ke subfolder lagi)
+    # 5. Kompilasi APK (Masuk ke dalam sub-folder apk-project)
     - name: Build Android APK
       run: |
+        cd apk-project
         cordova build android --debug
 
-    # 6. Unggah File Murni APK (Jalur path diperbaiki tanpa subfolder apk-project)
+    # 6. Pindahkan File APK ke Root dan Beri Nama Unik (Trik Utama Penghilang .tar)
+    - name: Prepare Pure APK File
+      run: |
+        cp apk-project/platforms/android/app/build/outputs/apk/debug/app-debug.apk ./Presensi-Digital-AzZahro.apk
+
+    # 7. Unggah File APK Murni tunggal
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: Presensi-Digital-AzZahro-APK
-        path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
+        path: Presensi-Digital-AzZahro.apk
