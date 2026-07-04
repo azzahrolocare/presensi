@@ -56,11 +56,14 @@ jobs:
         # Jika ada folder tambahan seperti notification, ikut disalin
         if [ -d "notification" ]; then cp -r notification cordova-app/www/; fi
 
-    - name: Configure Cordova config.xml (Metode Blok Aman)
+    - name: Configure Cordova config.xml (Metode Blok Aman & Valid XML)
       run: |
         cd cordova-app
         
-        # Set Fullscreen dan Orientation dasar menggunakan sed sederhana tunggal
+        # SUNTIKKAN NAMESPACE ANDROID (Solusi Eror AttributePrefixUnbound)
+        sed -i 's/<widget/<widget xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android"/g' config.xml
+        
+        # Set Fullscreen dan Orientation dasar
         sed -i '/<\/widget>/i \    <preference name="Fullscreen" value="true" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="Orientation" value="portrait" \/>' config.xml
         
@@ -69,7 +72,7 @@ jobs:
           sed -i '/<\/widget>/i \    <icon src="www/icon-presensi.png" \/>' config.xml
         fi
         
-        # Buat blok konfigurasi izin kamera Android secara utuh dan aman tanpa mengganggu baris lain
+        # Buat blok konfigurasi izin kamera Android secara utuh
         cat << 'EOF' > android_permissions.xml
             <platform name="android">
                 <config-file target="AndroidManifest.xml" parent="/*">
@@ -81,7 +84,7 @@ jobs:
             </platform>
         EOF
         
-        # Masukkan blok izin di atas tepat sebelum tag penutup </widget>
+        # Masukkan blok izin tepat sebelum tag penutup </widget>
         sed -i '/<\/widget>/e cat android_permissions.xml' config.xml
 
     - name: Build Android APK (Debug Signed)
