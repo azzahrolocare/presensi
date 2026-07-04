@@ -1,0 +1,75 @@
+name: Build Android APK (Presensi)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-cache: 'npm'
+        node-version: 18
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '11'
+
+    - name: Install Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Install Cordova
+      run: npm install -g cordova
+
+    - name: Create Cordova Project
+      run: |
+        cordova create cordova-app id.web.azzahro.presensi "Presensi Az-Zahro"
+        cd cordova-app
+        cordova platform add android
+        
+        # Tambahkan plugin penting untuk kenyamanan webview dan performa fullscreen
+        cordova plugin add cordova-plugin-statusbar
+        cordova plugin add cordova-plugin-splashscreen
+        cordova plugin add cordova-plugin-inappbrowser
+
+    - name: Copy Web Assets to Cordova
+      run: |
+        # Bersihkan folder www bawaan cordova
+        rm -rf cordova-app/www/*
+        
+        # Salin semua file dari root repositori (kecuali folder cordova-app dan .github) ke www
+        rsync -av --exclude='cordova-app' --exclude='.github' --exclude='.git' ./ cordova-app/www/
+
+    - name: Configure Cordova config.xml
+      run: |
+        cd cordova-app
+        # Mengatur agar aplikasi fullscreen dan orientasi portrait (opsional)
+        sed -i '/<\/widget>/i <preference name="Fullscreen" value="true" \/>' config.xml
+        sed -i '/<\/widget>/i <preference name="Orientation" value="portrait" \/>' config.xml
+        
+        # Set icon jika ada (menggunakan icon-presensi.png yang terlihat di Screenshot_20260704-205351.jpg)
+        if [ -f "www/icon-presensi.png" ]; then
+          sed -i '/<\/widget>/i <icon src="www/icon-presensi.png" \/>' config.xml
+        fi
+
+    - name: Build Android APK
+      run: |
+        cd cordova-app
+        cordova build android --release -- --packageType=apk
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Presensi-Az-Zahro-APK
+        path: cordova-app/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
