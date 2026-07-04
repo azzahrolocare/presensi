@@ -38,7 +38,7 @@ jobs:
     - name: Create Cordova App and Generate Config
       run: |
         # Membuat proyek dasar Cordova
-        cordova create apk-project com.azzahro.penilaian "Presensi Az-Zahro"
+        cordova create apk-project com.azzahro.presensi "Presensi Az-Zahro"
         cd apk-project
         
         # Menambahkan platform Android resmi
@@ -46,7 +46,7 @@ jobs:
         
         # --- MANAJEMEN ASET IKON ---
         mkdir -p res/icon/android
-        # Mengunduh ikon resmi SmartGrader
+        # Mengunduh ikon resmi Presensi
         curl -L -o res/icon/android/icon.png https://azzahro.web.id/presensi/icon-presensi.png
 
         # --- SOLUSI TOTAL ANTI-ERROR: TULIS ULANG CONFIG.XML ---
@@ -58,7 +58,7 @@ jobs:
             <description>Aplikasi Presensi Digital Az-Zahro</description>
             <author email="dev@azzahro.web.id" href="https://azzahro.web.id">Az-Zahro Team</author>
             
-            <!-- Jalur URL Utama Halaman Penilaian -->
+            <!-- Jalur URL Utama Halaman Presensi -->
             <content src="https://azzahro.web.id/presensi/" />
             
             <!-- Mengizinkan Semua Akses Navigasi Internal (Mencegah Lempar ke Browser) -->
