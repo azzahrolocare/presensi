@@ -1,106 +1,65 @@
-name: Build APK with Splash Screen and Fullscreen
+name: Build Android APK (Cordova)
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  workflow_dispatch: # Memungkinkan Anda menjalankan build secara manual dari tab Actions
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Mengambil kode dari repositori Anda
-    - name: Checkout Source Code
-      uses: actions/checkout@v4
+      # 1. Checkout source code dari repository
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
 
-    # 2. Setup Environment
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
+      # 2. Setup Node.js (diperlukan untuk Cordova)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-size: 18
 
-    - name: Setup JDK 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'zulu'
-        java-version: '17'
+      # 3. Setup Java Development Kit (JDK) untuk Android SDK
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
+      # 4. Setup Android SDK
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-    # 3. Install Cordova secara global
-    - name: Install Cordova
-      run: npm install -g cordova
+      # 5. Install Apache Cordova secara global
+      - name: Install Cordova
+        run: npm install -g cordova
 
-    # 4. Buat Proyek Cordova Terpisah (Solusi Bersih)
-    - name: Create Cordova App and Generate Config
-      run: |
-        # Buat proyek terpisah agar tidak tabrakan dengan file root repo Anda
-        cordova create apk-project com.azzahro.presensi "Presensi Az-Zahro"
-        cd apk-project
-        
-        # Buat folder untuk ikon bawaan Android
-        mkdir -p res/icon/android
-        
-        # Ambil ikon dari root repositori Anda yang sudah dicheckout tadi
-        cp ../icon-presensi.png res/icon/android/icon.png
+      # 6. Membuat project Cordova baru dan memindahkan file web Anda ke dalamnya
+      - name: Create Cordova Project & Prepare Files
+        run: |
+          cordova create my-app com.azzahro.presensi Presensi
+          cd my-app
+          # Hapus file bawaan Cordova di folder www
+          rm -rf www/*
+          # Salin semua file dari repository (kecuali folder my-app itu sendiri dan .github) ke folder www
+          cp -r ../* . || true
+          rm -rf my-app .github .git
+          mv * www/ || true
+          
+          # Tambahkan platform Android
+          cordova platform add android
 
-        # Tulis ulang config.xml dengan benar di dalam apk-project
-        cat << 'EOF' > config.xml
-        <?xml version='1.0' encoding='utf-8'?>
-        <widget id="com.azzahro.presensi" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-            <name>Presensi Az-Zahro</name>
-            <description>Aplikasi Presensi Digital Az-Zahro</description>
-            <author email="dev@azzahro.web.id" href="https://azzahro.web.id">Az-Zahro Team</author>
-            
-            <!-- URL webview tujuan utama Anda -->
-            <content src="https://azzahro.web.id/presensi/" />
-            
-            <!-- Pencegahan agar webview tidak terlempar ke luar aplikasi -->
-            <access origin="*" />
-            <allow-navigation href="http://*/*" />
-            <allow-navigation href="https://*/*" />
-            <allow-navigation href="https://azzahro.web.id/*" />
-            <allow-intent href="http://*/*" />
-            <allow-intent href="https://*/*" />
-            
-            <preference name="StayInApp" value="true" />
-            <preference name="Fullscreen" value="true" />
+      # 7. Build APK (Unaligned / Debug APK)
+      - name: Build Android APK
+        run: |
+          cd my-app
+          cordova build android --debug
 
-            <!-- Splash Screen Android Modern -->
-            <preference name="SplashScreenDelay" value="3000" />
-            <preference name="AutoHideSplashScreen" value="true" />
-            <preference name="FadeSplashScreen" value="true" />
-            <preference name="FadeSplashScreenDuration" value="500" />
-            <preference name="AndroidWindowSplashScreenBackground" value="#FFFFFF" />
-            
-            <platform name="android">
-                <icon src="res/icon/android/icon.png" />
-                <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/icon/android/icon.png" />
-                <preference name="MixedContentMode" value="0" />
-            </platform>
-        </widget>
-        EOF
-
-        # Tambahkan platform android setelah config.xml siap
-        cordova platform add android
-
-    # 5. Kompilasi APK (Masuk ke dalam sub-folder apk-project)
-    - name: Build Android APK
-      run: |
-        cd apk-project
-        cordova build android --debug
-
-    # 6. Pindahkan File APK ke Root dan Beri Nama Unik (Trik Utama Penghilang .tar)
-    - name: Prepare Pure APK File
-      run: |
-        cp apk-project/platforms/android/app/build/outputs/apk/debug/app-debug.apk ./Presensi-Digital-AzZahro.apk
-
-    # 7. Unggah File APK Murni tunggal
-    - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: Presensi-Digital-AzZahro-APK
-        path: Presensi-Digital-AzZahro.apk
+      # 8. Upload Hasil APK agar bisa di-download
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: presensi-app-debug
+          path: my-app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
