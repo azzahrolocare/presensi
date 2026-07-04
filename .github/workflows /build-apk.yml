@@ -1,65 +1,68 @@
-name: Build Android APK (Cordova)
+name: Build Android APK (Cordova 100% Fixed)
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch: # Memungkinkan Anda menjalankan build secara manual dari tab Actions
+  workflow_dispatch: # Memungkinkan klik manual dari tab Actions
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-      # 1. Checkout source code dari repository
+      # 1. Ambil kode dari repo
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js (diperlukan untuk Cordova)
+      # 2. Setup Node.js (Versi LTS Stabil)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-size: 18
+          node-version: '18'
 
-      # 3. Setup Java Development Kit (JDK) untuk Android SDK
-      - name: Setup JDK 17
+      # 3. Setup Java (JDK 11 wajib untuk Cordova Android versi stabil)
+      - name: Setup JDK 11
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '11'
 
-      # 4. Setup Android SDK
+      # 4. Setup Android SDK secara otomatis
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      # 5. Install Apache Cordova secara global
+      # 5. Install Cordova CLI global
       - name: Install Cordova
         run: npm install -g cordova
 
-      # 6. Membuat project Cordova baru dan memindahkan file web Anda ke dalamnya
-      - name: Create Cordova Project & Prepare Files
+      # 6. Inisialisasi Project Cordova & Menyalin File Web Anda
+      - name: Initialize Cordova Project and Inject Code
         run: |
-          cordova create my-app com.azzahro.presensi Presensi
-          cd my-app
-          # Hapus file bawaan Cordova di folder www
-          rm -rf www/*
-          # Salin semua file dari repository (kecuali folder my-app itu sendiri dan .github) ke folder www
-          cp -r ../* . || true
-          rm -rf my-app .github .git
-          mv * www/ || true
+          # Buat proyek Cordova sementara
+          cordova create cordova_project com.azzahro.presensi Presensi
           
-          # Tambahkan platform Android
-          cordova platform add android
+          # Bersihkan file template bawaan cordova
+          rm -rf cordova_project/www/*
+          
+          # Pindahkan index.html, sw.js, manifest.json, dan semua gambar ke dalam folder www Cordova
+          # Menggunakan rsync agar aman dari error circular copy
+          rsync -av --exclude='cordova_project' --exclude='.git' --exclude='.github' ./ cordova_project/www/
+          
+          cd cordova_project
+          # Mengunci versi android platform yang stabil dengan JDK 11
+          cordova platform add android@10.1.2 --save
 
-      # 7. Build APK (Unaligned / Debug APK)
-      - name: Build Android APK
+      # 7. Proses Kompilasi APK
+      - name: Build Android APK (Debug)
         run: |
-          cd my-app
-          cordova build android --debug
+          cd cordova_project
+          cordova build android --debug --device
 
-      # 8. Upload Hasil APK agar bisa di-download
+      # 8. Upload File APK ke GitHub Artifacts (100% Terdeteksi)
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: presensi-app-debug
-          path: my-app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          name: Aplikasi-Presensi-APK
+          path: cordova_project/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error # Jika gagal buat APK, langkah ini langsung melontarkan error informatif
