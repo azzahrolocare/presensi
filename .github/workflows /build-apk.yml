@@ -30,27 +30,22 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
 
-    # 3. Install Cordova
+    # 3. Install Cordova secara global
     - name: Install Cordova
       run: npm install -g cordova
 
-    # 4. Buat Proyek dan Tulis Ulang Konfigurasi Secara Bersih (Anti-Error)
+    # 4. Buat Proyek dan Struktur Konfigurasi (Digabung agar satu direktori kerja)
     - name: Create Cordova App and Generate Config
       run: |
-        # Membuat proyek dasar Cordova
+        # 1. Buat proyek dasar Cordova
         cordova create apk-project com.azzahro.presensi "Presensi Az-Zahro"
         cd apk-project
         
-        # Menambahkan platform Android resmi
-        cordova platform add android
-        
-        # --- MANAJEMEN ASET IKON ---
+        # 2. Manajemen Aset Ikon
         mkdir -p res/icon/android
-        # Mengunduh ikon resmi Presensi
         curl -L -o res/icon/android/icon.png https://azzahro.web.id/presensi/icon-presensi.png
 
-        # --- SOLUSI TOTAL ANTI-ERROR: TULIS ULANG CONFIG.XML ---
-        # Metode ini menggantikan perintah 'sed' yang rapuh dengan menulis file XML yang valid dan bersih dari awal
+        # 3. Tulis Ulang config.xml (Sebelum menambahkan platform agar terkonfigurasi dengan benar)
         cat << 'EOF' > config.xml
         <?xml version='1.0' encoding='utf-8'?>
         <widget id="com.azzahro.presensi" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
@@ -58,38 +53,31 @@ jobs:
             <description>Aplikasi Presensi Digital Az-Zahro</description>
             <author email="dev@azzahro.web.id" href="https://azzahro.web.id">Az-Zahro Team</author>
             
-            <!-- Jalur URL Utama Halaman Presensi -->
             <content src="https://azzahro.web.id/presensi/" />
             
-            <!-- Mengizinkan Semua Akses Navigasi Internal (Mencegah Lempar ke Browser) -->
             <access origin="*" />
             <allow-navigation href="*" />
             <allow-intent href="*" />
             
-            <!-- Pengaturan Aplikasi Tetap Berjalan di Dalam Webview -->
             <preference name="StayInApp" value="true" />
-
-            <!-- Pengaturan Layar Penuh Total (Sinyal, Baterai, Jam Tersembunyi) -->
             <preference name="Fullscreen" value="true" />
 
-            <!-- Konfigurasi Manajemen Splash Screen Adaptif Sesuai Standar Android Modern -->
+            <!-- Android Modern Splash Screen (Android 12+) -->
             <preference name="SplashScreenDelay" value="3000" />
             <preference name="AutoHideSplashScreen" value="true" />
             <preference name="FadeSplashScreen" value="true" />
             <preference name="FadeSplashScreenDuration" value="500" />
+            <preference name="AndroidWindowSplashScreenBackground" value="#FFFFFF" />
             
-            <!-- Mengikuti Tema Latar HP (Light/Dark Mode) Secara Otomatis -->
-            <preference name="AndroidWindowSplashScreenBackground" value="?android:attr/colorBackground" />
-            
-            <!-- Konfigurasi Khusus Platform Android -->
             <platform name="android">
-                <!-- Ikon Utama Aplikasi -->
                 <icon src="res/icon/android/icon.png" />
-                <!-- Menjadikan Ikon Utama Sebagai Splash Screen Yang Akan Dipotong Radius Secara Otomatis Oleh Sistem Android -->
                 <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/icon/android/icon.png" />
             </platform>
         </widget>
         EOF
+
+        # 4. Tambahkan platform Android setelah config.xml diperbarui
+        cordova platform add android
 
     # 5. Proses Kompilasi Menjadi Android APK
     - name: Build Android APK
