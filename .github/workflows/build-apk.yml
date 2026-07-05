@@ -80,6 +80,12 @@ jobs:
         # Set Ikon Utama Aplikasi
         sed -i '/<\/widget>/i \    <icon src="icon-presensi.png" \/>' config.xml
         
+        # KEBIJAKAN WHITELIST AKSES JARINGAN (Solusi Fetch/XHR Terblokir di Cordova)
+        sed -i '/<\/widget>/i \    <access origin="*" \/>' config.xml
+        sed -i '/<\/widget>/i \    <allow-navigation href="*" \/>' config.xml
+        sed -i '/<\/widget>/i \    <allow-intent href="http:\/\/*\/*" \/>' config.xml
+        sed -i '/<\/widget>/i \    <allow-intent href="https:\/\/*\/*" \/>' config.xml
+        
         # KONFIGURASI SPLASH SCREEN MODERN (Android 12+ API Compliant)
         sed -i '/<\/widget>/i \    <preference name="AndroidWindowSplashScreenAnimatedIcon" value="icon-presensi.png" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="AndroidWindowSplashScreenBackground" value="#ffffff" \/>' config.xml
@@ -90,6 +96,8 @@ jobs:
         cat << 'EOF' > android_permissions.xml
             <platform name="android">
                 <config-file target="AndroidManifest.xml" parent="/manifest">
+                    <uses-permission android:name="android.permission.INTERNET" />
+                    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
                     <uses-permission android:name="android.permission.CAMERA" />
                     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
                     <uses-feature android:name="android.hardware.camera" android:required="true" />
