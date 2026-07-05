@@ -40,7 +40,6 @@ jobs:
         
         # Tambahkan plugin inti UI, Kamera, Navigasi, dan Orientasi Layar
         cordova plugin add cordova-plugin-statusbar
-        cordova plugin add cordova-plugin-splashscreen
         cordova plugin add cordova-plugin-inappbrowser
         cordova plugin add cordova-plugin-camera
         cordova plugin add cordova-plugin-android-permissions
@@ -54,34 +53,38 @@ jobs:
         # Salin file web utama secara aman
         cp -r index.html offline.html rekapitulasi.html sw.js manifest.json *.png cordova-app/www/ 2>/dev/null || true
         
-        # OTOMATISASI LANDSCAPE KHUSUS REKAPITULASI (TANPA EDIT MANUAL)
+        # Unduh ikon resmi langsung ke root proyek untuk digunakan sebagai aset build
+        curl -s -L -o cordova-app/icon-presensi.png https://azzahro.web.id/presensi/icon-presensi.png
+        cp cordova-app/icon-presensi.png cordova-app/www/icon-presensi.png
+        
+        # OTOMATISASI LANDSCAPE KHUSUS REKAPITULASI
         sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("landscape"); } }, false);<\/script><\/body>/g' cordova-app/www/rekapitulasi.html
         
-        # OTOMATISASI PORTRAIT KHUSUS INDEX (Mencegah Layar Ikut Landscape Saat Kembali)
+        # OTOMATISASI PORTRAIT KHUSUS INDEX
         sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("portrait"); } }, false);<\/script><\/body>/g' cordova-app/www/index.html
         
         # Jika ada folder tambahan seperti notification, ikut disalin
         if [ -d "notification" ]; then cp -r notification cordova-app/www/; fi
 
-    - name: Configure Cordova config.xml (Perbaikan Struktur XML Manifest)
+    - name: Configure Cordova config.xml (Perbaikan Struktur XML Manifest & Splash Modern)
       run: |
         cd cordova-app
         
         # SUNTIKKAN NAMESPACE ANDROID (Solusi Eror AttributePrefixUnbound)
         sed -i 's/<widget/<widget xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android"/g' config.xml
         
-        # Set Fullscreen dan Orientation dasar (index.html tetap portrait)
+        # Set Fullscreen dan Orientation dasar
         sed -i '/<\/widget>/i \    <preference name="Fullscreen" value="true" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="Orientation" value="portrait" \/>' config.xml
         
-        # Set Icon Aplikasi dan Splash Screen
-        if [ -f "www/icon-presensi.png" ]; then
-          sed -i '/<\/widget>/i \    <icon src="www/icon-presensi.png" \/>' config.xml
-          sed -i '/<\/widget>/i \    <splash src="www/icon-presensi.png" \/>' config.xml
-          sed -i '/<\/widget>/i \    <preference name="SplashScreenDelay" value="3000" \/>' config.xml
-          sed -i '/<\/widget>/i \    <preference name="FadeSplashScreenDuration" value="300" \/>' config.xml
-          sed -i '/<\/widget>/i \    <preference name="SplashScreenBackgroundColor" value="#ffffff" \/>' config.xml
-        fi
+        # Set Ikon Utama Aplikasi
+        sed -i '/<\/widget>/i \    <icon src="icon-presensi.png" \/>' config.xml
+        
+        # KONFIGURASI SPLASH SCREEN MODERN (Android 12+ API Compliant)
+        sed -i '/<\/widget>/i \    <preference name="AndroidWindowSplashScreenAnimatedIcon" value="icon-presensi.png" \/>' config.xml
+        sed -i '/<\/widget>/i \    <preference name="AndroidWindowSplashScreenBackground" value="#ffffff" \/>' config.xml
+        sed -i '/<\/widget>/i \    <preference name="AutoHideSplashScreen" value="true" \/>' config.xml
+        sed -i '/<\/widget>/i \    <preference name="SplashScreenDelay" value="3000" \/>' config.xml
         
         # Buat blok konfigurasi izin dengan parent /manifest yang benar sesuai AAPT
         cat << 'EOF' > android_permissions.xml
