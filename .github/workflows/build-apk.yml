@@ -56,7 +56,11 @@ jobs:
         
         # OTOMATISASI LANDSCAPE KHUSUS REKAPITULASI (TANPA EDIT MANUAL)
         # Skrip ini menyuntikkan kode Cordova sebelum tag </body> untuk mengunci layar ke landscape
-        sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("landscape"); checkOrientation(); } }, false);<\/script><\/body>/g' cordova-app/www/rekapitulasi.html
+        sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("landscape"); } }, false);<\/script><\/body>/g' cordova-app/www/rekapitulasi.html
+        
+        # OTOMATISASI PORTRAIT KHUSUS INDEX (Mencegah Layar Ikut Landscape Saat Kembali)
+        # Skrip ini memaksa layar kembali ke portrait saat pengguna membuka kembali halaman utama
+        sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("portrait"); } }, false);<\/script><\/body>/g' cordova-app/www/index.html
         
         # Jika ada folder tambahan seperti notification, ikut disalin
         if [ -d "notification" ]; then cp -r notification cordova-app/www/; fi
