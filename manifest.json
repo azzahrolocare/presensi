@@ -12,22 +12,32 @@
     {
       "src": "icon-presensi.png",
       "type": "image/png",
+      "sizes": "144x144"
+    },
+    {
+      "src": "icon-presensi.png",
+      "type": "image/png",
       "sizes": "180x180"
     },
     {
       "src": "icon-presensi.png",
       "type": "image/png",
-      "sizes": "192x192",
+      "sizes": "192x192"
     },
     {
       "src": "icon-presensi.png",
       "type": "image/png",
-      "sizes": "512x512",
+      "sizes": "256x256"
     },
     {
       "src": "icon-presensi.png",
       "type": "image/png",
-      "sizes": "512x512",
+      "sizes": "384x384"
+    },
+    {
+      "src": "icon-presensi.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ]
 }
