@@ -38,12 +38,13 @@ jobs:
         cd cordova-app
         cordova platform add android
         
-        # Tambahkan plugin inti UI, Kamera, dan Navigasi
+        # Tambahkan plugin inti UI, Kamera, Navigasi, dan Orientasi Layar
         cordova plugin add cordova-plugin-statusbar
         cordova plugin add cordova-plugin-splashscreen
         cordova plugin add cordova-plugin-inappbrowser
         cordova plugin add cordova-plugin-camera
         cordova plugin add cordova-plugin-android-permissions
+        cordova plugin add cordova-plugin-screen-orientation
 
     - name: Copy Web Assets to Cordova
       run: |
@@ -52,6 +53,10 @@ jobs:
         
         # Salin file web utama secara aman
         cp -r index.html offline.html rekapitulasi.html sw.js manifest.json *.png cordova-app/www/ 2>/dev/null || true
+        
+        # OTOMATISASI LANDSCAPE KHUSUS REKAPITULASI (TANPA EDIT MANUAL)
+        # Skrip ini menyuntikkan kode Cordova sebelum tag </body> untuk mengunci layar ke landscape
+        sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("landscape"); checkOrientation(); } }, false);<\/script><\/body>/g' cordova-app/www/rekapitulasi.html
         
         # Jika ada folder tambahan seperti notification, ikut disalin
         if [ -d "notification" ]; then cp -r notification cordova-app/www/; fi
@@ -63,7 +68,7 @@ jobs:
         # SUNTIKKAN NAMESPACE ANDROID (Solusi Eror AttributePrefixUnbound)
         sed -i 's/<widget/<widget xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android"/g' config.xml
         
-        # Set Fullscreen dan Orientation dasar
+        # Set Fullscreen dan Orientation dasar (index.html tetap portrait)
         sed -i '/<\/widget>/i \    <preference name="Fullscreen" value="true" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="Orientation" value="portrait" \/>' config.xml
         
