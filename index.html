@@ -632,6 +632,7 @@ body::before{
   </div>
 </div>
 
+<script src="cordova.js"></script>
 <script>
 /* =====================================================
    DAFTAR_TEMA
@@ -978,8 +979,45 @@ function handleScan(txt) {
 }
 
 const html5QrCode = new Html5Qrcode("reader");
-html5QrCode.start({facingMode:"environment"},{fps:20,qrbox:{width:260,height:260}},handleScan).catch(e=>console.error(e));
 
+// Dengarkan event saat Cordova siap di Android
+document.addEventListener("deviceready", onDeviceReady, false);
+
+function onDeviceReady() {
+  // Cek apakah plugin permission tersedia (berjalan di dalam APK)
+  if (window.cordova && cordova.plugins && cordova.plugins.permissions) {
+    const permissions = cordova.plugins.permissions;
+    
+    // Minta izin kamera secara runtime ke sistem Android
+    permissions.requestPermission(permissions.CAMERA, function(status) {
+      if (status.hasPermission) {
+        // Jika izin diberikan, jalankan kamera scanner
+        nyalakanKamera();
+      } else {
+        alert("Aplikasi memerlukan izin kamera untuk melakukan scan presensi.");
+      }
+    }, function() {
+      alert("Gagal memproses permintaan izin kamera.");
+    });
+  } else {
+    // Jalankan langsung jika dibuka via Browser biasa/PWA Web
+    nyalakanKamera();
+  }
+}
+
+function nyalakanKamera() {
+  html5QrCode.start(
+    { facingMode: "environment" },
+    { fps: 20, qrbox: { width: 260, height: 260 } },
+    handleScan
+  ).catch(e => {
+    console.error("Gagal menyalakan kamera: ", e);
+  });
+}
+
+/* =====================================================
+   PWA
+===================================================== */
 /* =====================================================
    PWA
 ===================================================== */
