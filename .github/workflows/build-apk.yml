@@ -55,11 +55,9 @@ jobs:
         cp -r index.html offline.html rekapitulasi.html sw.js manifest.json *.png cordova-app/www/ 2>/dev/null || true
         
         # OTOMATISASI LANDSCAPE KHUSUS REKAPITULASI (TANPA EDIT MANUAL)
-        # Skrip ini menyuntikkan kode Cordova sebelum tag </body> untuk mengunci layar ke landscape
         sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("landscape"); } }, false);<\/script><\/body>/g' cordova-app/www/rekapitulasi.html
         
         # OTOMATISASI PORTRAIT KHUSUS INDEX (Mencegah Layar Ikut Landscape Saat Kembali)
-        # Skrip ini memaksa layar kembali ke portrait saat pengguna membuka kembali halaman utama
         sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("portrait"); } }, false);<\/script><\/body>/g' cordova-app/www/index.html
         
         # Jika ada folder tambahan seperti notification, ikut disalin
@@ -76,9 +74,13 @@ jobs:
         sed -i '/<\/widget>/i \    <preference name="Fullscreen" value="true" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="Orientation" value="portrait" \/>' config.xml
         
-        # Set Icon Aplikasi
+        # Set Icon Aplikasi dan Splash Screen
         if [ -f "www/icon-presensi.png" ]; then
           sed -i '/<\/widget>/i \    <icon src="www/icon-presensi.png" \/>' config.xml
+          sed -i '/<\/widget>/i \    <splash src="www/icon-presensi.png" \/>' config.xml
+          sed -i '/<\/widget>/i \    <preference name="SplashScreenDelay" value="3000" \/>' config.xml
+          sed -i '/<\/widget>/i \    <preference name="FadeSplashScreenDuration" value="300" \/>' config.xml
+          sed -i '/<\/widget>/i \    <preference name="SplashScreenBackgroundColor" value="#ffffff" \/>' config.xml
         fi
         
         # Buat blok konfigurasi izin dengan parent /manifest yang benar sesuai AAPT
