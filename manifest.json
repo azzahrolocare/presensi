@@ -4,7 +4,7 @@
   "description": "Aplikasi Presensi Digital SMP Islam Az-Zahro & SMK Az-Zahro",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#121212",
+  "background_color": "#FFFFFF",
   "theme_color": "#121212",
   "orientation": "portrait",
   "scope": "./",
@@ -18,19 +18,16 @@
       "src": "icon-presensi.png",
       "type": "image/png",
       "sizes": "192x192",
-      "purpose": "any"
     },
     {
       "src": "icon-presensi.png",
       "type": "image/png",
       "sizes": "512x512",
-      "purpose": "any"
     },
     {
       "src": "icon-presensi.png",
       "type": "image/png",
       "sizes": "512x512",
-      "purpose": "maskable"
     }
   ]
 }
