@@ -1059,6 +1059,13 @@ window.addEventListener('DOMContentLoaded',()=>{
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('./sw.js').then(()=>console.log("SW Aktif!"));
 }
+
+document.addEventListener("deviceready", () => {
+    if(window.screen && window.screen.orientation) {
+        window.screen.orientation.lock("portrait");
+    }
+}, false);
+  
 </script>
 </body>
 </html>
