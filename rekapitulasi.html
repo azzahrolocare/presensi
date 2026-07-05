@@ -9,6 +9,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
+    <!-- Tambahkan library script cordova.js agar API screen orientation bawaan plugin bisa terbaca -->
+    <script src="cordova.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         th, td { 
@@ -265,7 +267,12 @@
                 docElm.msRequestFullscreen();
             }
 
-            if (screen.orientation && screen.orientation.lock) {
+            // Integrasi pendukung rotasi bawaan plugin screen orientation Cordova
+            if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
+                window.screen.orientation.lock('landscape').catch((err) => {
+                    console.log("Kunci rotasi plugin: ", err);
+                });
+            } else if (screen.orientation && screen.orientation.lock) {
                 screen.orientation.lock('landscape').catch((err) => {
                     console.log("Kunci rotasi tidak diizinkan sistem: ", err);
                 });
@@ -442,6 +449,17 @@
                 tbody.appendChild(tr);
             });
         }
+
+        // Jalankan inisialisasi orientasi otomatis khusus Cordova deviceready
+        document.addEventListener("deviceready", () => {
+            if (window.screen && window.screen.orientation) {
+                window.screen.orientation.lock("landscape").then(() => {
+                    checkOrientation();
+                }).catch((err) => {
+                    console.log("Gagal mengunci orientasi:", err);
+                });
+            }
+        }, false);
 
         window.addEventListener('DOMContentLoaded', () => {
             setBulanTahunOtomatis();
