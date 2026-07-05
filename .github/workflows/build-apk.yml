@@ -12,74 +12,72 @@ jobs:
 
     steps:
     - name: Checkout Source Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v3[cite: 1]
 
     - name: Set up Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v3[cite: 1]
       with:
-        node-cache: 'npm'
-        node-version: 18
+        node-cache: 'npm'[cite: 1]
+        node-version: 18[cite: 1]
 
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v3[cite: 1]
       with:
-        distribution: 'zulu'
-        java-version: '17'
+        distribution: 'zulu'[cite: 1]
+        java-version: '17'[cite: 1]
 
     - name: Install Android SDK
-      uses: android-actions/setup-android@v3
+      uses: android-actions/setup-android@v3[cite: 1]
 
     - name: Install Cordova
-      run: npm install -g cordova
+      run: npm install -g cordova[cite: 1]
 
     - name: Create Cordova Project
       run: |
-        cordova create cordova-app id.web.azzahro.presensi "Presensi Az-Zahro"
-        cd cordova-app
-        cordova platform add android
+        cordova create cordova-app id.web.azzahro.presensi "Presensi Az-Zahro"[cite: 1]
+        cd cordova-app[cite: 1]
+        cordova platform add android[cite: 1]
         
         # Tambahkan plugin inti UI, Kamera, dan Navigasi
-        cordova plugin add cordova-plugin-statusbar
-        cordova plugin add cordova-plugin-splashscreen
-        cordova plugin add cordova-plugin-inappbrowser
-        cordova plugin add cordova-plugin-camera
-        cordova plugin add cordova-plugin-android-permissions
+        cordova plugin add cordova-plugin-statusbar[cite: 1]
+        cordova plugin add cordova-plugin-splashscreen[cite: 1]
+        cordova plugin add cordova-plugin-inappbrowser[cite: 1]
+        cordova plugin add cordova-plugin-camera[cite: 1]
+        cordova plugin add cordova-plugin-android-permissions[cite: 1]
 
     - name: Copy Web Assets to Cordova
       run: |
         # Bersihkan folder www bawaan cordova
-        rm -rf cordova-app/www/*
+        rm -rf cordova-app/www/*[cite: 1]
         
         # Salin file web utama secara aman
-        cp -r index.html offline.html rekapitulasi.html sw.js manifest.json *.png cordova-app/www/ 2>/dev/null || true
+        cp -r index.html offline.html rekapitulasi.html sw.js manifest.json *.png cordova-app/www/ 2>/dev/null || true[cite: 1]
         
         # Jika ada folder tambahan seperti notification, ikut disalin
-        if [ -d "notification" ]; then cp -r notification cordova-app/www/; fi
+        if [ -d "notification" ]; then cp -r notification cordova-app/www/; fi[cite: 1]
 
-    - name: Configure Cordova config.xml (Pembaruan Blok Izin Kamera)
+    - name: Configure Cordova config.xml (Perbaikan Struktur XML Manifest)
       run: |
-        cd cordova-app
+        cd cordova-app[cite: 1]
         
         # SUNTIKKAN NAMESPACE ANDROID (Solusi Eror AttributePrefixUnbound)
-        sed -i 's/<widget/<widget xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android"/g' config.xml
+        sed -i 's/<widget/<widget xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android"/g' config.xml[cite: 1]
         
         # Set Fullscreen dan Orientation dasar
-        sed -i '/<\/widget>/i \    <preference name="Fullscreen" value="true" \/>' config.xml
-        sed -i '/<\/widget>/i \    <preference name="Orientation" value="portrait" \/>' config.xml
+        sed -i '/<\/widget>/i \    <preference name="Fullscreen" value="true" \/>' config.xml[cite: 1]
+        sed -i '/<\/widget>/i \    <preference name="Orientation" value="portrait" \/>' config.xml[cite: 1]
         
         # Set Icon Aplikasi
-        if [ -f "www/icon-presensi.png" ]; then
-          sed -i '/<\/widget>/i \    <icon src="www/icon-presensi.png" \/>' config.xml
-        fi
+        if [ -f "www/icon-presensi.png" ]; then[cite: 1]
+          sed -i '/<\/widget>/i \    <icon src="www/icon-presensi.png" \/>' config.xml[cite: 1]
+        fi[cite: 1]
         
-        # Buat konfigurasi baru dengan target parent manifest yang presisi
+        # Buat blok konfigurasi izin dengan parent /manifest yang benar sesuai AAPT
         cat << 'EOF' > android_permissions.xml
             <platform name="android">
                 <config-file target="AndroidManifest.xml" parent="/manifest">
                     <uses-permission android:name="android.permission.CAMERA" />
                     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-                </config-file>
-                <config-file target="AndroidManifest.xml" parent="/manifest/application">
                     <uses-feature android:name="android.hardware.camera" android:required="true" />
                     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
                 </config-file>
@@ -87,15 +85,15 @@ jobs:
         EOF
         
         # Masukkan blok izin tepat sebelum tag penutup </widget>
-        sed -i '/<\/widget>/e cat android_permissions.xml' config.xml
+        sed -i '/<\/widget>/e cat android_permissions.xml' config.xml[cite: 1]
 
     - name: Build Android APK (Debug Signed)
       run: |
-        cd cordova-app
-        cordova build android --debug -- --packageType=apk
+        cd cordova-app[cite: 1]
+        cordova build android --debug -- --packageType=apk[cite: 1]
 
     - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4[cite: 1]
       with:
-        name: Presensi-Az-Zahro-APK
-        path: cordova-app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+        name: Presensi-Az-Zahro-APK[cite: 1]
+        path: cordova-app/platforms/android/app/build/outputs/apk/debug/app-debug.apk[cite: 1]
