@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Kartu Presensi F4 - AZ-ZAHRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --deep-emerald: #064e3b;
+            --emerald-medium: #047857;
+            --bright-lime: #a3e635;
+            --text-dark: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* ==================== PANEL GENERATOR INPUT ==================== */
+        .generator-panel {
+            background: #ffffff;
+            width: 215mm;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .generator-panel h2 {
+            font-size: 18px;
+            color: var(--deep-emerald);
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+
+        .generator-panel p {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .select-input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-dark);
+            background-color: #ffffff;
+            outline: none;
+            transition: border-color 0.2s;
+            cursor: pointer;
+        }
+
+        .select-input:focus {
+            border-color: var(--emerald-medium);
+        }
+
+        .input-area {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            transition: border-color 0.2s;
+        }
+
+        .input-area:focus {
+            outline: none;
+            border-color: var(--emerald-medium);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--deep-emerald);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(6, 78, 59, 0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--emerald-medium);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+        }
+
+        #printArea {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ==================== LEMBAR KERTAS F4 (FIXED 3x3 GRID) ==================== */
+        .page-f4 {
+            background: #ffffff !important;
+            width: 215mm;
+            height: 330mm;
+            min-height: 330mm;
+            max-height: 330mm;
+            padding: 20mm 15mm;
+            display: grid;
+            grid-template-columns: repeat(3, 54mm);
+            grid-template-rows: repeat(3, 85mm);
+            gap: 15mm 11mm;
+            justify-content: center;
+            align-content: start;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            page-break-after: always;
+            
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .presensi-card {
+            width: 54mm;
+            height: 85mm;
+            background: #ffffff !important;
+            position: relative;
+            overflow: hidden;
+            border: 0.2mm solid #cbd5e1;
+            border-radius: 4mm;
+            padding: 5mm 3mm 4mm 3mm; /* Ditambah sedikit ruang atas */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            page-break-inside: avoid;
+            
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* ==================== PREMIUM CLIP-PATH DIAGONAL SUIT ==================== */
+        .bg-top-lime {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 32mm;
+            background-color: var(--bright-lime) !important;
+            clip-path: polygon(0 0, 100% 0, 0 85%);
+            z-index: 1;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .bg-top-emerald {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 28mm;
+            background: linear-gradient(135deg, var(--deep-emerald) 0%, var(--emerald-medium) 100%) !important;
+            clip-path: polygon(0 0, 85% 0, 0 100%);
+            z-index: 2;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .bg-bottom-lime {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 30mm;
+            background-color: var(--bright-lime) !important;
+            clip-path: polygon(100% 15%, 100% 100%, 0 100%);
+            z-index: 1;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .bg-bottom-emerald {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 26mm;
+            background: linear-gradient(315deg, var(--deep-emerald) 0%, var(--emerald-medium) 100%) !important;
+            clip-path: polygon(15% 100%, 100% 0, 100% 100%);
+            z-index: 2;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .circle-1 {
+            position: absolute;
+            top: 38%;
+            left: -10mm;
+            width: 20mm;
+            height: 20mm;
+            background-color: rgba(163, 230, 53, 0.15) !important;
+            border-radius: 50%;
+            z-index: 0;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .circle-2 {
+            position: absolute;
+            top: 48%;
+            right: -8mm;
+            width: 16mm;
+            height: 16mm;
+            background-color: rgba(4, 120, 87, 0.08) !important;
+            border-radius: 50%;
+            z-index: 0;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* ==================== KONTEN KARTU ==================== */
+        .card-content {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 0mm;
+        }
+
+        /* Container Bulat Putih Sempurna & Mutlak */
+        .logo-container-white {
+            width: 16.5mm;
+            height: 16.5mm;
+            background-color: #ffffff !important;
+            border-radius: 50%;
+            box-shadow: 0 1.5mm 3mm rgba(6, 78, 59, 0.2);
+            border: 0.4mm solid #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Mengunci agar tidak melebar keluar */
+            aspect-ratio: 1 / 1;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* Gambar logo di dalam dijamin aman dari terpotong */
+        .school-logo {
+            width: 88%;
+            height: 88%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .school-name {
+            font-size: 2.5mm; 
+            font-weight: 800;
+            color: var(--deep-emerald);
+            text-transform: uppercase;
+            letter-spacing: 0.2mm;
+            margin-top: 1.5mm;
+            line-height: 1.1;
+        }
+
+        .title-wrapper {
+            width: 100%;
+            margin-top: 0.6mm; 
+        }
+
+        .card-title {
+            font-size: 4.5mm;
+            font-weight: 800;
+            color: var(--deep-emerald);
+            letter-spacing: 0.2mm;
+            line-height: 1.2;
+        }
+
+        .divider {
+            width: 12mm; 
+            height: 0.8mm;
+            background-color: var(--bright-lime) !important;
+            border-radius: 0.4mm;
+            margin: 0.5mm auto 0 auto;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .qrcode-container {
+            background-color: #ffffff !important;
+            padding: 1.5mm;
+            border-radius: 3.5mm;
+            border: 0.4mm dashed rgba(6, 78, 59, 0.25);
+            width: fit-content;
+            box-shadow: 0 2mm 4mm rgba(6, 78, 59, 0.05);
+            margin: 1mm 0;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .qrcode-container canvas, .qrcode-container img {
+            width: 25mm !important;
+            height: 25mm !important;
+            display: block;
+        }
+
+        .attendee-name {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            text-transform: uppercase; 
+            font-size: 2.8mm;          
+            font-weight: 700;          
+            letter-spacing: 0.1mm;
+            color: var(--text-dark);
+            background-color: #f8fafc !important;
+            padding: 2mm 3mm;
+            border-radius: 2.5mm;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border: 0.2mm solid #e2e8f0;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .empty-state {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px dashed #cbd5e1;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            width: 215mm;
+        }
+
+        /* ==================== PENGATURAN CETAK (PRINT SETTING) ==================== */
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+            .generator-panel {
+                display: none !important;
+            }
+            #printArea {
+                gap: 0;
+            }
+            .page-f4 {
+                box-shadow: none;
+                width: 215mm;
+                height: 330mm;
+                margin: 0; 
+            }
+            .page-f4:last-child {
+                page-break-after: avoid;
+            }
+            @page {
+                size: 215mm 330mm;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Panel Kontrol Utama Generator -->
+    <div class="generator-panel">
+        <h2>Tempel Daftar Nama Peserta</h2>
+        <p>Tempelkan seluruh nama di kotak teks di bawah. Pilihlah tingkat satuan pendidikan untuk menyesuaikan identitas logo dan nama sekolah pada kartu presensi.</p>
+        
+        <div class="form-group">
+            <label for="schoolSelect">Pilih Instansi Sekolah:</label>
+            <select id="schoolSelect" class="select-input" onchange="generateCards()">
+                <option value="smp">SMP ISLAM AZ-ZAHRO</option>
+                <option value="smk">SMK AZ-ZAHRO</option>
+            </select>
+        </div>
+
+        <textarea id="namesInput" class="input-area" placeholder="Tempel nama di sini...&#10;Contoh:&#10;Nama Peserta 1&#10;Nama Peserta 2"></textarea>
+        
+        <div class="button-group">
+            <button class="btn btn-secondary" onclick="clearInput()">🧹 Kosongkan</button>
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Cetak / Save PDF F4</button>
+        </div>
+    </div>
+
+    <!-- Wadah untuk menampung lembaran-lembaran F4 -->
+    <div id="printArea"></div>
+
+    <!-- Pustaka Pembuat QR Code -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        const namesInput = document.getElementById('namesInput');
+        const schoolSelect = document.getElementById('schoolSelect');
+        const printArea = document.getElementById('printArea');
+
+        namesInput.value = "";
+
+        const schoolConfig = {
+            smp: {
+                name: "SMP ISLAM AZ-ZAHRO",
+                logo: "https://azzahro.web.id/presensi/logo-smp-azzahro.png"
+            },
+            smk: {
+                name: "SMK AZ-ZAHRO",
+                logo: "https://azzahro.web.id/presensi/logo-smk-azzahro.png"
+            }
+        };
+
+        function generateCards() {
+            const lines = namesInput.value.split("\n");
+            const daftarPeserta = lines
+                .map(nama => nama.trim())
+                .filter(nama => nama !== "");
+
+            printArea.innerHTML = ""; 
+
+            if (daftarPeserta.length === 0) {
+                printArea.innerHTML = `<div class="empty-state">Silakan masukkan atau tempel daftar nama pada kotak di atas untuk membuat kartu.</div>`;
+                return;
+            }
+
+            const selectedSchool = schoolSelect.value;
+            const currentSchool = schoolConfig[selectedSchool];
+
+            let currentPageDiv = null;
+            const kartuPerLembar = 9;
+
+            daftarPeserta.forEach((nama, index) => {
+                if (index % kartuPerLembar === 0) {
+                    currentPageDiv = document.createElement('div');
+                    currentPageDiv.className = 'page-f4';
+                    printArea.appendChild(currentPageDiv);
+                }
+
+                const cardId = `qrcode-${index}`;
+                
+                const cardHtml = `
+                    <div class="presensi-card">
+                        <div class="circle-1"></div>
+                        <div class="circle-2"></div>
+                        <div class="bg-top-lime"></div>
+                        <div class="bg-top-emerald"></div>
+                        <div class="bg-bottom-lime"></div>
+                        <div class="bg-bottom-emerald"></div>
+
+                        <div class="card-content">
+                            <div class="header-wrapper">
+                                <div class="logo-wrapper">
+                                    <div class="logo-container-white">
+                                        <img class="school-logo" src="${currentSchool.logo}" alt="Logo ${currentSchool.name}">
+                                    </div>
+                                    <div class="school-name">${currentSchool.name}</div>
+                                </div>
+                                <div class="title-wrapper">
+                                    <div class="card-title">KARTU PRESENSI</div>
+                                    <div class="divider"></div>
+                                </div>
+                            </div>
+
+                            <div class="qrcode-container">
+                                <div id="${cardId}"></div>
+                            </div>
+
+                            <div class="attendee-name" title="${nama}">${nama}</div>
+                        </div>
+                    </div>
+                `;
+                
+                currentPageDiv.innerHTML += cardHtml;
+            });
+
+            daftarPeserta.forEach((nama, index) => {
+                new QRCode(document.getElementById(`qrcode-${index}`), {
+                    text: nama,
+                    width: 100,
+                    height: 100,
+                    colorDark : "#064e3b",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            });
+        }
+
+        function clearInput() {
+            namesInput.value = "";
+            generateCards();
+            namesInput.focus();
+        }
+
+        namesInput.addEventListener('input', generateCards);
+        generateCards();
+    </script>
+</body>
+</html>
