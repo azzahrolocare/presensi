@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Presensi & QR Code Multi-Fitur - AZ-ZAHRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Library QR Code -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        /* ==================== VARIABLE & ROOT CONFIG ==================== */
+        :root {
+            --deep-emerald: #064e3b;
+            --emerald-medium: #047857;
+            --bright-lime: #a3e635;
+            --text-dark: #0f172a;
+            
+            /* Margin untuk Mode 2 (Kantor 4x4) */
+            --margin-top: 20mm;
+            --margin-bottom: 0mm;
+            --margin-left: 15mm;
+            --margin-right: 15mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* ==================== PANEL GENERATOR INPUT ==================== */
+        .generator-panel {
+            background: #ffffff;
+            width: 215mm;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+            font-family: Arial, sans-serif;
+        }
+
+        .generator-panel h2 {
+            font-size: 18px;
+            color: var(--deep-emerald);
+            margin-bottom: 12px;
+            font-weight: 800;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .generator-panel p {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .select-input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-dark);
+            background-color: #ffffff;
+            outline: none;
+            transition: border-color 0.2s;
+            cursor: pointer;
+        }
+
+        .select-input:focus {
+            border-color: var(--emerald-medium);
+        }
+
+        .input-area {
+            width: 100%;
+            height: 140px;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            transition: border-color 0.2s;
+        }
+
+        .input-area:focus {
+            outline: none;
+            border-color: var(--emerald-medium);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--deep-emerald);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(6, 78, 59, 0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--emerald-medium);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+        }
+
+        /* Container Bungkus Utama Cetak */
+        #printArea, .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .container {
+            width: 330mm; 
+            margin: 0 auto;
+        }
+
+        /* ==================== FITUR 1: LEMBAR KERTAS F4 PORTRAIT (3x3 GRID KARTU) ==================== */
+        .page-f4 {
+            background: #ffffff !important;
+            width: 215mm;
+            height: 330mm;
+            min-height: 330mm;
+            max-height: 330mm;
+            padding: 20mm 15mm;
+            display: grid;
+            grid-template-columns: repeat(3, 54mm);
+            grid-template-rows: repeat(3, 85mm);
+            gap: 15mm 11mm;
+            justify-content: center;
+            align-content: start;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            page-break-after: always;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .presensi-card {
+            width: 54mm;
+            height: 85mm;
+            background: #ffffff !important;
+            position: relative;
+            overflow: hidden;
+            border: 0.2mm solid #cbd5e1;
+            border-radius: 4mm;
+            padding: 5mm 3mm 4mm 3mm;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            page-break-inside: avoid;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* PREMIUM CLIP-PATH DIAGONAL SUIT KARTU */
+        .bg-top-lime {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 32mm;
+            background-color: var(--bright-lime) !important;
+            clip-path: polygon(0 0, 100% 0, 0 85%);
+            z-index: 1;
+        }
+
+        .bg-top-emerald {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 28mm;
+            background: linear-gradient(135deg, var(--deep-emerald) 0%, var(--emerald-medium) 100%) !important;
+            clip-path: polygon(0 0, 85% 0, 0 100%);
+            z-index: 2;
+        }
+
+        .bg-bottom-lime {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 30mm;
+            background-color: var(--bright-lime) !important;
+            clip-path: polygon(100% 15%, 100% 100%, 0 100%);
+            z-index: 1;
+        }
+
+        .bg-bottom-emerald {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 26mm;
+            background: linear-gradient(315deg, var(--deep-emerald) 0%, var(--emerald-medium) 100%) !important;
+            clip-path: polygon(15% 100%, 100% 0, 100% 100%);
+            z-index: 2;
+        }
+
+        .circle-1 {
+            position: absolute;
+            top: 38%;
+            left: -10mm;
+            width: 20mm;
+            height: 20mm;
+            background-color: rgba(163, 230, 53, 0.15) !important;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .circle-2 {
+            position: absolute;
+            top: 48%;
+            right: -8mm;
+            width: 16mm;
+            height: 16mm;
+            background-color: rgba(4, 120, 87, 0.08) !important;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 0mm;
+        }
+
+        .logo-container-white {
+            width: 16.5mm;
+            height: 16.5mm;
+            background-color: #ffffff !important;
+            border-radius: 50%;
+            box-shadow: 0 1.5mm 3mm rgba(6, 78, 59, 0.2);
+            border: 0.4mm solid #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            aspect-ratio: 1 / 1;
+        }
+
+        .school-logo {
+            width: 88%;
+            height: 88%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .school-name {
+            font-size: 2.5mm; 
+            font-weight: 800;
+            color: var(--deep-emerald);
+            text-transform: uppercase;
+            letter-spacing: 0.2mm;
+            margin-top: 1.5mm;
+            line-height: 1.1;
+        }
+
+        .title-wrapper {
+            width: 100%;
+            margin-top: 0.6mm; 
+        }
+
+        .card-title {
+            font-size: 4.5mm;
+            font-weight: 800;
+            color: var(--deep-emerald);
+            letter-spacing: 0.2mm;
+            line-height: 1.2;
+        }
+
+        .divider {
+            width: 12mm; 
+            height: 0.8mm;
+            background-color: var(--bright-lime) !important;
+            border-radius: 0.4mm;
+            margin: 0.5mm auto 0 auto;
+        }
+
+        .qrcode-container {
+            background-color: #ffffff !important;
+            padding: 1.5mm;
+            border-radius: 3.5mm;
+            border: 0.4mm dashed rgba(6, 78, 59, 0.25);
+            width: fit-content;
+            box-shadow: 0 2mm 4mm rgba(6, 78, 59, 0.05);
+            margin: 1mm 0;
+        }
+
+        .qrcode-container canvas, .qrcode-container img {
+            width: 25mm !important;
+            height: 25mm !important;
+            display: block;
+        }
+
+        .attendee-name {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            text-transform: uppercase; 
+            font-size: 2.8mm;          
+            font-weight: 700;          
+            letter-spacing: 0.1mm;
+            color: var(--text-dark);
+            background-color: #f8fafc !important;
+            padding: 2mm 3mm;
+            border-radius: 2.5mm;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border: 0.2mm solid #e2e8f0;
+        }
+
+        .empty-state {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px dashed #cbd5e1;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            width: 215mm;
+        }
+
+
+        /* ==================== FITUR 2: TABEL QR KANTOR LANDSCAPE (4x4 GRID) ==================== */
+        .qr-table-container {
+            display: none; /* Diatur via JS */
+        }
+
+        .qr-table {
+            width: 100%;
+            height: calc(215mm - var(--margin-top) - var(--margin-bottom)); 
+            border-collapse: collapse;
+            background-color: #fff;
+            page-break-inside: avoid;
+            page-break-after: always;
+            table-layout: fixed; 
+            margin-bottom: 20px;
+        }
+
+        .qr-table tr {
+            height: 25%; 
+        }
+
+        .qr-table td {
+            border: 1px solid #000000; 
+            width: 25%; 
+            padding: 10px; 
+            text-align: center;
+            vertical-align: middle;
+            box-sizing: border-box;
+            height: 25%; 
+        }
+
+        .qr-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 8px; 
+        }
+
+        .qr-wrapper img {
+            display: block;
+        }
+
+        .name-label {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11pt; 
+            font-weight: bold;
+            color: #000;
+            word-wrap: break-word;
+            line-height: 1.2;
+            text-transform: capitalize;
+        }
+
+        /* CSS KHUSUS PRINT MEDIA */
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+            .generator-panel, .no-print, #schoolSelectGroup {
+                display: none !important;
+            }
+            
+            /* Print setting jika aktif Mode Kartu F4 (Portrait) */
+            body.mode-kartu {
+                font-family: 'Plus Jakarta Sans', sans-serif;
+            }
+            body.mode-kartu #printArea {
+                display: flex !important;
+                gap: 0;
+            }
+            body.mode-kartu .qr-table-container {
+                display: none !important;
+            }
+            body.mode-kartu .page-f4 {
+                box-shadow: none;
+                width: 215mm;
+                height: 330mm;
+                margin: 0; 
+            }
+            body.mode-kartu .page-f4:last-child {
+                page-break-after: avoid;
+            }
+
+            /* Print setting jika aktif Mode QR Kantor (Landscape) */
+            body.mode-kantor {
+                font-family: 'Times New Roman', Times, serif;
+            }
+            body.mode-kantor .qr-table-container {
+                display: block !important;
+            }
+            body.mode-kantor #printArea {
+                display: none !important;
+            }
+            body.mode-kantor .qr-table {
+                margin-bottom: 0;
+            }
+
+            /* Atur dinamis rotasi halaman berdasarkan class body */
+            @page {
+                size: 215mm 330mm;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body class="mode-kartu">
+
+    <!-- Panel Kontrol Utama Generator -->
+    <div class="generator-panel">
+        <h2>Panel Generator QR Code Multi-Fitur</h2>
+        <p>Silakan masukkan daftar nama peserta dan pilih jenis layout atau fitur cetak yang ingin Anda gunakan.</p>
+        
+        <!-- Dropdown untuk Memilih Fitur -->
+        <div class="form-group">
+            <label for="featureMode">Pilih Fitur / Mode Cetak:</label>
+            <select id="featureMode" class="select-input" onchange="switchMode()">
+                <option value="kartu">Mode 1: Kartu Presensi F4 Berlogo (3x3 Grid - Portrait)</option>
+                <option value="kantor">Mode 2: Lembaran Lembar QR Kantor (4x4 Grid - Landscape)</option>
+            </select>
+        </div>
+
+        <!-- Group Pilihan Instansi Sekolah (Hanya berfungsi di Mode Kartu) -->
+        <div class="form-group" id="schoolSelectGroup">
+            <label for="schoolSelect">Pilih Instansi Sekolah (Khusus Mode Kartu):</label>
+            <select id="schoolSelect" class="select-input" onchange="processGeneration()">
+                <option value="smp">SMP ISLAM AZ-ZAHRO</option>
+                <option value="smk">SMK AZ-ZAHRO</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="namesInput">Daftar Nama Peserta (Satu nama per baris):</label>
+            <textarea id="namesInput" class="input-area" placeholder="Tempel nama di sini...&#10;Contoh:&#10;Nama Peserta 1&#10;Nama Peserta 2"></textarea>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-secondary" onclick="clearInput()">🧹 Kosongkan</button>
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Cetak / Save PDF</button>
+        </div>
+    </div>
+
+    <!-- WADAH RENDERING FITUR 1: Kartu Presensi F4 (3x3) -->
+    <div id="printArea"></div>
+
+    <!-- WADAH RENDERING FITUR 2: Tabel QR Kantor Landscape (4x4) -->
+    <div id="printContainer" class="container qr-table-container"></div>
+
+
+    <script>
+        const namesInput = document.getElementById('namesInput');
+        const schoolSelect = document.getElementById('schoolSelect');
+        const featureMode = document.getElementById('featureMode');
+        const schoolSelectGroup = document.getElementById('schoolSelectGroup');
+        const printArea = document.getElementById('printArea');
+        const printContainer = document.getElementById('printContainer');
+
+        // Reset input pertama kali load
+        namesInput.value = "";
+
+        // Data Config Sekolah untuk Mode Kartu
+        const schoolConfig = {
+            smp: {
+                name: "SMP ISLAM AZ-ZAHRO",
+                logo: "https://azzahro.web.id/presensi/logo-smp-azzahro.png"
+            },
+            smk: {
+                name: "SMK AZ-ZAHRO",
+                logo: "https://azzahro.web.id/presensi/logo-smk-azzahro.png"
+            }
+        };
+
+        // Fungsi Switch/Ganti Mode Fitur
+        function switchMode() {
+            const currentMode = featureMode.value;
+            
+            if (currentMode === 'kartu') {
+                document.body.className = "mode-kartu";
+                schoolSelectGroup.style.display = "flex";
+                printArea.style.display = "flex";
+                printContainer.style.display = "none";
+                
+                // Set @page css secara dinamis untuk browser
+                updatePageStyle("330mm", "215mm", "portrait");
+            } else {
+                document.body.className = "mode-kantor";
+                schoolSelectGroup.style.display = "none";
+                printArea.style.display = "none";
+                printContainer.style.display = "block";
+                
+                updatePageStyle("215mm", "330mm", "landscape");
+            }
+            processGeneration();
+        }
+
+        // Membantu injeksi style ukuran page dinamis saat cetak
+        function updatePageStyle(width, height, orientation) {
+            let styleEl = document.getElementById('dynamic-page-css');
+            if (!styleEl) {
+                styleEl = document.createElement('style');
+                styleEl.id = 'dynamic-page-css';
+                document.head.appendChild(styleEl);
+            }
+            if (orientation === "portrait") {
+                styleEl.innerHTML = `@media print { @page { size: 215mm 330mm; margin: 0; } }`;
+            } else {
+                styleEl.innerHTML = `@media print { @page { size: 330mm 215mm; margin-top: var(--margin-top); margin-bottom: var(--margin-bottom); margin-left: var(--margin-left); margin-right: var(--margin-right); } }`;
+            }
+        }
+
+        // Fungsi router utama trigger generator code dasar
+        function processGeneration() {
+            const currentMode = featureMode.value;
+            if (currentMode === 'kartu') {
+                generateCards();
+            } else {
+                generateQRNominal();
+            }
+        }
+
+        /* ==================== LOGIKAL ASLI FITUR 1: GENERATE KARTU ==================== */
+        function generateCards() {
+            const lines = namesInput.value.split("\n");
+            const daftarPeserta = lines
+                .map(nama => nama.trim())
+                .filter(nama => nama !== "");
+
+            printArea.innerHTML = ""; 
+
+            if (daftarPeserta.length === 0) {
+                printArea.innerHTML = `<div class="empty-state">Silakan masukkan atau tempel daftar nama pada kotak di atas untuk membuat kartu.</div>`;
+                return;
+            }
+
+            const selectedSchool = schoolSelect.value;
+            const currentSchool = schoolConfig[selectedSchool];
+
+            let currentPageDiv = null;
+            const kartuPerLembar = 9;
+
+            daftarPeserta.forEach((nama, index) => {
+                if (index % kartuPerLembar === 0) {
+                    currentPageDiv = document.createElement('div');
+                    currentPageDiv.className = 'page-f4';
+                    printArea.appendChild(currentPageDiv);
+                }
+
+                const cardId = `qrcode-kartu-${index}`;
+                
+                const cardHtml = `
+                    <div class="presensi-card">
+                        <div class="circle-1"></div>
+                        <div class="circle-2"></div>
+                        <div class="bg-top-lime"></div>
+                        <div class="bg-top-emerald"></div>
+                        <div class="bg-bottom-lime"></div>
+                        <div class="bg-bottom-emerald"></div>
+
+                        <div class="card-content">
+                            <div class="header-wrapper">
+                                <div class="logo-wrapper">
+                                    <div class="logo-container-white">
+                                        <img class="school-logo" src="${currentSchool.logo}" alt="Logo ${currentSchool.name}">
+                                    </div>
+                                    <div class="school-name">${currentSchool.name}</div>
+                                </div>
+                                <div class="title-wrapper">
+                                    <div class="card-title">KARTU PRESENSI</div>
+                                    <div class="divider"></div>
+                                </div>
+                            </div>
+
+                            <div class="qrcode-container">
+                                <div id="${cardId}"></div>
+                            </div>
+
+                            <div class="attendee-name" title="${nama}">${nama}</div>
+                        </div>
+                    </div>
+                `;
+                
+                currentPageDiv.innerHTML += cardHtml;
+            });
+
+            daftarPeserta.forEach((nama, index) => {
+                new QRCode(document.getElementById(`qrcode-kartu-${index}`), {
+                    text: nama,
+                    width: 100,
+                    height: 100,
+                    colorDark : "#064e3b",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            });
+        }
+
+        /* ==================== LOGIKAL ASLI FITUR 2: GENERATE TABEL KANTOR ==================== */
+        function generateQRNominal() {
+            printContainer.innerHTML = "";
+
+            const inputData = namesInput.value;
+            const daftarNama = inputData.split('\n')
+                .map(nama => nama.trim())
+                .filter(nama => nama.length > 0);
+
+            if (daftarNama.length === 0) {
+                return;
+            }
+
+            const kolomMax = 4; 
+            const barisMax = 4;
+            const itemPerLembar = kolomMax * barisMax; 
+
+            let currentTable = null;
+            let currentRow = null;
+
+            daftarNama.forEach((nama, index) => {
+                if (index % itemPerLembar === 0) {
+                    currentTable = document.createElement('table');
+                    currentTable.className = 'qr-table';
+                    printContainer.appendChild(currentTable);
+                }
+
+                if ((index % itemPerLembar) % kolomMax === 0) {
+                    currentRow = document.createElement('tr');
+                    currentTable.appendChild(currentRow);
+                }
+
+                const cell = document.createElement('td');
+                
+                const qrWrapper = document.createElement('div');
+                qrWrapper.className = 'qr-wrapper';
+                const qrId = 'generator-qr-kantor-' + index;
+                qrWrapper.id = qrId;
+                cell.appendChild(qrWrapper);
+
+                const nameLabel = document.createElement('div');
+                nameLabel.className = 'name-label';
+                nameLabel.innerText = nama;
+                cell.appendChild(nameLabel);
+
+                currentRow.appendChild(cell);
+
+                new QRCode(document.getElementById(qrId), {
+                    text: nama,
+                    width: 105, 
+                    height: 105,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            });
+
+            const sisaTotal = daftarNama.length % itemPerLembar;
+            if (sisaTotal !== 0) {
+                const sisaKolomDiBarisIni = daftarNama.length % kolomMax;
+                
+                if (sisaKolomDiBarisIni !== 0) {
+                    const kurangKolom = kolomMax - sisaKolomDiBarisIni;
+                    for (let i = 0; i < kurangKolom; i++) {
+                        currentRow.appendChild(document.createElement('td'));
+                    }
+                }
+                
+                const totalBarisSaatIni = currentTable.querySelectorAll('tr').length;
+                if (totalBarisSaatIni < barisMax) {
+                    const kurangBaris = barisMax - totalBarisSaatIni;
+                    for (let b = 0; b < kurangBaris; b++) {
+                        const emptyRow = document.createElement('tr');
+                        for (let k = 0; k < kolomMax; k++) {
+                            emptyRow.appendChild(document.createElement('td'));
+                        }
+                        currentTable.appendChild(emptyRow);
+                    }
+                }
+            }
+        }
+
+        // Fungsi Kosongkan Input Form
+        function clearInput() {
+            namesInput.value = "";
+            processGeneration();
+            namesInput.focus();
+        }
+
+        // Event listener input real-time
+        namesInput.addEventListener('input', processGeneration);
+        
+        // Inisialisasi awal aplikasi berjalan
+        switchMode();
+    </script>
+</body>
+</html>
