@@ -106,7 +106,7 @@
         }
     </style>
 </head>
-<body id="mainBody" class="bg-[#111827] min-h-screen flex justify-center items-start text-gray-800 antialiased p-0 sm:p-4 overflow-y-auto">
+<body id="mainBody" class="bg-[#f8fafc] min-h-screen text-gray-800 antialiased overflow-y-auto">
 
     <!-- Overlay Deteksi Lanskap (Hanya aktif saat membuka halaman rekap di HP vertikal) -->
     <div id="rotateOverlay" class="hidden fixed inset-0 bg-slate-900/95 backdrop-blur-md z-50 flex flex-col items-center justify-center text-center p-6 text-white transition-all duration-500">
@@ -140,8 +140,8 @@
         </button>
     </div>
 
-    <!-- Container Utama Tampilan HP -->
-    <div id="wrapperUtama" class="w-full max-w-md min-h-screen bg-[#f8fafc] flex flex-col justify-between shadow-2xl relative overflow-x-hidden sm:min-h-[700px] sm:rounded-3xl sm:my-4 transition-all duration-300">
+    <!-- Container Utama Full Screen (Tidak ngambang/card lagi) -->
+    <div id="wrapperUtama" class="w-full min-h-screen bg-[#f8fafc] flex flex-col justify-between relative overflow-x-hidden transition-all duration-300">
         
         <div>
             <!-- Overlay Alert Kustom -->
@@ -164,9 +164,9 @@
                 <p class="text-xs font-semibold tracking-wider">Memproses data...</p>
             </div>
 
-            <!-- Navigasi Utama -->
-            <nav class="sticky top-0 z-40 bg-emerald-deep/95 backdrop-blur-md shadow-md border-b border-emerald-medium/30 text-white px-4 py-4 sm:rounded-t-3xl">
-                <div class="flex items-center justify-between gap-2">
+            <!-- Navigasi Utama (Menempel Penuh ke Sisi Atas) -->
+            <nav class="sticky top-0 z-40 bg-emerald-deep/95 backdrop-blur-md shadow-md border-b border-emerald-medium/30 text-white px-4 py-4">
+                <div class="w-full max-w-7xl mx-auto flex items-center justify-between gap-2">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="p-2.5 bg-emerald-medium/50 rounded-xl border border-emerald-light/10 flex-shrink-0 shadow-inner">
                             <i id="nav-icon" data-lucide="clipboard-check" class="w-5 h-5 text-gold-accent"></i>
@@ -186,10 +186,10 @@
                 </div>
             </nav>
 
-            <!-- HALAMAN 1: FORM INPUT PRESENSI (DEFAULT TAMPIL) -->
-            <div id="sectionFormInput">
-                <main class="px-4 mt-4 mb-8">
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+            <!-- HALAMAN 1: FORM INPUT PRESENSI (DEFAULT TAMPIL - SEKARANG MAKSIMAL LEBAR NYAMAN DI HP/PC) -->
+            <div id="sectionFormInput" class="w-full max-w-md mx-auto">
+                <main class="px-4 mt-6 mb-8">
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
                         <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
                             <i data-lucide="sliders-horizontal" class="w-4 h-4 text-emerald-deep"></i>
                             <h5 class="text-xs font-bold text-gray-900 font-serif-custom uppercase tracking-wider">Input Kehadiran</h5>
@@ -239,8 +239,8 @@
                 </main>
             </div>
 
-            <!-- HALAMAN 2: REKAPITULASI PRESENSI GURU (DEFAULT TERSEMBUNYI) -->
-            <div id="sectionRekapTabel" class="hidden">
+            <!-- HALAMAN 2: REKAPITULASI PRESENSI GURU (TAMPILAN FULL LEBAR LAYAR) -->
+            <div id="sectionRekapTabel" class="hidden w-full max-w-7xl mx-auto">
                 <main class="p-2 md:p-4">
                     <div class="w-full bg-white p-3 md:p-6 rounded-xl shadow-md border border-slate-100 relative">
                         <div id="headerDinamis" class="hidden flex items-center justify-between border-b pb-4 mb-4 gap-4">
@@ -358,9 +358,9 @@
             </div>
         </div>
 
-        <!-- Footer Lembaga -->
-        <footer class="bg-emerald-deep text-slate-200 border-t-2 border-gold-accent/40 mt-auto py-5 px-4 sm:rounded-b-3xl">
-            <div class="w-full space-y-3.5">
+        <!-- Footer Lembaga (Melekat Penuh di Sisi Bawah Layar) -->
+        <footer class="bg-emerald-deep text-slate-200 border-t-2 border-gold-accent/40 mt-auto py-5 px-4">
+            <div class="w-full max-w-7xl mx-auto space-y-3.5">
                 <div class="space-y-1">
                     <div class="flex items-center gap-1.5 text-white">
                         <i data-lucide="info" class="w-3.5 h-3.5 text-gold-accent"></i>
@@ -382,7 +382,7 @@
     <script>
         // PENTING: PASTIKAN URL WEB APP SESUAI DENGAN DEPLOYMENT BARU ANDA
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby8WvRATuvHWxPzqOP1PXmmZzK9aEoregIzIyMblMhII7gdaGD538TY5pBlPsJUkf4/exec";
-        const API_URL = WEB_APP_URL; // Disamakan agar referensi fungsi muatData() tetap berjalan valid
+        const API_URL = WEB_APP_URL; 
 
         // Variabel Status Halaman Aktif
         let isRekapMode = false;
@@ -398,12 +398,10 @@
             checkOrientation();
         });
 
-        // FUNGSI NAVIGASI / TOGGLE TOGETHER
+        // FUNGSI NAVIGASI / TOGGLE HAlAMAN
         function toggleHalamanRekap() {
             const formSection = document.getElementById('sectionFormInput');
             const rekapSection = document.getElementById('sectionRekapTabel');
-            const wrapper = document.getElementById('wrapperUtama');
-            const body = document.getElementById('mainBody');
             const btnToggle = document.getElementById('btnToggleRekap');
             const navTitle = document.getElementById('nav-title');
             const navIcon = document.getElementById('nav-icon');
@@ -414,10 +412,6 @@
                 // Sembunyikan Form Input, Tampilkan Rekap
                 formSection.classList.add('hidden');
                 rekapSection.classList.remove('hidden');
-                
-                // Ubah Tampilan Wrapper agar Fleksibel saat Tabel Melebar ke Kanan
-                wrapper.classList.remove('max-w-md');
-                wrapper.classList.add('max-w-7xl');
                 
                 // Perbarui Konten Navigasi Atas
                 btnToggle.innerHTML = `<i data-lucide="arrow-left" class="w-3.5 h-3.5"></i><span>Kembali</span>`;
@@ -431,10 +425,6 @@
                 // Tampilkan Kembali Form Input, Sembunyikan Rekap
                 formSection.classList.remove('hidden');
                 rekapSection.classList.add('hidden');
-                
-                // Kembalikan Wrapper ke Ukuran HP Semula
-                wrapper.classList.remove('max-w-7xl');
-                wrapper.classList.add('max-w-md');
                 
                 // Kembalikan Konten Navigasi Atas
                 btnToggle.innerHTML = `<i data-lucide="table" class="w-3.5 h-3.5"></i><span>Lihat Rekap</span>`;
@@ -491,7 +481,7 @@
             }
 
             const sekarang = new Date();
-            const waktu = ClinicalTime = sekarang.toTimeString().split(' ')[0]; 
+            const waktu = sekarang.toTimeString().split(' ')[0]; 
 
             showLoading(true);
 
@@ -547,7 +537,7 @@
         }
 
 
-        // LOGIKA TAMPILAN DAN MOCKING DARI REKAPITULASI TABEL GURU
+        // LOGIKA TABEL REKAPITULASI PRESENSI GURU
         const containerTabel = document.getElementById('containerTabel');
         const barisHari = document.getElementById('barisHari');
         const barisTanggal = document.getElementById('barisTanggal');
@@ -558,7 +548,6 @@
             const overlay = document.getElementById('rotateOverlay');
             const body = document.getElementById('mainBody');
             
-            // Sistem deteksi hanya berlaku jika user sedang aktif melihat halaman rekap di resolusi mobile
             if (isRekapMode && window.innerHeight > window.innerWidth && window.innerWidth < 768) {
                 overlay.classList.remove('hidden');
                 overlay.classList.add('flex');
