@@ -140,7 +140,7 @@
         </button>
     </div>
 
-    <!-- Container Utama Full Screen (Tidak ngambang/card lagi) -->
+    <!-- Container Utama Full Screen -->
     <div id="wrapperUtama" class="w-full min-h-screen bg-[#f8fafc] flex flex-col justify-between relative overflow-x-hidden transition-all duration-300">
         
         <div>
@@ -164,7 +164,7 @@
                 <p class="text-xs font-semibold tracking-wider">Memproses data...</p>
             </div>
 
-            <!-- Navigasi Utama (Menempel Penuh ke Sisi Atas) -->
+            <!-- Navigasi Utama -->
             <nav class="sticky top-0 z-40 bg-emerald-deep/95 backdrop-blur-md shadow-md border-b border-emerald-medium/30 text-white px-4 py-4">
                 <div class="w-full max-w-7xl mx-auto flex items-center justify-between gap-2">
                     <div class="flex items-center gap-3 min-w-0">
@@ -178,7 +178,6 @@
                             </h1>
                         </div>
                     </div>
-                    <!-- Tombol untuk Membuka/Menutup Rekapitulasi -->
                     <button id="btnToggleRekap" onclick="toggleHalamanRekap()" class="flex-shrink-0 bg-gold-accent hover:bg-gold-muted text-emerald-deep font-bold text-[10px] px-3 py-2 rounded-xl transition-all active:scale-95 shadow-md tracking-wider uppercase flex items-center gap-1">
                         <i data-lucide="table" class="w-3.5 h-3.5"></i>
                         <span>Lihat Rekap</span>
@@ -186,7 +185,7 @@
                 </div>
             </nav>
 
-            <!-- HALAMAN 1: FORM INPUT PRESENSI (DEFAULT TAMPIL - SEKARANG MAKSIMAL LEBAR NYAMAN DI HP/PC) -->
+            <!-- HALAMAN 1: FORM INPUT PRESENSI -->
             <div id="sectionFormInput" class="w-full max-w-md mx-auto">
                 <main class="px-4 mt-6 mb-8">
                     <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
@@ -196,7 +195,6 @@
                         </div>
                         
                         <form id="form-presensi" onsubmit="kirimData(event)" class="space-y-4">
-                            <!-- Dropdown Nama Guru -->
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
                                     <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i> Nama Lengkap Guru
@@ -206,7 +204,6 @@
                                 </select>
                             </div>
 
-                            <!-- Input Tanggal -->
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
                                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i> Tanggal Presensi
@@ -214,7 +211,6 @@
                                 <input type="date" id="tanggal" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-gray-900 font-medium focus:bg-white focus:ring-4 focus:ring-emerald-deep/5 focus:border-emerald-deep transition-all outline-none">
                             </div>
 
-                            <!-- Dropdown Keterangan (A, I, S, T) -->
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
                                     <i data-lucide="check-square" class="w-3.5 h-3.5 text-slate-400"></i> Keterangan Status
@@ -228,7 +224,6 @@
                                 </select>
                             </div>
 
-                            <!-- Tombol Kirim -->
                             <div class="pt-2">
                                 <button type="submit" class="w-full inline-flex items-center justify-center gap-1.5 px-4 py-3.5 bg-emerald-deep hover:bg-emerald-medium text-white font-bold text-xs rounded-xl transition-all shadow-sm hover:shadow active:scale-[0.97] tracking-wider uppercase">
                                     <i data-lucide="send" class="w-3.5 h-3.5 text-gold-accent"></i> Kirim Presensi
@@ -239,7 +234,7 @@
                 </main>
             </div>
 
-            <!-- HALAMAN 2: REKAPITULASI PRESENSI GURU (TAMPILAN FULL LEBAR LAYAR) -->
+            <!-- HALAMAN 2: REKAPITULASI PRESENSI GURU -->
             <div id="sectionRekapTabel" class="hidden w-full max-w-7xl mx-auto">
                 <main class="p-2 md:p-4">
                     <div class="w-full bg-white p-3 md:p-6 rounded-xl shadow-md border border-slate-100 relative">
@@ -358,7 +353,7 @@
             </div>
         </div>
 
-        <!-- Footer Lembaga (Melekat Penuh di Sisi Bawah Layar) -->
+        <!-- Footer Lembaga -->
         <footer class="bg-emerald-deep text-slate-200 border-t-2 border-gold-accent/40 mt-auto py-5 px-4">
             <div class="w-full max-w-7xl mx-auto space-y-3.5">
                 <div class="space-y-1">
@@ -380,25 +375,21 @@
     </div>
 
     <script>
-        // PENTING: PASTIKAN URL WEB APP SESUAI DENGAN DEPLOYMENT BARU ANDA
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby8WvRATuvHWxPzqOP1PXmmZzK9aEoregIzIyMblMhII7gdaGD538TY5pBlPsJUkf4/exec";
         const API_URL = WEB_APP_URL; 
 
-        // Variabel Status Halaman Aktif
         let isRekapMode = false;
 
         window.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             initTanggalHariIni();
             muatDaftarGuru();
-            
-            // Inisialisasi struktur tabel rekapitulasi bawaan
             setBulanTahunOtomatis();
             bangunStrukturTabel();
             checkOrientation();
         });
 
-        // FUNGSI NAVIGASI / TOGGLE HAlAMAN
+        // FUNGSI NAVIGASI / TOGGLE HALAMAN
         function toggleHalamanRekap() {
             const formSection = document.getElementById('sectionFormInput');
             const rekapSection = document.getElementById('sectionRekapTabel');
@@ -409,24 +400,22 @@
             isRekapMode = !isRekapMode;
 
             if(isRekapMode) {
-                // Sembunyikan Form Input, Tampilkan Rekap
                 formSection.classList.add('hidden');
                 rekapSection.classList.remove('hidden');
                 
-                // Perbarui Konten Navigasi Atas
                 btnToggle.innerHTML = `<i data-lucide="arrow-left" class="w-3.5 h-3.5"></i><span>Kembali</span>`;
                 navTitle.innerText = "Rekap Presensi Guru";
                 navIcon.setAttribute('data-lucide', 'table');
                 
-                // Jalankan sinkronisasi data rekap server
                 document.getElementById('pilihKelas').value = "GURU";
                 muatData();
             } else {
-                // Tampilkan Kembali Form Input, Sembunyikan Rekap
+                // KEMBALI KE INPUT FORM: Reset Orientasi ke Potret (Tetap Fullscreen)
+                lockPortraitOnly();
+                
                 formSection.classList.remove('hidden');
                 rekapSection.classList.add('hidden');
                 
-                // Kembalikan Konten Navigasi Atas
                 btnToggle.innerHTML = `<i data-lucide="table" class="w-3.5 h-3.5"></i><span>Lihat Rekap</span>`;
                 navTitle.innerText = "Presensi Guru Az-Zahro";
                 navIcon.setAttribute('data-lucide', 'clipboard-check');
@@ -434,6 +423,14 @@
             
             lucide.createIcons();
             checkOrientation();
+        }
+
+        // FUNGSI KHUSUS: HANYA KUNCI KE POTRET TANPA KELUAR FULLSCREEN
+        function lockPortraitOnly() {
+            if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
+                window.screen.orientation.lock('portrait')
+                    .catch((err) => console.log("Gagal mengunci potret:", err));
+            }
         }
 
         // LOGIKA HALAMAN INPUT PRESENSI
@@ -481,7 +478,7 @@
             }
 
             const sekarang = new Date();
-            const waktu = sekarang.toTimeString().split(' ')[0]; 
+            const waktu = ThermalTimeString = sekarang.toTimeString().split(' ')[0]; 
 
             showLoading(true);
 
@@ -536,8 +533,7 @@
             document.getElementById('custom-alert').style.display = 'none';
         }
 
-
-        // LOGIKA TABEL REKAPITULASI PRESENSI GURU
+        // LOGIKA TABEL REKAPITULASI
         const containerTabel = document.getElementById('containerTabel');
         const barisHari = document.getElementById('barisHari');
         const barisTanggal = document.getElementById('barisTanggal');
