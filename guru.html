@@ -2,8 +2,10 @@
 <html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0F5132">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>Sistem Presensi Guru Az-Zahro</title>
     
     <!-- Integrasi Tailwind CSS -->
@@ -36,6 +38,8 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="security-lock.js"></script>
+    <script src="cordova.js"></script>
     
     <style>
         body {
@@ -48,12 +52,96 @@
         #custom-alert, #loading-overlay {
             display: none;
         }
+        
+        /* Style Tambahan untuk Tabel Rekapitulasi */
+        th, td { 
+            min-width: 38px; 
+            max-width: 38px;
+            text-align: center; 
+            border: 1px solid #e2e8f0;
+            padding: 6px 2px;
+            white-space: nowrap;
+        }
+        .name-col { 
+            min-width: 180px; 
+            max-width: 180px; 
+            text-align: left; 
+            padding-left: 8px; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap;
+        }
+        .rekap-col { min-width: 35px; max-width: 35px; }
+        .persen-col { min-width: 50px; max-width: 50px; }
+
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 25;
+        }
+        
+        th.sticky-col { background-color: #cbd5e1 !important; }
+        tr:nth-child(even) td.sticky-col { background-color: #f8fafc !important; }
+        tr:nth-child(odd) td.sticky-col { background-color: #ffffff !important; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scroll-bar-width: none; }
+
+        #containerTabel { cursor: grab; user-select: none; }
+        #containerTabel:active { cursor: grabbing; }
+
+        @keyframes rotate3DDevice {
+            0%, 20%, 90%, 100% { transform: rotate(0deg) rotateY(0deg); }
+            40%, 70% {
+                transform: rotate(-90deg) rotateY(15deg);
+                box-shadow: 15px -15px 30px rgba(0,0,0,0.4);
+            }
+        }
+        
+        .phone-container { perspective: 600px; }
+        .animate-phone-3d {
+            animation: rotate3DDevice 3.5s infinite ease-in-out;
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
-<body class="bg-[#111827] min-h-screen flex justify-center items-start text-gray-800 antialiased p-0 sm:p-4">
+<body id="mainBody" class="bg-[#111827] min-h-screen flex justify-center items-start text-gray-800 antialiased p-0 sm:p-4 overflow-y-auto">
+
+    <!-- Overlay Deteksi Lanskap (Hanya aktif saat membuka halaman rekap di HP vertikal) -->
+    <div id="rotateOverlay" class="hidden fixed inset-0 bg-slate-900/95 backdrop-blur-md z-50 flex flex-col items-center justify-center text-center p-6 text-white transition-all duration-500">
+        <div class="phone-container w-32 h-44 mb-8 flex items-center justify-center">
+            <div class="animate-phone-3d w-20 h-36 border-[3px] border-slate-400 bg-slate-800 rounded-2xl relative flex flex-col items-center justify-between p-2">
+                <div class="w-8 h-1 bg-slate-500 rounded-full mt-0.5"></div>
+                <div class="w-full flex-1 my-1.5 border border-slate-700 rounded-lg bg-gradient-to-tr from-blue-600/20 to-cyan-500/30 flex flex-col items-center justify-center overflow-hidden p-1 gap-1">
+                    <div class="w-full h-2 bg-white/20 rounded-sm"></div>
+                    <div class="w-full h-8 bg-white/10 rounded-sm flex flex-col justify-between p-0.5">
+                        <div class="w-2/3 h-1 bg-white/30 rounded-xs"></div>
+                        <div class="w-full h-1 bg-white/20 rounded-xs"></div>
+                        <div class="w-1/2 h-1 bg-white/20 rounded-xs"></div>
+                    </div>
+                </div>
+                <div class="w-6 h-1 bg-slate-500 rounded-full mb-0.5"></div>
+            </div>
+        </div>
+
+        <h2 class="text-xl md:text-2xl font-black mb-3 tracking-wide bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent uppercase">
+            Mode Lanskap Diperlukan
+        </h2>
+        <p class="text-xs md:text-sm text-slate-300 max-w-sm mb-8 leading-relaxed font-medium px-4">
+            Agar tabel rekap presensi dapat ditampilkan dengan rapi dan sempurna, silakan miringkan posisi HP anda.
+        </p>
+
+        <button onclick="requestFullScreenAndRotate()" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 active:scale-95 text-white font-bold text-xs py-3.5 px-6 rounded-xl shadow-lg shadow-blue-500/20 transition-all duration-200 flex items-center gap-2 tracking-wide uppercase">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 animate-pulse">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9m5.25 11.25v-4.5m0 4.5h-4.5m4.5 0L15 15" />
+            </svg>
+            Buka Layar Penuh
+        </button>
+    </div>
 
     <!-- Container Utama Tampilan HP -->
-    <div class="w-full max-w-md min-h-screen bg-[#f8fafc] flex flex-col justify-between shadow-2xl relative overflow-x-hidden sm:min-h-[700px] sm:rounded-3xl sm:my-4">
+    <div id="wrapperUtama" class="w-full max-w-md min-h-screen bg-[#f8fafc] flex flex-col justify-between shadow-2xl relative overflow-x-hidden sm:min-h-[700px] sm:rounded-3xl sm:my-4 transition-all duration-300">
         
         <div>
             <!-- Overlay Alert Kustom -->
@@ -78,69 +166,196 @@
 
             <!-- Navigasi Utama -->
             <nav class="sticky top-0 z-40 bg-emerald-deep/95 backdrop-blur-md shadow-md border-b border-emerald-medium/30 text-white px-4 py-4 sm:rounded-t-3xl">
-                <div class="flex items-center gap-3">
-                    <div class="p-2.5 bg-emerald-medium/50 rounded-xl border border-emerald-light/10 flex-shrink-0 shadow-inner">
-                        <i data-lucide="clipboard-check" class="w-5 h-5 text-gold-accent"></i>
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="p-2.5 bg-emerald-medium/50 rounded-xl border border-emerald-light/10 flex-shrink-0 shadow-inner">
+                            <i id="nav-icon" data-lucide="clipboard-check" class="w-5 h-5 text-gold-accent"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-[9px] font-mono font-bold text-gold-accent tracking-widest uppercase block mb-0.5 opacity-90">Presensi Digital</span>
+                            <h1 id="nav-title" class="text-sm font-serif-custom font-bold tracking-wide truncate">
+                                Presensi Guru Az-Zahro
+                            </h1>
+                        </div>
                     </div>
-                    <div class="min-w-0">
-                        <span class="text-[9px] font-mono font-bold text-gold-accent tracking-widest uppercase block mb-0.5 opacity-90">Presensi Digital</span>
-                        <h1 class="text-sm font-serif-custom font-bold tracking-wide truncate">
-                            Presensi Guru Az-Zahro
-                        </h1>
-                    </div>
+                    <!-- Tombol untuk Membuka/Menutup Rekapitulasi -->
+                    <button id="btnToggleRekap" onclick="toggleHalamanRekap()" class="flex-shrink-0 bg-gold-accent hover:bg-gold-muted text-emerald-deep font-bold text-[10px] px-3 py-2 rounded-xl transition-all active:scale-95 shadow-md tracking-wider uppercase flex items-center gap-1">
+                        <i data-lucide="table" class="w-3.5 h-3.5"></i>
+                        <span>Lihat Rekap</span>
+                    </button>
                 </div>
             </nav>
 
-            <!-- Formulir Penginputan Utama -->
-            <main class="px-4 mt-4 mb-8">
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
-                    <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
-                        <i data-lucide="sliders-horizontal" class="w-4 h-4 text-emerald-deep"></i>
-                        <h5 class="text-xs font-bold text-gray-900 font-serif-custom uppercase tracking-wider">Input Kehadiran</h5>
+            <!-- HALAMAN 1: FORM INPUT PRESENSI (DEFAULT TAMPIL) -->
+            <div id="sectionFormInput">
+                <main class="px-4 mt-4 mb-8">
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+                        <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+                            <i data-lucide="sliders-horizontal" class="w-4 h-4 text-emerald-deep"></i>
+                            <h5 class="text-xs font-bold text-gray-900 font-serif-custom uppercase tracking-wider">Input Kehadiran</h5>
+                        </div>
+                        
+                        <form id="form-presensi" onsubmit="kirimData(event)" class="space-y-4">
+                            <!-- Dropdown Nama Guru -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                    <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i> Nama Lengkap Guru
+                                </label>
+                                <select id="nama" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-gray-900 focus:bg-white focus:ring-4 focus:ring-emerald-deep/5 focus:border-emerald-deep transition-all outline-none font-medium">
+                                    <option value="" disabled selected>Pilih nama Anda...</option>
+                                </select>
+                            </div>
+
+                            <!-- Input Tanggal -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i> Tanggal Presensi
+                                </label>
+                                <input type="date" id="tanggal" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-gray-900 font-medium focus:bg-white focus:ring-4 focus:ring-emerald-deep/5 focus:border-emerald-deep transition-all outline-none">
+                            </div>
+
+                            <!-- Dropdown Keterangan (A, I, S, T) -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                    <i data-lucide="check-square" class="w-3.5 h-3.5 text-slate-400"></i> Keterangan Status
+                                </label>
+                                <select id="keterangan" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-gray-900 focus:bg-white focus:ring-4 focus:ring-emerald-deep/5 focus:border-emerald-deep transition-all outline-none font-bold">
+                                    <option value="" disabled selected>Pilih Keterangan...</option>
+                                    <option value="A">A</option>
+                                    <option value="I">I</option>
+                                    <option value="S">S</option>
+                                    <option value="T">T</option>
+                                </select>
+                            </div>
+
+                            <!-- Tombol Kirim -->
+                            <div class="pt-2">
+                                <button type="submit" class="w-full inline-flex items-center justify-center gap-1.5 px-4 py-3.5 bg-emerald-deep hover:bg-emerald-medium text-white font-bold text-xs rounded-xl transition-all shadow-sm hover:shadow active:scale-[0.97] tracking-wider uppercase">
+                                    <i data-lucide="send" class="w-3.5 h-3.5 text-gold-accent"></i> Kirim Presensi
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    
-                    <form id="form-presensi" onsubmit="kirimData(event)" class="space-y-4">
-                        <!-- Dropdown Nama Guru -->
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                                <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i> Nama Lengkap Guru
-                            </label>
-                            <select id="nama" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-gray-900 focus:bg-white focus:ring-4 focus:ring-emerald-deep/5 focus:border-emerald-deep transition-all outline-none font-medium">
-                                <option value="" disabled selected>Pilih nama Anda...</option>
-                            </select>
+                </main>
+            </div>
+
+            <!-- HALAMAN 2: REKAPITULASI PRESENSI GURU (DEFAULT TERSEMBUNYI) -->
+            <div id="sectionRekapTabel" class="hidden">
+                <main class="p-2 md:p-4">
+                    <div class="w-full bg-white p-3 md:p-6 rounded-xl shadow-md border border-slate-100 relative">
+                        <div id="headerDinamis" class="hidden flex items-center justify-between border-b pb-4 mb-4 gap-4">
+                            <img src="https://github.com/masrahmat-id/absensi-barcode-online-smp-smk-azzahro/raw/main/logo-smp-azzahro.png" alt="Logo SMP Azzahro" class="h-12 w-auto object-contain flex-shrink-0">
+                            <div class="text-center flex-1">
+                                <h1 id="txtS1" class="text-base md:text-lg font-bold uppercase tracking-wide text-slate-800">DAFTAR HADIR GURU</h1>
+                                <h2 id="txtS2" class="text-sm md:text-base font-bold uppercase text-slate-700">-</h2>
+                                <p id="txtS3" class="text-xs font-semibold text-slate-500 uppercase tracking-wide">-</p>
+                                <p id="txtS4" class="text-xs font-bold text-blue-600 uppercase mt-0.5">-</p>
+                            </div>
+                            <img src="https://github.com/masrahmat-id/absensi-barcode-online-smp-smk-azzahro/raw/main/logo-smk-azzahro.png" alt="Logo SMK Azzahro" class="h-12 w-auto object-contain flex-shrink-0">
                         </div>
 
-                        <!-- Input Tanggal -->
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                                <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i> Tanggal Presensi
-                            </label>
-                            <input type="date" id="tanggal" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-gray-900 font-medium focus:bg-white focus:ring-4 focus:ring-emerald-deep/5 focus:border-emerald-deep transition-all outline-none">
+                        <div id="headerDefault" class="text-center border-b pb-3 mb-4">
+                            <h1 class="text-base md:text-xl font-bold text-slate-700 tracking-wide">REKAP PRESENSI GURU SMPI/SMK AZZAHRO</h1>
                         </div>
 
-                        <!-- Dropdown Keterangan (A, I, S, T) -->
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                                <i data-lucide="check-square" class="w-3.5 h-3.5 text-slate-400"></i> Keterangan Status
-                            </label>
-                            <select id="keterangan" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-gray-900 focus:bg-white focus:ring-4 focus:ring-emerald-deep/5 focus:border-emerald-deep transition-all outline-none font-bold">
-                                <option value="" disabled selected>Pilih Keterangan...</option>
-                                <option value="A">A</option>
-                                <option value="I">I</option>
-                                <option value="S">S</option>
-                                <option value="T">T</option>
-                            </select>
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                            <div class="w-full sm:w-auto flex flex-wrap items-center gap-3">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label for="pilihKelas" class="font-semibold text-slate-600 text-xs whitespace-nowrap">Pilih Data:</label>
+                                    <select id="pilihKelas" onchange="muatData()" class="bg-white border border-slate-300 text-slate-900 text-xs rounded-lg block p-2 w-full sm:w-40 shadow-sm font-medium focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="GURU" selected>REKAP GURU</option>
+                                    </select>
+                                </div>
+                                
+                                <button id="btnRefresh" onclick="muatData()" class="w-full sm:w-auto bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-lg text-xs px-3 py-2 shadow transition-all duration-200 flex items-center justify-center gap-1.5" title="Refresh Data">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                    </svg>
+                                    Refresh Data
+                                </button>
+                                
+                                <div id="loadingStatus" class="hidden text-xs text-blue-600 font-semibold flex items-center gap-2">
+                                    <svg class="animate-spin h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Memuat...
+                                </div>
+                            </div>
+                            <div id="bulanTahunOtomatis" class="w-full sm:w-auto text-center font-bold text-slate-700 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm text-xs uppercase">
+                                -
+                            </div>
                         </div>
 
-                        <!-- Tombol Kirim -->
-                        <div class="pt-2">
-                            <button type="submit" class="w-full inline-flex items-center justify-center gap-1.5 px-4 py-3.5 bg-emerald-deep hover:bg-emerald-medium text-white font-bold text-xs rounded-xl transition-all shadow-sm hover:shadow active:scale-[0.97] tracking-wider uppercase">
-                                <i data-lucide="send" class="w-3.5 h-3.5 text-gold-accent"></i> Kirim Presensi
-                            </button>
+                        <div class="relative border border-slate-200 rounded-lg shadow-inner bg-white">
+                            <div id="containerTabel" class="overflow-x-auto no-scrollbar scroll-smooth">
+                                <table class="w-full text-[11px] text-slate-600 border-collapse">
+                                    <thead class="text-slate-700 uppercase font-bold bg-slate-100 sticky top-0 z-20">
+                                        <tr id="barisHari">
+                                            <th rowspan="2" class="name-col sticky-col border-r-2 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Nama Guru</th>
+                                            <th colspan="5" class="bg-emerald-50 text-emerald-800 text-center font-bold border-l-2 rekap-col">Keterangan</th>
+                                            <th rowspan="2" class="bg-amber-50 text-amber-800 text-center font-bold border-l-2 persen-col">%</th>
+                                        </tr>
+                                        <tr id="barisTanggal">
+                                            <th class="bg-emerald-100 text-emerald-700 font-bold border-l-2 rekap-col">H</th>
+                                            <th class="bg-amber-100 text-amber-700 font-bold rekap-col">T</th>
+                                            <th class="bg-emerald-100 text-emerald-700 font-bold rekap-col">I</th>
+                                            <th class="bg-emerald-100 text-emerald-700 font-bold rekap-col">S</th>
+                                            <th class="bg-emerald-100 text-emerald-700 font-bold rekap-col">A</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bodyTabelPresensi" class="divide-y divide-slate-200 bg-white">
+                                        <tr>
+                                            <td colspan="38" class="text-center py-10 text-slate-400 italic text-xs">
+                                                Silakan pilih opsi di atas untuk menampilkan data rekap.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </form>
-                </div>
-            </main>
+
+                        <div id="areaBawahRekap" class="hidden mt-6 border-t pt-4 text-xs text-slate-700 font-medium">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                                <div class="space-y-3">
+                                    <div>
+                                        <span class="font-bold text-slate-500 uppercase block mb-1 text-[10px]">KET :</span>
+                                        <div class="flex flex-wrap gap-2 text-[10px]">
+                                            <span class="bg-slate-100 border px-2 py-1 rounded font-semibold"><span class="text-emerald-600 font-black mr-1">●</span>: HADIR</span>
+                                            <span class="bg-slate-100 border px-2 py-1 rounded font-semibold"><span class="text-amber-500 font-bold mr-1">T</span>: TELAT</span>
+                                            <span class="bg-slate-100 border px-2 py-1 rounded font-semibold"><span class="text-amber-600 font-bold mr-1">S</span>: SAKIT</span>
+                                            <span class="bg-slate-100 border px-2 py-1 rounded font-semibold"><span class="text-blue-600 font-bold mr-1">I</span>: IJIN</span>
+                                            <span class="bg-slate-100 border px-2 py-1 rounded font-semibold"><span class="text-red-600 font-bold mr-1">A</span>: ALFA</span>
+                                        </div>
+                                    </div>
+                                    <div class="border-t pt-2">
+                                        <span class="font-bold text-slate-500 uppercase block mb-1 text-[10px]">Jumlah Guru :</span>
+                                        <div class="flex flex-wrap gap-2 text-[10px]">
+                                            <span class="bg-blue-50 border border-blue-200 px-2 py-1 rounded font-bold text-blue-800">L : <span id="valL">-</span></span>
+                                            <span class="bg-pink-50 border border-pink-200 px-2 py-1 rounded font-bold text-pink-800">P : <span id="valP">-</span></span>
+                                            <span class="bg-slate-100 border border-slate-300 px-2 py-1 rounded font-bold text-slate-800">Total : <span id="valJumlah">-</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2 text-center text-[10px]">
+                                    <div class="flex flex-col justify-between h-28">
+                                        <div id="waliJabatan" class="font-bold uppercase text-slate-800">Koordinator</div>
+                                        <div id="waliNama" class="font-bold underline text-slate-900">-</div>
+                                    </div>
+                                    <div class="flex flex-col justify-between h-28 border-l pl-2">
+                                        <div>
+                                            <div id="txtKabupaten" class="italic text-slate-500 mb-0.5">Kabupaten, Tanggal</div>
+                                            <div id="kepalaJabatan" class="font-bold uppercase text-slate-800">Mengetahui, Kepala Sekolah</div>
+                                        </div>
+                                        <div id="kepalaNama" class="font-bold underline text-slate-900">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
         </div>
 
         <!-- Footer Lembaga -->
@@ -167,13 +382,71 @@
     <script>
         // PENTING: PASTIKAN URL WEB APP SESUAI DENGAN DEPLOYMENT BARU ANDA
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby8WvRATuvHWxPzqOP1PXmmZzK9aEoregIzIyMblMhII7gdaGD538TY5pBlPsJUkf4/exec";
+        const API_URL = WEB_APP_URL; // Disamakan agar referensi fungsi muatData() tetap berjalan valid
+
+        // Variabel Status Halaman Aktif
+        let isRekapMode = false;
 
         window.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             initTanggalHariIni();
             muatDaftarGuru();
+            
+            // Inisialisasi struktur tabel rekapitulasi bawaan
+            setBulanTahunOtomatis();
+            bangunStrukturTabel();
+            checkOrientation();
         });
 
+        // FUNGSI NAVIGASI / TOGGLE TOGETHER
+        function toggleHalamanRekap() {
+            const formSection = document.getElementById('sectionFormInput');
+            const rekapSection = document.getElementById('sectionRekapTabel');
+            const wrapper = document.getElementById('wrapperUtama');
+            const body = document.getElementById('mainBody');
+            const btnToggle = document.getElementById('btnToggleRekap');
+            const navTitle = document.getElementById('nav-title');
+            const navIcon = document.getElementById('nav-icon');
+
+            isRekapMode = !isRekapMode;
+
+            if(isRekapMode) {
+                // Sembunyikan Form Input, Tampilkan Rekap
+                formSection.classList.add('hidden');
+                rekapSection.classList.remove('hidden');
+                
+                // Ubah Tampilan Wrapper agar Fleksibel saat Tabel Melebar ke Kanan
+                wrapper.classList.remove('max-w-md');
+                wrapper.classList.add('max-w-7xl');
+                
+                // Perbarui Konten Navigasi Atas
+                btnToggle.innerHTML = `<i data-lucide="arrow-left" class="w-3.5 h-3.5"></i><span>Kembali</span>`;
+                navTitle.innerText = "Rekap Presensi Guru";
+                navIcon.setAttribute('data-lucide', 'table');
+                
+                // Jalankan sinkronisasi data rekap server
+                document.getElementById('pilihKelas').value = "GURU";
+                muatData();
+            } else {
+                // Tampilkan Kembali Form Input, Sembunyikan Rekap
+                formSection.classList.remove('hidden');
+                rekapSection.classList.add('hidden');
+                
+                // Kembalikan Wrapper ke Ukuran HP Semula
+                wrapper.classList.remove('max-w-7xl');
+                wrapper.classList.add('max-w-md');
+                
+                // Kembalikan Konten Navigasi Atas
+                btnToggle.innerHTML = `<i data-lucide="table" class="w-3.5 h-3.5"></i><span>Lihat Rekap</span>`;
+                navTitle.innerText = "Presensi Guru Az-Zahro";
+                navIcon.setAttribute('data-lucide', 'clipboard-check');
+            }
+            
+            lucide.createIcons();
+            checkOrientation();
+        }
+
+        // LOGIKA HALAMAN INPUT PRESENSI
         function initTanggalHariIni() {
             const hariIni = new Date();
             const yyyy = hariIni.getFullYear();
@@ -218,7 +491,7 @@
             }
 
             const sekarang = new Date();
-            const waktu = sekarang.toTimeString().split(' ')[0]; // Format HH:mm:ss
+            const waktu = ClinicalTime = sekarang.toTimeString().split(' ')[0]; 
 
             showLoading(true);
 
@@ -271,6 +544,221 @@
 
         function closeAlert() {
             document.getElementById('custom-alert').style.display = 'none';
+        }
+
+
+        // LOGIKA TAMPILAN DAN MOCKING DARI REKAPITULASI TABEL GURU
+        const containerTabel = document.getElementById('containerTabel');
+        const barisHari = document.getElementById('barisHari');
+        const barisTanggal = document.getElementById('barisTanggal');
+        
+        let indexHariMinggu = [];
+
+        function checkOrientation() {
+            const overlay = document.getElementById('rotateOverlay');
+            const body = document.getElementById('mainBody');
+            
+            // Sistem deteksi hanya berlaku jika user sedang aktif melihat halaman rekap di resolusi mobile
+            if (isRekapMode && window.innerHeight > window.innerWidth && window.innerWidth < 768) {
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+                body.classList.remove('overflow-y-auto');
+                body.classList.add('overflow-hidden');
+            } else {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+                body.classList.remove('overflow-hidden');
+                body.classList.add('overflow-y-auto');
+            }
+        }
+
+        function requestFullScreenAndRotate() {
+            const docElm = document.documentElement;
+            if (docElm.requestFullscreen) { docElm.requestFullscreen({ navigationUI: "hide" }); }
+            else if (docElm.webkitRequestFullScreen) { docElm.webkitRequestFullScreen(); }
+            
+            if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
+                window.screen.orientation.lock('landscape').catch((err) => console.log(err));
+            }
+        }
+
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', checkOrientation);
+
+        // Fitur Drag Geser Tabel Menggunakan Mouse
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        containerTabel.addEventListener('mousedown', (e) => {
+            isDown = true;
+            containerTabel.classList.remove('scroll-smooth');
+            startX = e.pageX - containerTabel.offsetLeft;
+            scrollLeft = containerTabel.scrollLeft;
+        });
+        containerTabel.addEventListener('mouseleave', () => { isDown = false; });
+        containerTabel.addEventListener('mouseup', () => {
+            isDown = false;
+            containerTabel.classList.add('scroll-smooth');
+        });
+        containerTabel.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - containerTabel.offsetLeft;
+            const walk = (x - startX) * 1.5; 
+            containerTabel.scrollLeft = scrollLeft - walk;
+        });
+
+        function bangunStrukturTabel() {
+            const refHari = barisHari.children[1]; 
+            const refTanggal = barisTanggal.children[0]; 
+
+            for (let t = 1; t <= 31; t++) {
+                const thHari = document.createElement('th');
+                thHari.className = "bg-blue-50 text-blue-800 text-[9px] font-semibold p-1 min-w-[38px] max-w-[38px]";
+                thHari.id = `kolomHari-${t}`;
+                thHari.innerText = "-"; 
+
+                barisHari.insertBefore(thHari, refHari);
+
+                const thTanggal = document.createElement('th');
+                thTanggal.className = "bg-slate-50 text-slate-700 font-bold text-[10px] p-1 min-w-[38px] max-w-[38px]";
+                thTanggal.id = `kolomTanggal-${t}`;
+                thTanggal.innerText = t;
+                barisTanggal.insertBefore(thTanggal, refTanggal);
+            }
+        }
+
+        function setBulanTahunOtomatis() {
+            const namaBulan = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
+            const tglSekarang = new Date();
+            document.getElementById('bulanTahunOtomatis').innerText = `${namaBulan[tglSekarang.getMonth()]} ${tglSekarang.getFullYear()}`;
+        }
+
+        async function muatData() {
+            const kelas = document.getElementById('pilihKelas').value;
+            if (!kelas) return;
+
+            const loading = document.getElementById('loadingStatus');
+            const tbody = document.getElementById('bodyTabelPresensi');
+            const areaBawah = document.getElementById('areaBawahRekap');
+            const hDefault = document.getElementById('headerDefault');
+            const hDinamis = document.getElementById('headerDinamis');
+            
+            loading.classList.remove('hidden');
+            tbody.innerHTML = `<tr><td colspan="38" class="text-center py-8 text-blue-600 font-semibold text-xs animate-pulse">Menghubungkan ke Server...</td></tr>`;
+            areaBawah.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${API_URL}?action=getRekap&kelas=${encodeURIComponent(kelas)}`);
+                const result = await response.json();
+
+                if (result.status === "error") throw new Error(result.message);
+                indexHariMinggu = [];
+
+                if (result.hari && result.hari.length > 0) {
+                    for (let hIdx = 1; hIdx <= 31; hIdx++) {
+                        const elHari = document.getElementById(`kolomHari-${hIdx}`);
+                        const elTanggal = document.getElementById(`kolomTanggal-${hIdx}`);
+                        const teksHari = result.hari[hIdx - 1] || "-";
+                        
+                        if (elHari) {
+                            elHari.innerText = teksHari;
+                            if (teksHari.toLowerCase().includes("minggu") || teksHari.toLowerCase().includes("min")) {
+                                indexHariMinggu.push(hIdx - 1);
+                                elHari.className = "bg-red-100 text-red-700 text-[9px] font-bold p-1 min-w-[38px] max-w-[38px]";
+                                if (elTanggal) elTanggal.className = "bg-red-100 text-red-700 font-bold text-[10px] p-1 min-w-[38px] max-w-[38px]";
+                            } else {
+                                elHari.className = "bg-blue-50 text-blue-800 text-[9px] font-semibold p-1 min-w-[38px] max-w-[38px]";
+                                if (elTanggal) elTanggal.className = "bg-slate-50 text-slate-700 font-bold text-[10px] p-1 min-w-[38px] max-w-[38px]";
+                            }
+                        }
+                    }
+                }
+
+                renderTable(result.data);
+                
+                if (result.infoBawah) {
+                    document.getElementById('valL').innerText = result.infoBawah.L || "0";
+                    document.getElementById('valP').innerText = result.infoBawah.P || "0";
+                    document.getElementById('valJumlah').innerText = result.infoBawah.Jumlah || "0";
+                    document.getElementById('waliJabatan').innerText = result.infoBawah.waliJabatan || "Koordinator";
+                    document.getElementById('waliNama').innerText = result.infoBawah.waliNama || "-";
+                    document.getElementById('txtKabupaten').innerText = result.infoBawah.kabupaten || "";
+                    document.getElementById('kepalaJabatan').innerText = result.infoBawah.kepalaJabatan || "Kepala Sekolah";
+                    document.getElementById('kepalaNama').innerText = result.infoBawah.kepalaNama || "-";
+                    areaBawah.classList.remove('hidden');
+                }
+
+                if (result.infoHeader) {
+                    document.getElementById('txtS1').innerText = result.infoHeader.S1 || "DAFTAR HADIR GURU";
+                    document.getElementById('txtS2').innerText = result.infoHeader.S2 || "";
+                    document.getElementById('txtS3').innerText = result.infoHeader.S3 || "";
+                    document.getElementById('txtS4').innerText = result.infoHeader.S4 || "";
+                    hDefault.classList.add('hidden');
+                    hDinamis.classList.remove('hidden');
+                }
+
+            } catch (error) {
+                console.error(error);
+                tbody.innerHTML = `<tr><td colspan="38" class="text-center py-10 text-red-600 font-medium text-xs">Gagal memuat data rekap.</td></tr>`;
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        function renderTable(dataSiswa) {
+            const tbody = document.getElementById('bodyTabelPresensi');
+            tbody.innerHTML = "";
+
+            if (!dataSiswa || dataSiswa.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="38" class="text-center py-10 text-slate-400 italic text-xs">Tidak ditemukan data guru.</td></tr>`;
+                return;
+            }
+
+            dataSiswa.forEach((siswa, index) => {
+                const tr = document.createElement('tr');
+                tr.className = index % 2 === 0 ? "bg-white hover:bg-slate-50" : "bg-slate-50/50 hover:bg-slate-50";
+
+                const tdNama = document.createElement('td');
+                tdNama.className = "name-col sticky-col border-r-2 font-semibold text-slate-700 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]";
+                tdNama.innerText = siswa.nama || "-";
+                tdNama.title = siswa.nama; 
+                tr.appendChild(tdNama);
+
+                for (let j = 0; j < 31; j++) {
+                    const tdPresensi = document.createElement('td');
+                    const status = (siswa.presensi[j] || "").toUpperCase().trim();
+                    
+                    let baseClass = "font-bold text-[10px] p-1 border shadow-xs min-w-[38px] max-w-[38px]";
+                    if (indexHariMinggu.includes(j)) baseClass += " bg-red-50/50";
+                    tdPresensi.className = baseClass;
+                    
+                    if (status === 'H' || status === '●') tdPresensi.className += " text-emerald-600 bg-emerald-50/30";
+                    else if (status === 'T') tdPresensi.className += " text-amber-500 bg-amber-50/40";
+                    else if (status === 'I') tdPresensi.className += " text-blue-600 bg-blue-50/30";
+                    else if (status === 'S') tdPresensi.className += " text-amber-600 bg-amber-50/30";
+                    else if (status === 'A') tdPresensi.className += " text-red-600 bg-red-100/70";
+
+                    tdPresensi.innerText = status;
+                    tr.appendChild(tdPresensi);
+                }
+
+                const rekapKeys = ['hadir', 'telat', 'izin', 'sakit', 'alfa'];
+                rekapKeys.forEach((key, kIdx) => {
+                    const tdRekap = document.createElement('td');
+                    tdRekap.className = `font-bold bg-slate-50 text-[10px] text-slate-700 rekap-col ${kIdx === 0 ? 'border-l-2' : ''}`;
+                    tdRekap.innerText = siswa.rekap[key] !== undefined ? siswa.rekap[key] : 0;
+                    tr.appendChild(tdRekap);
+                });
+
+                const tdPersen = document.createElement('td');
+                tdPersen.className = "font-bold text-blue-700 bg-blue-50/70 border-l-2 text-center text-[10px] persen-col";
+                tdPersen.innerText = siswa.persentase || "0%";
+                tr.appendChild(tdPersen);
+
+                tbody.appendChild(tr);
+            });
         }
     </script>
 </body>
