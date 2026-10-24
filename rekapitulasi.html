@@ -137,7 +137,7 @@
                         <option value="APRIL">APRIL</option>
                         <option value="MEI">MEI</option>
                         <option value="JUNI">JUNI</option>
-                        <option value="JULI" selected>JULI</option>
+                        <option value="JULI">JULI</option>
                         <option value="AGUSTUS">AGUSTUS</option>
                         <option value="SEPTEMBER">SEPTEMBER</option>
                         <option value="OKTOBER">OKTOBER</option>
@@ -490,7 +490,19 @@
             setBulanTahunOtomatis();
             checkOrientation(); 
             document.getElementById('pilihKelas').value = "KELAS 07";
-            document.getElementById('pilihBulan').value = "JULI";
+        
+            // Daftar nama bulan dalam bahasa Indonesia
+            const namaBulan = [
+                "JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", 
+                "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"
+            ];
+            
+            // Mendapatkan bulan saat ini berdasarkan sistem perangkat (0 = Januari, 11 = Desember)
+            const bulanSekarang = namaBulan[new Date().getMonth()];
+            
+            // Mengatur nilai dropdown bulan sesuai bulan saat ini
+            document.getElementById('pilihBulan').value = bulanSekarang;
+        
             muatData(); 
         });
     </script>
