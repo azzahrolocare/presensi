@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0F5132">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>PRESENSI DIGITAL SMP & SMK AZ-ZAHRO</title>
+    
+    <!-- Integrasi Tailwind CSS & Config sesuai halaman Guru -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            deep: '#0F5132',
+                            medium: '#146c43',
+                            light: '#d1e7dd',
+                            soft: '#f0fdf4'
+                        },
+                        gold: {
+                            accent: '#D4AF37',
+                            muted: '#c5a059',
+                            light: '#fbf7eb'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'Georgia', 'serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="cordova.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .font-serif-custom {
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+        #custom-alert, #loading-overlay {
+            display: none;
+        }
+        
+        /* Style Tabel Rekapitulasi */
+        th, td { 
+            min-width: 38px; 
+            max-width: 38px;
+            text-align: center; 
+            border: 1px solid #e2e8f0;
+            padding: 6px 2px;
+            white-space: nowrap;
+        }
+        .name-col { 
+            min-width: 180px; 
+            max-width: 180px; 
+            text-align: left; 
+            padding-left: 8px; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap;
+        }
+        .rekap-col { min-width: 35px; max-width: 35px; }
+        .persen-col { min-width: 50px; max-width: 50px; }
+
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 25;
+        }
+        
+        th.sticky-col { background-color: #cbd5e1 !important; }
+        tr:nth-child(even) td.sticky-col { background-color: #f8fafc !important; }
+        tr:nth-child(odd) td.sticky-col { background-color: #ffffff !important; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scroll-bar-width: none; }
+
+        #containerTabel { cursor: grab; user-select: none; }
+        #containerTabel:active { cursor: grabbing; }
+
+        @keyframes rotate3DDevice {
+            0%, 20%, 90%, 100% { transform: rotate(0deg) rotateY(0deg); }
+            40%, 70% {
+                transform: rotate(-90deg) rotateY(15deg);
+                box-shadow: 15px -15px 30px rgba(0,0,0,0.4);
+            }
+        }
+        
+        .phone-container { perspective: 600px; }
+        .animate-phone-3d {
+            animation: rotate3DDevice 3.5s infinite ease-in-out;
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        /* Bottom Nav Styling (Aktif & Kotak Sudut Lengkung) */
+        .nav-it.active .ic-wrap { background-color: #D4AF37; color: #0F5132; }
+
+        /* Siku-siku Putih di 4 Sudut Scanner */
+        .corner-bracket {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            border-color: #ffffff;
+            border-style: solid;
+            z-index: 20;
+            pointer-events: none;
+        }
+        .corner-tl { top: 16px; left: 16px; border-width: 4px 0 0 4px; border-top-left-radius: 6px; }
+        .corner-tr { top: 16px; right: 16px; border-width: 4px 4px 0 0; border-top-right-radius: 6px; }
+        .corner-bl { bottom: 16px; left: 16px; border-width: 0 0 4px 4px; border-bottom-left-radius: 6px; }
+        .corner-br { bottom: 16px; right: 16px; border-width: 0 4px 4px 0; border-bottom-right-radius: 6px; }
+
+        /* CSS TAMBAHAN: Memaksa area bayangan html5-qrcode menjadi persegi sempurna di tengah */
+        #reader__dashboard_section_csr button {
+            background-color: #0F5132 !important;
+            color: white !important;
+            border-radius: 8px !important;
+            padding: 6px 12px !important;
+            font-size: 12px !important;
+        }
+    </style>
+</head>
+<body id="mainBody" class="bg-[#f8fafc] min-h-screen text-gray-800 antialiased flex flex-col justify-between overflow-x-hidden" onclick="onBodyClick()">
+
+<div>
+    <!-- STATUS TOAST -->
+    <div id="status-kirim" class="fixed top-28 left-1/2 -translate-x-1/2 w-[88%] max-w-[400px] p-4 rounded-2xl z-[700] hidden text-white text-center font-bold text-xs shadow-xl backdrop-blur-md border border-white/20"></div>
+
+    <!-- ABOUT OVERLAY -->
+    <div id="about-overlay" class="hidden fixed inset-0 bg-black/72 z-[550]" onclick="closeAbout()"></div>
+
+    <!-- MODAL ANTREAN OFFLINE -->
+    <div id="modal-antrean" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-[600] justify-center items-center p-4">
+      <div class="bg-white rounded-2xl p-5 w-full max-w-[380px] shadow-2xl border border-gray-100 text-gray-800" onclick="event.stopPropagation()">
+        <div class="flex justify-between items-center pb-3 border-b mb-4">
+          <h3 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-emerald-deep"></i> Antrean Offline</h3>
+          <div class="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200" onclick="tutupModalAntrean()"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        <div id="loading-text" class="text-xs text-emerald-deep text-center mb-2 font-bold hidden">MENGIRIM: <span id="current-send">0</span>/<span id="total-send">0</span></div>
+        <div class="w-full bg-gray-100 rounded-lg h-2 mb-3 hidden overflow-hidden" id="prog-cont"><div class="h-full bg-emerald-deep w-0 transition-all duration-300 rounded-lg" id="prog-bar"></div></div>
+        <div id="daftar-item-antrean" class="mb-4 max-h-[280px] overflow-y-auto space-y-2"></div>
+        <div class="flex gap-2">
+          <button onclick="kirimManual()" id="btn-kirim-manual" class="flex-1 bg-emerald-deep text-white py-3 rounded-xl font-bold text-xs cursor-pointer shadow">
+            <span id="text-btn-kirim">KIRIM</span>
+          </button>
+          <button onclick="tutupModalAntrean()" id="btn-tutup-antrean" class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-bold text-xs cursor-pointer">TUTUP</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP NAV (Header diperluas dengan paddingTop lebih besar agar aman dari kamera/poni HP) -->
+    <nav class="sticky top-0 z-40 bg-emerald-deep text-white px-4 pt-7 pb-5 shadow-lg border-b border-emerald-medium/30">
+      <div class="max-w-7xl mx-auto flex flex-col items-center justify-center gap-2">
+        
+        <!-- Baris Atas: Logo & Judul Utama (SMP Baris Atas, SMK Baris Bawah) -->
+        <div class="flex items-center justify-center gap-4 w-full">
+          <img src="https://azzahro.web.id/presensi/logo-smp-azzahro.png" alt="SMP" class="w-11 h-11 object-contain rounded-lg flex-shrink-0 shadow-sm">
+          <div class="text-center">
+            <h1 class="font-serif-custom text-base font-bold tracking-wide">PRESENSI DIGITAL</h1>
+            <p class="text-[10px] uppercase font-medium tracking-wider text-gold-accent">SMP ISLAM AZ-ZAHRO</p>
+            <p class="text-[10px] uppercase font-medium tracking-wider text-gold-accent">SMK AZ-ZAHRO</p>
+          </div>
+          <img src="https://azzahro.web.id/presensi/logo-smk-azzahro.png" alt="SMK" class="w-11 h-11 object-contain rounded-lg flex-shrink-0 shadow-sm">
+        </div>
+
+        <!-- Baris Bawah: Jam Digital & Tanggal Terpisah -->
+        <div class="w-full pt-2 border-t border-emerald-medium/40 flex flex-col items-center justify-center">
+          <div id="header-time" class="font-serif-custom text-xl font-bold tracking-widest text-gold-accent drop-shadow-sm leading-none">
+            00:00:00
+          </div>
+          <div id="header-date" class="text-[10px] font-medium tracking-wider text-emerald-light uppercase mt-1">
+            Sabtu, 24 Oktober 2026
+          </div>
+        </div>
+
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="w-full max-w-md mx-auto p-4 flex flex-col gap-4 mt-2 pb-28 items-center">
+
+        <!-- DROPDOWN KETERANGAN -->
+        <div class="relative w-full">
+          <select id="keterangan" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-gray-900 font-bold focus:ring-4 focus:ring-emerald-deep/5 focus:border-emerald-deep outline-none cursor-pointer shadow-sm">
+            <option value="" disabled selected>Pilih Keterangan</option>
+            <option value="●">🟢 HADIR</option>
+            <option value="I">🟡 IZIN</option>
+            <option value="S">🔵 SAKIT</option>
+            <option value="A">🔴 ALPA</option>
+          </select>
+        </div>
+
+        <!-- SCANNER BOX (PERSEGI 1:1 DENGAN UKURAN LEBIH BESAR & SIKU-SIKU PUTIH) -->
+        <div class="w-full max-w-[320px] aspect-square rounded-2xl overflow-hidden border-2 border-emerald-deep shadow-lg bg-black relative flex items-center justify-center">
+          <!-- Siku-siku Putih -->
+          <div class="corner-bracket corner-tl"></div>
+          <div class="corner-bracket corner-tr"></div>
+          <div class="corner-bracket corner-bl"></div>
+          <div class="corner-bracket corner-br"></div>
+
+          <div id="reader" class="w-full h-full absolute inset-0"></div>
+          <div id="selection-overlay" class="absolute inset-0 bg-black/90 z-[100] hidden flex-col items-center justify-center gap-2 p-4"></div>
+        </div>
+
+        <!-- NAMA TERAKHIR -->
+        <div class="w-full bg-white rounded-xl p-3 shadow-sm border border-slate-100 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-emerald-soft border border-emerald-light flex items-center justify-center flex-shrink-0">
+            <i class="fa-solid fa-id-card text-emerald-deep text-sm"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Terakhir Discan</div>
+            <input type="text" id="last-name-display" class="w-full bg-transparent border-none outline-none font-bold text-emerald-deep text-sm" placeholder="MENUNGGU SCAN..." readonly>
+          </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- BOTTOM NAV DOCK (Tinggi ditinggikan h-20, ikon & kotak tombol diperbesar) -->
+<nav id="bottomNav" class="fixed bottom-0 left-0 right-0 h-24 bg-emerald-deep border-t border-emerald-medium/40 shadow-2xl z-[200] flex items-center justify-around px-2 pb-2">
+  <div class="nav-it flex flex-col items-center justify-center w-20 h-full cursor-pointer transition-all duration-300" id="nRekap" onclick="navKlik(this,'rekap');event.stopPropagation()">
+    <div class="ic-wrap w-11 h-11 rounded-xl bg-emerald-medium/50 border border-white/20 flex items-center justify-center text-white transition-all shadow-sm">
+      <i class="fa-solid fa-chart-pie text-sm"></i>
+    </div>
+    <span class="text-[10px] font-bold text-white mt-1">Rekap</span>
+  </div>
+
+  <div class="nav-it flex flex-col items-center justify-center w-20 h-full cursor-pointer transition-all duration-300" id="nOffline" onclick="navKlik(this,'offline');event.stopPropagation()">
+    <div class="ic-wrap w-11 h-11 rounded-xl bg-emerald-medium/50 border border-white/20 flex items-center justify-center text-white transition-all shadow-sm">
+      <i class="fa-solid fa-database text-sm"></i>
+    </div>
+    <span class="text-[10px] font-bold text-white mt-1">Offline</span>
+  </div>
+
+  <div class="nav-it flex flex-col items-center justify-center w-20 h-full cursor-pointer transition-all duration-300" id="nPengaturan" onclick="navKlik(this,'pengaturan');event.stopPropagation()">
+    <div class="ic-wrap w-11 h-11 rounded-xl bg-emerald-medium/50 border border-white/20 flex items-center justify-center text-white transition-all shadow-sm">
+      <i class="fa-solid fa-gear text-sm"></i>
+    </div>
+    <span class="text-[10px] font-bold text-white mt-1">Pengaturan</span>
+  </div>
+</nav>
+
+<!-- MODAL PENGATURAN -->
+<div class="hidden fixed inset-0 bg-black/75 z-[500] items-center justify-center p-4" id="mPengaturan" onclick="tutupMod('mPengaturan')">
+  <div class="bg-white rounded-2xl p-5 w-full max-w-[370px] shadow-2xl text-gray-800" onclick="event.stopPropagation()">
+    <div class="flex justify-between items-center pb-3 border-b mb-4">
+      <h3 class="font-bold text-sm font-serif-custom flex items-center gap-2"><i class="fa-solid fa-sliders text-emerald-deep"></i> Pengaturan</h3>
+      <div class="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200" onclick="cancelSettings();tutupMod('mPengaturan')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    
+    <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">🔔 Suara Notifikasi</div>
+    <div class="flex justify-between items-center gap-2 text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl mb-4">
+      <label class="font-semibold text-slate-700">Pilih Suara</label>
+      <select id="sound-choice" class="bg-white border border-slate-300 rounded-lg p-1.5 text-xs outline-none w-1/2">
+        <option value="notification/Notif01.mp3">Default</option>
+        <option value="notification/Notif02.mp3">Notifikasi 01</option>
+        <option value="notification/Notif03.mp3">Notifikasi 02</option>
+        <option value="notification/apple-success.mp3">Apple Success</option>
+        <option value="notification/success.mp3">Success</option>
+        <option value="notification/Done.mp3">Done</option>
+        <option value="notification/Notif-ML.mp3">Notifikasi ML</option>
+        <option value="notification/Mission-success.mp3">Mission Success</option>
+        <option value="notification/Success-fanfare-trumpets.mp3">Success Fanfare</option>
+        <option value="notification/floraphonic-cute-animal-squeak-1.mp3">Squeak 1</option>
+        <option value="notification/floraphonic-cute-animal-squeak-2.mp3">Squeak 2</option>
+        <option value="notification/Yayyy.mp3">Yayyy!!</option>
+        <option value="notification/kiw-kiw-cukurukuk-small-child.mp3">Kiw-kiw Child</option>
+        <option value="notification/kiw-kiw-original.mp3">Kiw-kiw Original</option>
+      </select>
+    </div>
+    
+    <button onclick="event.stopPropagation();showAbout()" class="w-full mb-3 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-slate-700 font-bold text-xs cursor-pointer flex items-center justify-center gap-2">
+      <i class="fa-solid fa-circle-info text-emerald-deep"></i> Tentang Aplikasi
+    </button>
+    
+    <button class="w-full py-3 bg-emerald-deep text-white font-bold text-xs rounded-xl cursor-pointer shadow" onclick="saveSettings()"><i class="fa-solid fa-floppy-disk"></i> &nbsp;SIMPAN</button>
+  </div>
+</div>
+
+<!-- TENTANG -->
+<div id="about-pop-up" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[560] w-[90%] max-w-[340px]">
+  <div class="bg-white rounded-2xl p-5 shadow-2xl text-gray-800 max-h-[82vh] overflow-y-auto">
+    <div class="flex justify-between items-center pb-3 border-b mb-4">
+      <h3 class="font-bold text-sm font-serif-custom flex items-center gap-2"><i class="fa-solid fa-circle-info text-emerald-deep"></i> Tentang Aplikasi</h3>
+      <div class="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200" onclick="closeAbout()"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <p class="text-xs leading-relaxed text-slate-600 mb-4">"Aplikasi Presensi Digital SMP Islam &amp; SMK Az-Zahro hadir sebagai solusi inovatif dalam mendukung digitalisasi pendidikan serta efisiensi administrasi sekolah. Dengan focus mentransformasi presensi konvensional menjadi sistem otomatis berbasis QR Code, aplikasi ini memastikan pendataan kehadiran berjalan cepat dan akurat."</p>
+    <div class="bg-slate-50 p-3 rounded-xl text-[11px] border-l-4 border-emerald-deep mb-4">
+      <div class="font-bold text-emerald-deep mb-1">IT DIGITALIZATION</div>
+      <div class="font-bold text-slate-500 mb-2 text-[10px]">SMP ISLAM AZ-ZAHRO &amp; SMK AZ-ZAHRO</div>
+      <p class="text-slate-700 my-0.5"><strong>Created by ops:</strong> Rahmattullah</p>
+      <p class="text-slate-700 my-0.5"><strong>Email:</strong> rahmattullah.ofc@gmail.com</p>
+    </div>
+    <button class="w-full py-3 bg-emerald-deep text-white font-bold text-xs rounded-xl cursor-pointer shadow" onclick="closeAbout()">TUTUP</button>
+  </div>
+</div>
+
+<!-- PWA POPUP -->
+<div id="pwa-popup" class="hidden fixed inset-0 bg-black/85 z-[800] items-center justify-center backdrop-blur-sm">
+  <div class="bg-white rounded-2xl p-6 w-[88%] max-w-[320px] text-center shadow-2xl">
+    <img src="icon-presensi.png" alt="App Icon" class="w-16 h-16 rounded-2xl mx-auto mb-3 object-cover shadow-md">
+    <h3 class="font-serif-custom font-bold text-base text-gray-900 mb-2">Instal Aplikasi</h3>
+    <p class="text-xs text-slate-600 mb-5 leading-relaxed">Pasang Aplikasi Presensi Digital Az-Zahro di layar utama untuk akses lebih cepat.</p>
+    <div class="flex gap-2">
+      <button id="btnBatal" class="flex-1 bg-transparent text-slate-600 border border-slate-200 py-2.5 rounded-xl font-bold text-xs cursor-pointer">Nanti</button>
+      <button id="btnInstalPop" class="flex-1 bg-emerald-deep text-white py-2.5 rounded-xl font-bold text-xs cursor-pointer shadow">Instal</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let activeModal = null;
+
+// SCRIPT JAM REALTIME DENGAN FORMAT TANGGAL INDONESIA
+function updateClock() {
+  const now = new Date();
+  
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  const timeStr = `${hours}:${minutes}:${seconds}`;
+  
+  const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+  const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+  
+  const dayName = days[now.getDay()];
+  const dateNum = now.getDate();
+  const monthName = months[now.getMonth()];
+  const yearNum = now.getFullYear();
+  
+  const dateStr = `${dayName}, ${dateNum} ${monthName} ${yearNum}`;
+
+  const elTime = document.getElementById('header-time');
+  const elDate = document.getElementById('header-date');
+  
+  if (elTime) elTime.textContent = timeStr;
+  if (elDate) elDate.textContent = dateStr;
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+// Navigasi Langsung 1 Kali Klik Tanpa Status Bertingkat (Idle/Ready/Active)
+function navKlik(el, aksi) {
+  document.querySelectorAll('.nav-it').forEach(n => { n.classList.remove('active'); });
+  el.classList.add('active');
+  jalankanNav(aksi);
+}
+
+function jalankanNav(aksi) {
+  if (aksi === 'rekap') { window.open('rekapitulasi.html','_blank'); resetNav(); }
+  else if (aksi === 'offline') { bukaModalAntrean(null); }
+  else if (aksi === 'pengaturan') { applySettings(); bukaMod('mPengaturan'); }
+}
+
+function resetNav() {
+  document.querySelectorAll('.nav-it').forEach(n => { n.classList.remove('active'); });
+}
+
+function bukaMod(id) {
+  if (activeModal) tutupMod(activeModal);
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = 'flex';
+  activeModal = id;
+}
+
+function tutupMod(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = 'none';
+  if (activeModal === id) activeModal = null;
+  resetNav();
+}
+
+function onBodyClick() {
+  if (activeModal) return;
+  const antrOpen = document.getElementById('modal-antrean').style.display === 'flex';
+  const aboutOpen = document.getElementById('about-pop-up').style.display === 'block';
+  if (antrOpen || aboutOpen) return;
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(()=>{});
+  }
+}
+
+function applySettings() {
+  const cfg = JSON.parse(localStorage.getItem('absensiConfig')) || {
+    sound:'notification/Notif01.mp3'
+  };
+  document.getElementById('sound-choice').value = cfg.sound;
+}
+
+function cancelSettings() { applySettings(); }
+
+function saveSettings() {
+  const cfg = {
+    sound:document.getElementById('sound-choice').value
+  };
+  localStorage.setItem('absensiConfig', JSON.stringify(cfg));
+  new Audio(cfg.sound).play().catch(()=>{});
+  tutupMod('mPengaturan');
+}
+
+function showAbout() {
+  document.getElementById('about-pop-up').style.display='block';
+  document.getElementById('about-overlay').style.display='block';
+}
+function closeAbout() {
+  document.getElementById('about-pop-up').style.display='none';
+  document.getElementById('about-overlay').style.display='none';
+}
+
+function updateStatusUI(pesan, warna) {
+  const s = document.getElementById('status-kirim');
+  s.textContent = pesan;
+  s.style.backgroundColor = warna;
+  s.style.display = 'block';
+  setTimeout(()=>{ s.style.display='none'; isProcessing=false; detectedBarcodes.clear(); }, 4000);
+}
+
+const dbName = "PresensiOfflineDB";
+let db;
+const reqDB = indexedDB.open(dbName, 1);
+reqDB.onupgradeneeded = e => {
+  db = e.target.result;
+  if (!db.objectStoreNames.contains("antrean"))
+    db.createObjectStore("antrean",{keyPath:"id",autoIncrement:true});
+};
+reqDB.onsuccess = e => { db=e.target.result; };
+
+function bukaModalAntrean(ev) {
+  if (ev) ev.stopPropagation();
+  const modal = document.getElementById('modal-antrean');
+  const cont = document.getElementById('daftar-item-antrean');
+  document.getElementById('prog-cont').style.display='none';
+  document.getElementById('loading-text').style.display='none';
+  cont.innerHTML="<p class='text-center text-gray-400 text-xs'>Memuat data...</p>";
+  modal.style.display='flex';
+  const tx=db.transaction(["antrean"],"readonly");
+  tx.objectStore("antrean").getAll().onsuccess = e => {
+    const items=e.target.result;
+    const btnK=document.getElementById('btn-kirim-manual');
+    const txtK=document.getElementById('text-btn-kirim');
+    if (items.length===0) {
+      cont.innerHTML="<p class='text-center text-gray-400 text-xs'>Tidak ada data offline.</p>";
+      btnK.disabled=true; btnK.style.opacity="0.5"; return;
+    }
+    btnK.disabled=false; btnK.style.opacity="1";
+    txtK.textContent="KIRIM";
+    cont.innerHTML=items.map(it=>`<div class="bg-gray-50 p-2.5 rounded-xl border-l-4 border-amber-500 text-xs"><strong class="text-gray-800">${it.nama}</strong><br><span class="text-gray-500">Keterangan: ${it.keterangan}</span></div>`).join('');
+  };
+}
+
+function tutupModalAntrean() {
+  document.getElementById('modal-antrean').style.display='none';
+  resetNav();
+}
+
+async function kirimManual() {
+  if (!navigator.onLine) { updateStatusUI("ⓘ ANDA SEDANG OFFLINE!\nSILAKAN HUBUNGKAN KE INTERNET TERLEBIH DAHULU","#e67e22"); return; }
+  const btnK=document.getElementById('btn-kirim-manual'), txtK=document.getElementById('text-btn-kirim'),
+        btnT=document.getElementById('btn-tutup-antrean'), progC=document.getElementById('prog-cont'),
+        progB=document.getElementById('prog-bar'), loadT=document.getElementById('loading-text'),
+        totT=document.getElementById('total-send'), curT=document.getElementById('current-send');
+  btnK.disabled=true; btnK.style.opacity="0.6";
+  txtK.textContent="MENGIRIM..."; btnT.disabled=true;
+  const data = await new Promise(res=>{ const tx=db.transaction(["antrean"],"readwrite"); tx.objectStore("antrean").getAll().onsuccess=e=>res(e.target.result); });
+  if (data.length===0) { btnK.disabled=false; btnT.disabled=false; return; }
+  progC.style.display='block'; loadT.style.display='block'; totT.textContent=data.length;
+  for (let i=0;i<data.length;i++) {
+    const item=data[i]; curT.textContent=i+1;
+    progB.style.width=((i+1)/data.length*100)+"%";
+    await fetch(`${scriptURL}?nama=${encodeURIComponent(item.nama)}&keterangan=${encodeURIComponent(item.keterangan)}`,{method:'GET',mode:'no-cors'});
+    const delTx=db.transaction(["antrean"],"readwrite"); delTx.objectStore("antrean").delete(item.id);
+    await new Promise(r=>setTimeout(r,100));
+  }
+  updateStatusUI("✔ SEMUA DATA BERHASIL TERKIRIM!","#0F5132");
+  setTimeout(()=>{
+    tutupModalAntrean(); btnK.disabled=false; btnT.disabled=false;
+    btnK.style.opacity="1"; txtK.textContent="KIRIM";
+  },1500);
+}
+
+const scriptURL='https://script.google.com/macros/s/AKfycbwzJeGPQLKAYIOMUWht45sHz3Vv-JBOJ9jfeFZ434ANaT8sPSe2JQI441YoZBrdqV9a/exec';
+let isProcessing=false, detectedBarcodes=new Set(), scanTimer=null;
+
+function sendPresence(nama) {
+  const ket=document.getElementById('keterangan').value;
+  if (!ket) { updateStatusUI("✖ PILIH KETERANGAN DULU!","#e74c3c"); isProcessing=false; document.getElementById('selection-overlay').style.display='none'; return; }
+  document.getElementById('last-name-display').value=nama;
+  const cfg=JSON.parse(localStorage.getItem('absensiConfig'))||{sound:'notification/Notif01.mp3'};
+  new Audio(cfg.sound).play().catch(()=>{});
+  if (navigator.onLine) {
+    updateStatusUI("✔ TERKIRIM: "+nama,"#0F5132");
+    fetch(`${scriptURL}?nama=${encodeURIComponent(nama)}&keterangan=${encodeURIComponent(ket)}`,{method:'GET',mode:'no-cors',cache:'no-store'});
+  } else { simpanKeOffline({nama,keterangan:ket}); }
+  document.getElementById('selection-overlay').style.display='none';
+}
+
+function simpanKeOffline(data) {
+  if (!db) return;
+  const cfg=JSON.parse(localStorage.getItem('absensiConfig'))||{sound:'notification/Notif01.mp3'};
+  new Audio(cfg.sound).play().catch(()=>{});
+  const tx=db.transaction(["antrean"],"readwrite"); tx.objectStore("antrean").add(data);
+  tx.oncomplete=()=>{ updateStatusUI("☁ OFFLINE: "+data.nama+"\nDATA TERSIMPAN DI ANTREAN","#f39c12"); };
+}
+
+function handleScan(txt) {
+  if (isProcessing) return;
+  detectedBarcodes.add(txt.trim());
+  if (scanTimer) clearTimeout(scanTimer);
+  scanTimer=setTimeout(()=>{
+    const res=Array.from(detectedBarcodes);
+    if (res.length>1) {
+      isProcessing=true;
+      const ov=document.getElementById('selection-overlay');
+      ov.innerHTML=`<p class="text-white text-xs font-bold mb-3">TERDETEKSI ${res.length} BARCODE. PILIH NAMA:</p>`;
+      res.forEach(nama=>{ const b=document.createElement('div'); b.className='bg-emerald-deep text-white p-3 rounded-xl font-bold w-full text-center text-xs cursor-pointer border border-white/20'; b.textContent=nama; b.onclick=e=>{e.stopPropagation();sendPresence(nama);}; ov.appendChild(b); });
+      const batal=document.createElement('div'); batal.className='bg-gray-600 text-white p-3 rounded-xl font-bold w-full text-center text-xs cursor-pointer'; batal.textContent='BATAL — SCAN ULANG';
+      batal.onclick=e=>{e.stopPropagation();ov.style.display='none';isProcessing=false;detectedBarcodes.clear();};
+      ov.appendChild(batal); ov.style.display='flex';
+    } else if (res.length===1) { isProcessing=true; sendPresence(res[0]); }
+  },300);
+}
+
+const html5QrCode = new Html5Qrcode("reader");
+
+function initAppPlatform() {
+  if (window.cordova) {
+    document.addEventListener("deviceready", onCordovaReady, false);
+  } else {
+    nyalakanKamera();
+  }
+}
+
+function onCordovaReady() {
+  if (cordova.plugins && cordova.plugins.permissions) {
+    const permissions = cordova.plugins.permissions;
+    permissions.requestPermission(permissions.CAMERA, function(status) {
+      if (status.hasPermission) {
+        nyalakanKamera();
+      } else {
+        alert("Aplikasi memerlukan izin kamera untuk melakukan scan presensi.");
+      }
+    }, function() {
+      alert("Gagal memproses permintaan izin kamera.");
+    });
+  } else {
+    nyalakanKamera();
+  }
+}
+
+// PERUBAHAN UTAMA: Memaksa ukuran qrbox menggunakan ukuran fix berbentuk persegi (misal 220 x 220 piksel) agar pasti kotak
+function nyalakanKamera() {
+  setTimeout(() => {
+    html5QrCode.start(
+      { facingMode: "environment" },
+      { fps: 20, qrbox: { width: 220, height: 220 } }, // <--- Ukuran dipatok sama persis (Persegi 1:1)
+      handleScan
+    ).catch(e => {
+      if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+        alert("Gagal akses kamera: Browser membutuhkan koneksi aman (HTTPS) untuk mengaktifkan kamera.");
+      }
+    });
+  }, 100);
+}
+
+window.addEventListener('DOMContentLoaded', initAppPlatform);
+
+let pwaPrompt;
+window.addEventListener('beforeinstallprompt', e=>{
+  e.preventDefault(); pwaPrompt=e;
+  setTimeout(()=>{ document.getElementById('pwa-popup').style.display='flex'; },2000);
+});
+document.getElementById('btnInstalPop').onclick=async()=>{
+  if (!pwaPrompt) return;
+  document.getElementById('pwa-popup').style.display='none';
+  pwaPrompt.prompt(); pwaPrompt=null;
+};
+document.getElementById('btnBatal').onclick=()=>{ document.getElementById('pwa-popup').style.display='none'; };
+
+window.addEventListener('DOMContentLoaded',()=>{
+  applySettings();
+});
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').then(()=>console.log("SW Aktif!"));
+}
+
+document.addEventListener("deviceready", () => {
+    if(window.screen && window.screen.orientation) {
+        window.screen.orientation.lock("portrait");
+    }
+}, false);
+</script>
+</body>
+</html>
