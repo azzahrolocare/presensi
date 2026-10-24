@@ -9,7 +9,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <script src="security-lock.js"></script>
-    <!-- Tambahkan library script cordova.js agar API screen orientation bawaan plugin bisa terbaca -->
     <script src="cordova.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -49,7 +48,6 @@
         #containerTabel { cursor: grab; user-select: none; }
         #containerTabel:active { cursor: grabbing; }
 
-        /* --- ANIMASI ROTASI HP 3D KEREN --- */
         @keyframes rotate3DDevice {
             0%, 20%, 90%, 100% { transform: rotate(0deg) rotateY(0deg); }
             40%, 70% {
@@ -119,13 +117,32 @@
             <div class="w-full sm:w-auto flex flex-wrap items-center gap-3">
                 <div class="flex items-center gap-2 w-full sm:w-auto">
                     <label for="pilihKelas" class="font-semibold text-slate-600 text-xs whitespace-nowrap">Pilih Kelas:</label>
-                    <select id="pilihKelas" onchange="muatData()" class="bg-white border border-slate-300 text-slate-900 text-xs rounded-lg block p-2 w-full sm:w-40 shadow-sm font-medium focus:ring-blue-500 focus:border-blue-500">
+                    <select id="pilihKelas" onchange="muatData()" class="bg-white border border-slate-300 text-slate-900 text-xs rounded-lg block p-2 w-full sm:w-36 shadow-sm font-medium focus:ring-blue-500 focus:border-blue-500">
                         <option value="KELAS 07" selected>KELAS 07</option>
                         <option value="KELAS 08">KELAS 08</option>
                         <option value="KELAS 09">KELAS 09</option>
                         <option value="KELAS 10">KELAS 10</option>
                         <option value="KELAS 11">KELAS 11</option>
                         <option value="KELAS 12">KELAS 12</option>
+                    </select>
+                </div>
+
+                <!-- DROPDOWN BULAN BARU -->
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <label for="pilihBulan" class="font-semibold text-slate-600 text-xs whitespace-nowrap">Bulan:</label>
+                    <select id="pilihBulan" onchange="muatData()" class="bg-white border border-slate-300 text-slate-900 text-xs rounded-lg block p-2 w-full sm:w-32 shadow-sm font-medium focus:ring-blue-500 focus:border-blue-500">
+                        <option value="JANUARI">JANUARI</option>
+                        <option value="FEBRUARI">FEBRUARI</option>
+                        <option value="MARET">MARET</option>
+                        <option value="APRIL">APRIL</option>
+                        <option value="MEI">MEI</option>
+                        <option value="JUNI">JUNI</option>
+                        <option value="JULI" selected>JULI</option>
+                        <option value="AGUSTUS">AGUSTUS</option>
+                        <option value="SEPTEMBER">SEPTEMBER</option>
+                        <option value="OKTOBER">OKTOBER</option>
+                        <option value="NOVEMBER">NOVEMBER</option>
+                        <option value="DESEMBER">DESEMBER</option>
                     </select>
                 </div>
                 
@@ -226,7 +243,6 @@
 
         let indexHariMinggu = [];
 
-        // Deteksi Perubahan Orientasi & Update Warna Status Bar Dinamis
         function checkOrientation() {
             const overlay = document.getElementById('rotateOverlay');
             const statusBar = document.getElementById('statusBarTheme');
@@ -236,7 +252,6 @@
                 overlay.classList.remove('hidden');
                 overlay.classList.add('flex');
                 
-                // Matikan scroll pada background saat modal tampil
                 body.classList.remove('overflow-y-auto');
                 body.classList.add('overflow-hidden');
                 
@@ -245,7 +260,6 @@
                 overlay.classList.add('hidden');
                 overlay.classList.remove('flex');
                 
-                // Aktifkan kembali scroll saat mode landscape / normal
                 body.classList.remove('overflow-hidden');
                 body.classList.add('overflow-y-auto');
                 
@@ -253,7 +267,6 @@
             }
         }
 
-        // Jalankan Mode Fullscreen dengan Kunci Lanskap
         function requestFullScreenAndRotate() {
             const docElm = document.documentElement;
             
@@ -267,7 +280,6 @@
                 docElm.msRequestFullscreen();
             }
 
-            // Integrasi pendukung rotasi bawaan plugin screen orientation Cordova
             if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
                 window.screen.orientation.lock('landscape').catch((err) => {
                     console.log("Kunci rotasi plugin: ", err);
@@ -319,14 +331,14 @@
             barisTanggal.insertBefore(thTanggal, refTanggal);
         }
 
-        function setBulanTahunOtomatis() {
-            const namaBulan = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
-            const tglSekarang = new Date();
-            document.getElementById('bulanTahunOtomatis').innerText = `${namaBulan[tglSekarang.getMonth()]} ${tglSekarang.getFullYear()}`;
+        function setBulanTahunOtomatis(bulan, tahun) {
+            const elemenBulanTahun = document.getElementById('bulanTahunOtomatis');
+            elemenBulanTahun.innerText = `${bulan || ""} ${tahun || ""}`.trim() || "-";
         }
 
         async function muatData() {
             const kelas = document.getElementById('pilihKelas').value;
+            const bulan = document.getElementById('pilihBulan').value;
             if (!kelas) return;
 
             const loading = document.getElementById('loadingStatus');
@@ -340,7 +352,8 @@
             areaBawah.classList.add('hidden');
 
             try {
-                const response = await fetch(`${API_URL}?action=getRekap&kelas=${encodeURIComponent(kelas)}`);
+                // Mengirim parameter kelas dan bulan ke Backend
+                const response = await fetch(`${API_URL}?action=getRekap&kelas=${encodeURIComponent(kelas)}&bulan=${encodeURIComponent(bulan)}`);
                 const result = await response.json();
 
                 if (result.status === "error") throw new Error(result.message);
@@ -385,6 +398,19 @@
                     document.getElementById('txtS2').innerText = result.infoHeader.S2 || "";
                     document.getElementById('txtS3').innerText = result.infoHeader.S3 || "";
                     document.getElementById('txtS4').innerText = result.infoHeader.S4 || "";
+                    setBulanTahunOtomatis(result.infoHeader.bulan, result.infoHeader.tahun);
+                    
+                    // Sinkronisasi dropdown bulan jika ada respons bulan dari sheet
+                    if (result.infoHeader.bulan) {
+                        const selectBulan = document.getElementById('pilihBulan');
+                        for (let opt of selectBulan.options) {
+                            if (opt.value.toUpperCase() === result.infoHeader.bulan.toUpperCase()) {
+                                selectBulan.value = opt.value;
+                                break;
+                            }
+                        }
+                    }
+
                     hDefault.classList.add('hidden');
                     hDinamis.classList.remove('hidden');
                 }
@@ -450,7 +476,6 @@
             });
         }
 
-        // Jalankan inisialisasi orientasi otomatis khusus Cordova deviceready
         document.addEventListener("deviceready", () => {
             if (window.screen && window.screen.orientation) {
                 window.screen.orientation.lock("landscape").then(() => {
@@ -464,8 +489,8 @@
         window.addEventListener('DOMContentLoaded', () => {
             setBulanTahunOtomatis();
             checkOrientation(); 
-            // Memastikan KELAS 07 langsung di-load secara otomatis di latar belakang
             document.getElementById('pilihKelas').value = "KELAS 07";
+            document.getElementById('pilihBulan').value = "JULI";
             muatData(); 
         });
     </script>
