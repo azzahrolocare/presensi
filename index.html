@@ -113,7 +113,7 @@ body::before{
 .nav-logos{
   display:flex;align-items:center;
   justify-content:center;
-  gap: 15px;
+  gap: 15px; /* Jarak/gap antara logo dan teks (atur angka ini untuk menyesuaikan posisi masuknya logo) */
   width:100%;
 }
 .nav-logos img{
@@ -137,48 +137,13 @@ body::before{
   width:100%;
 }
 
-/* ── LIVE CLOCK & DATE BAR (BARU) ── */
-.datetime-bar {
-  width: 100%;
-  max-width: 600px;
-  margin: 6px auto 0 auto;
-  padding: 8px 14px;
-  background: var(--glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1.5px solid var(--glass-border);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  box-shadow: var(--glass-shadow);
-  flex-shrink: 0;
-}
-#live-time {
-  font-size: clamp(16px, 4.5vw, 22px);
-  font-weight: 800;
-  color: var(--accent);
-  letter-spacing: .05em;
-  font-family: 'Inter', sans-serif;
-}
-#live-date {
-  font-size: clamp(10px, 3vw, 12px);
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  margin-top: 2px;
-}
-
 /* ── MAIN CONTENT AREA ── */
 #mainScroll{
   flex:1;
   overflow:hidden;
   display:flex;flex-direction:column;
   align-items:center;
-  padding:8px 12px 10px;
+  padding:10px 12px 10px;
   min-height:0;
 }
 .main-inner{
@@ -188,11 +153,10 @@ body::before{
   height:100%;
   min-height:0;
 }
-/* scanner expands to fill all leftover space, ukuran disesuaikan */
+/* scanner expands to fill all leftover space */
 .scanner-box{
   flex:1;
-  min-height: 150px;
-  max-height: 380px;
+  min-height:0;
 }
 
 /* ── DROPDOWN KETERANGAN ── */
@@ -473,6 +437,8 @@ body::before{
 <!-- ABOUT OVERLAY -->
 <div id="about-overlay" onclick="closeAbout()"></div>
 
+<!-- FLOAT OFFLINE (removed) -->
+
 <!-- MODAL ANTREAN -->
 <div id="modal-antrean">
   <div class="antr-card" onclick="event.stopPropagation()">
@@ -503,12 +469,6 @@ body::before{
     <img src="logo-smk-azzahro.png" alt="SMK">
   </div>
 </nav>
-
-<!-- LAYOUT BARU JAM & TANGGAL DI BAWAH HEADER -->
-<div class="datetime-bar">
-  <div id="live-time">00:00:00</div>
-  <div id="live-date">Memuat Tanggal...</div>
-</div>
 
 <!-- MAIN CONTENT -->
 <div id="mainScroll">
@@ -773,22 +733,8 @@ function pilihTema(nama) {
 }
 
 /* =====================================================
-   LIVE CLOCK & DATE LOGIC (BARU)
+   CLOCK (removed)
 ===================================================== */
-function updateLiveClock() {
-  const now = new Date();
-  
-  // Format Jam: Baris Pertama (HH:MM:SS)
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
-  document.getElementById('live-time').textContent = `${hours}:${minutes}:${seconds}`;
-  
-  // Format Tanggal: Baris Kedua (Contoh: Senin, 26 Oktober 2026)
-  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  document.getElementById('live-date').textContent = now.toLocaleDateString('id-ID', options);
-}
-setInterval(updateLiveClock, 1000);
 
 /* =====================================================
    MODAL
@@ -821,6 +767,7 @@ function onBodyClick() {
   if (antrOpen || aboutOpen) return;
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen().catch(()=>{});
+    document.getElementById('fullscreen-info').style.display = 'none';
   }
 }
 
@@ -918,7 +865,9 @@ reqDB.onsuccess = e => { db=e.target.result; updateBadge(); };
 function updateBadge() {
   if (!db) return;
   const tx = db.transaction(["antrean"],"readonly");
-  tx.objectStore("antrean").count().onsuccess = e => {};
+  tx.objectStore("antrean").count().onsuccess = e => {
+    // float button removed; badge count tracked internally only
+  };
 }
 
 function bukaModalAntrean(ev) {
@@ -1031,15 +980,20 @@ function handleScan(txt) {
 
 const html5QrCode = new Html5Qrcode("reader");
 
+// Fungsi inisialisasi utama yang mendeteksi platform
 function initAppPlatform() {
+  // Cek apakah aplikasi berjalan di dalam ekosistem Cordova (APK)
   if (window.cordova) {
     document.addEventListener("deviceready", onCordovaReady, false);
   } else {
+    // Jika di browser biasa / PWA Chrome, langsung nyalakan kamera
+    console.log("Berjalan di Browser/PWA: Menginisialisasi kamera...");
     nyalakanKamera();
   }
 }
 
 function onCordovaReady() {
+  console.log("Berjalan di Cordova APK: Memeriksa izin standar...");
   if (cordova.plugins && cordova.plugins.permissions) {
     const permissions = cordova.plugins.permissions;
     permissions.requestPermission(permissions.CAMERA, function(status) {
@@ -1057,12 +1011,15 @@ function onCordovaReady() {
 }
 
 function nyalakanKamera() {
+  // Pastikan element penampung kamera sudah siap dimuat
   setTimeout(() => {
     html5QrCode.start(
       { facingMode: "environment" },
-      { fps: 20, qrbox: { width: 220, height: 220 } },
+      { fps: 20, qrbox: { width: 260, height: 260 } },
       handleScan
     ).catch(e => {
+      console.error("Gagal menyalakan kamera: ", e);
+      // Opsional: Berikan alert edukatif di browser jika HTTPS bermasalah
       if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
         alert("Gagal akses kamera: Browser membutuhkan koneksi aman (HTTPS) untuk mengaktifkan kamera.");
       }
@@ -1070,8 +1027,12 @@ function nyalakanKamera() {
   }, 100);
 }
 
+// Jalankan fungsi deteksi platform saat DOM selesai dimuat
 window.addEventListener('DOMContentLoaded', initAppPlatform);
 
+/* =====================================================
+   PWA
+===================================================== */
 /* =====================================================
    PWA
 ===================================================== */
@@ -1093,7 +1054,6 @@ document.getElementById('btnBatal').onclick=()=>{ document.getElementById('pwa-p
 window.addEventListener('DOMContentLoaded',()=>{
   pilihTema(localStorage.getItem('presensi_theme')||'emerald');
   applySettings();
-  updateLiveClock();
 });
 </script>
 <script>
@@ -1106,6 +1066,7 @@ document.addEventListener("deviceready", () => {
         window.screen.orientation.lock("portrait");
     }
 }, false);
+  
 </script>
 </body>
 </html>
