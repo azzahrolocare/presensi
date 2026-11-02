@@ -1,4 +1,4 @@
-name: Build Android APK (Presensi URL Wrapper)
+name: Build Android APK (Presensi)
 
 on:
   push:
@@ -38,49 +38,65 @@ jobs:
         cd cordova-app
         cordova platform add android
         
-        # Tambahkan plugin inti UI, Kamera, Navigasi, dan Whitelist
+        # Tambahkan plugin inti UI, Kamera, Navigasi, dan Orientasi Layar
         cordova plugin add cordova-plugin-statusbar
         cordova plugin add cordova-plugin-inappbrowser
         cordova plugin add cordova-plugin-camera
         cordova plugin add cordova-plugin-android-permissions
         cordova plugin add cordova-plugin-screen-orientation
-        cordova plugin add cordova-plugin-whitelist
 
-    - name: Download App Icon
+    - name: Copy Web Assets to Cordova
       run: |
+        # Bersihkan folder www bawaan cordova
+        rm -rf cordova-app/www/*
+        
+        # Salin file web utama termasuk default.html secara aman
+        cp -r default.html index.html offline.html rekapitulasi.html sw.js manifest.json *.png cordova-app/www/ 2>/dev/null || true
+        
+        # Unduh ikon resmi langsung ke root proyek untuk digunakan sebagai aset build
         curl -s -L -o cordova-app/icon-presensi.png https://azzahro.web.id/presensi/icon-presensi.png
+        cp cordova-app/icon-presensi.png cordova-app/www/icon-presensi.png
+        
+        # OTOMATISASI LANDSCAPE KHUSUS REKAPITULASI
+        sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("landscape"); } }, false);<\/script><\/body>/g' cordova-app/www/rekapitulasi.html
+        
+        # OTOMATISASI PORTRAIT KHUSUS DEFAULT.HTML
+        sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("portrait"); } }, false);<\/script><\/body>/g' cordova-app/www/default.html
+        
+        # Jika ada folder tambahan seperti notification, ikut disalin
+        if [ -d "notification" ]; then cp -r notification cordova-app/www/; fi
 
-    - name: Configure Cordova config.xml (URL Wrapper & Whitelist)
+    - name: Configure Cordova config.xml (Perbaikan Struktur XML Manifest & Splash Modern)
       run: |
         cd cordova-app
         
-        # SUNTIKKAN NAMESPACE ANDROID
+        # SUNTIKKAN NAMESPACE ANDROID (Solusi Eror AttributePrefixUnbound)
         sed -i 's/<widget/<widget xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android"/g' config.xml
         
-        # UBAH KONTEN UTAMA AGAR LANGSUNG MEMUAT LINK WEBSITE AZ-ZAHRO
-        sed -i 's/<content src="index.html" \/>/<content src="https:\/\/azzahro.web.id\/presensi\/" \/>/g' config.xml
+        # ATUR DEFAULT.HTML SEBAGAI HALAMAN UTAMA (ENTRY POINT)
+        sed -i '/<\/widget>/i \    <content src="default.html" \/>' config.xml
         
-        # Set Fullscreen, Orientasi, Ikon, dan Whitelist Akses Penuh
+        # Set Fullscreen dan Orientation dasar
         sed -i '/<\/widget>/i \    <preference name="Fullscreen" value="true" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="Orientation" value="portrait" \/>' config.xml
+        
+        # Set Ikon Utama Aplikasi
         sed -i '/<\/widget>/i \    <icon src="icon-presensi.png" \/>' config.xml
+        
+        # KEBIJAKAN WHITELIST AKSES JARINGAN (Solusi Fetch/XHR Terblokir di Cordova)
         sed -i '/<\/widget>/i \    <access origin="*" \/>' config.xml
         sed -i '/<\/widget>/i \    <allow-navigation href="*" \/>' config.xml
         sed -i '/<\/widget>/i \    <allow-intent href="http:\/\/*\/*" \/>' config.xml
         sed -i '/<\/widget>/i \    <allow-intent href="https:\/\/*\/*" \/>' config.xml
-        sed -i '/<\/widget>/i \    <preference name="backgroundColor" value="0xFF0F5132" \/>' config.xml
         
-        # Konfigurasi Splash Screen Hijau
+        # KONFIGURASI SPLASH SCREEN MODERN (Android 12+ API Compliant)
         sed -i '/<\/widget>/i \    <preference name="AndroidWindowSplashScreenAnimatedIcon" value="icon-presensi.png" \/>' config.xml
-        sed -i '/<\/widget>/i \    <preference name="AndroidWindowSplashScreenBackground" value="#0F5132" \/>' config.xml
+        sed -i '/<\/widget>/i \    <preference name="AndroidWindowSplashScreenBackground" value="#ffffff" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="AutoHideSplashScreen" value="true" \/>' config.xml
-        sed -i '/<\/widget>/i \    <preference name="SplashScreenDelay" value="2000" \/>' config.xml
+        sed -i '/<\/widget>/i \    <preference name="SplashScreenDelay" value="3000" \/>' config.xml
         
-        # Hapus tag penutup widget lama agar bisa disisipi konfigurasi izin Android
-        sed -i '$d' config.xml
-        
-        # Tambahkan izin Android (Kamera & Internet)
-        cat << 'EOF' >> config.xml
+        # Buat blok konfigurasi izin dengan parent /manifest yang benar sesuai AAPT
+        cat << 'EOF' > android_permissions.xml
             <platform name="android">
                 <config-file target="AndroidManifest.xml" parent="/manifest">
                     <uses-permission android:name="android.permission.INTERNET" />
@@ -91,8 +107,10 @@ jobs:
                     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
                 </config-file>
             </platform>
-        </widget>
         EOF
+        
+        # Masukkan blok izin tepat sebelum tag penutup </widget>
+        sed -i '/<\/widget>/e cat android_permissions.xml' config.xml
 
     - name: Build Android APK (Debug Signed)
       run: |
@@ -102,5 +120,7 @@ jobs:
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Presensi-Az-Zahro-APK
+        name: app-debug-apk
         path: cordova-app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+        if-no-files-found: error
+        retention-days: 1
