@@ -66,7 +66,7 @@ jobs:
         # Jika ada folder tambahan seperti notification, ikut disalin
         if [ -d "notification" ]; then cp -r notification cordova-app/www/; fi
 
-    - name: Configure Cordova config.xml (Perbaikan anti-kedip & splash screen hijau)
+    - name: Configure Cordova config.xml (Anti-Kedip & Splash Screen Hijau)
       run: |
         cd cordova-app
         
