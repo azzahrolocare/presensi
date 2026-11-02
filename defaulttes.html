@@ -204,38 +204,61 @@
     <!-- MAIN CONTENT -->
     <div class="w-full max-w-md mx-auto p-4 flex flex-col gap-4 mt-2 pb-28 items-center">
 
-        <!-- DROPDOWN KETERANGAN -->
-        <div class="relative w-full">
-          <select id="keterangan" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-gray-900 font-bold focus:ring-4 focus:ring-emerald-deep/5 focus:border-emerald-deep outline-none cursor-pointer shadow-sm">
-            <option value="" disabled selected>Pilih Keterangan</option>
-            <option value="●">🟢 HADIR</option>
-            <option value="I">🟡 IZIN</option>
-            <option value="S">🔵 SAKIT</option>
-            <option value="A">🔴 ALPA</option>
-          </select>
+        <!-- HALAMAN QR CODE (DEFAULT) -->
+        <div id="page-qrcode" class="w-full flex flex-col gap-4 items-center">
+            <!-- DROPDOWN KETERANGAN -->
+            <div class="relative w-full">
+              <select id="keterangan" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-gray-900 font-bold focus:ring-4 focus:ring-emerald-deep/5 focus:border-emerald-deep outline-none cursor-pointer shadow-sm">
+                <option value="" disabled selected>Pilih Keterangan</option>
+                <option value="●">🟢 HADIR</option>
+                <option value="I">🟡 IZIN</option>
+                <option value="S">🔵 SAKIT</option>
+                <option value="A">🔴 ALPA</option>
+              </select>
+            </div>
+
+            <!-- SCANNER BOX (PERSEGI 1:1 DENGAN UKURAN LEBIH BESAR & SIKU-SIKU PUTIH) -->
+            <div class="w-full max-w-[320px] aspect-square rounded-2xl overflow-hidden border-2 border-emerald-deep shadow-lg bg-black relative flex items-center justify-center">
+              <!-- Siku-siku Putih -->
+              <div class="corner-bracket corner-tl"></div>
+              <div class="corner-bracket corner-tr"></div>
+              <div class="corner-bracket corner-bl"></div>
+              <div class="corner-bracket corner-br"></div>
+
+              <div id="reader" class="w-full h-full absolute inset-0"></div>
+              <div id="selection-overlay" class="absolute inset-0 bg-black/90 z-[100] hidden flex-col items-center justify-center gap-2 p-4"></div>
+            </div>
+
+            <!-- NAMA TERAKHIR -->
+            <div class="w-full bg-white rounded-xl p-3 shadow-sm border border-slate-100 flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-emerald-soft border border-emerald-light flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-id-card text-emerald-deep text-sm"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Terakhir Discan</div>
+                <input type="text" id="last-name-display" class="w-full bg-transparent border-none outline-none font-bold text-emerald-deep text-sm" placeholder="MENUNGGU SCAN..." readonly>
+              </div>
+            </div>
         </div>
 
-        <!-- SCANNER BOX (PERSEGI 1:1 DENGAN UKURAN LEBIH BESAR & SIKU-SIKU PUTIH) -->
-        <div class="w-full max-w-[320px] aspect-square rounded-2xl overflow-hidden border-2 border-emerald-deep shadow-lg bg-black relative flex items-center justify-center">
-          <!-- Siku-siku Putih -->
-          <div class="corner-bracket corner-tl"></div>
-          <div class="corner-bracket corner-tr"></div>
-          <div class="corner-bracket corner-bl"></div>
-          <div class="corner-bracket corner-br"></div>
+        <!-- HALAMAN PRESENSI MANUAL -->
+        <div id="page-manual" class="w-full flex flex-col gap-4 items-center hidden">
+            <div class="w-full bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">Pilih Kelas:</label>
+                <select id="select-kelas-manual" onchange="loadSiswaManual(this.value)" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-xs text-gray-900 font-bold focus:ring-4 focus:ring-emerald-deep/5 focus:border-emerald-deep outline-none cursor-pointer">
+                    <option value="" disabled selected>-- Pilih Kelas --</option>
+                    <option value="KELAS 07">KELAS 07</option>
+                    <option value="KELAS 08">KELAS 08</option>
+                    <option value="KELAS 09">KELAS 09</option>
+                    <option value="KELAS 10">KELAS 10</option>
+                    <option value="KELAS 11">KELAS 11</option>
+                    <option value="KELAS 12">KELAS 12</option>
+                </select>
+            </div>
 
-          <div id="reader" class="w-full h-full absolute inset-0"></div>
-          <div id="selection-overlay" class="absolute inset-0 bg-black/90 z-[100] hidden flex-col items-center justify-center gap-2 p-4"></div>
-        </div>
-
-        <!-- NAMA TERAKHIR -->
-        <div class="w-full bg-white rounded-xl p-3 shadow-sm border border-slate-100 flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg bg-emerald-soft border border-emerald-light flex items-center justify-center flex-shrink-0">
-            <i class="fa-solid fa-id-card text-emerald-deep text-sm"></i>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Terakhir Discan</div>
-            <input type="text" id="last-name-display" class="w-full bg-transparent border-none outline-none font-bold text-emerald-deep text-sm" placeholder="MENUNGGU SCAN..." readonly>
-          </div>
+            <div id="container-daftar-siswa" class="w-full flex flex-col gap-3">
+                <div class="text-center text-xs text-slate-400 py-8 bg-white rounded-2xl border border-slate-100">Silakan pilih kelas terlebih dahulu untuk menampilkan daftar siswa.</div>
+            </div>
         </div>
 
     </div>
@@ -248,6 +271,14 @@
       <i class="fa-solid fa-chart-pie text-sm"></i>
     </div>
     <span class="text-[10px] font-bold text-white mt-1">Rekap</span>
+  </div>
+
+  <!-- Tombol Toggle Dinamis: Presensi Manual / QR Code -->
+  <div class="nav-it flex flex-col items-center justify-center w-20 h-full cursor-pointer transition-all duration-300" id="nManualToggle" onclick="toggleModePresensi(this);event.stopPropagation()">
+    <div class="ic-wrap w-11 h-11 rounded-xl bg-emerald-medium/50 border border-white/20 flex items-center justify-center text-white transition-all shadow-sm" id="navToggleIconWrap">
+      <i class="fa-solid fa-hand-pointer text-sm" id="navToggleIcon"></i>
+    </div>
+    <span class="text-[10px] font-bold text-white mt-1" id="navToggleText">Manual</span>
   </div>
 
   <div class="nav-it flex flex-col items-center justify-center w-20 h-full cursor-pointer transition-all duration-300" id="nOffline" onclick="navKlik(this,'offline');event.stopPropagation()">
@@ -335,6 +366,7 @@
 
 <script>
 let activeModal = null;
+let currentMode = 'qrcode'; // 'qrcode' atau 'manual'
 
 // SCRIPT JAM REALTIME DENGAN FORMAT TANGGAL INDONESIA
 function updateClock() {
@@ -365,10 +397,124 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
+// Fungsi Toggle Mode Presensi (QR Code <-> Manual) pada Nav Bottom
+function toggleModePresensi(el) {
+  const pageQrcode = document.getElementById('page-qrcode');
+  const pageManual = document.getElementById('page-manual');
+  const icon = document.getElementById('navToggleIcon');
+  const text = document.getElementById('navToggleText');
+
+  if (currentMode === 'qrcode') {
+    currentMode = 'manual';
+    pageQrcode.classList.add('hidden');
+    pageManual.classList.remove('hidden');
+    icon.className = 'fa-solid fa-qrcode text-sm';
+    text.textContent = 'QR Code';
+    el.classList.add('active');
+  } else {
+    currentMode = 'qrcode';
+    pageManual.classList.add('hidden');
+    pageQrcode.classList.remove('hidden');
+    icon.className = 'fa-solid fa-hand-pointer text-sm';
+    text.textContent = 'Manual';
+    el.classList.remove('active');
+  }
+}
+
+// Logika Load Siswa Manual Berdasarkan Kelas yang Dipilih
+async function loadSiswaManual(kelas) {
+  const container = document.getElementById('container-daftar-siswa');
+  container.innerHTML = `<div class="text-center text-xs text-slate-500 py-8 bg-white rounded-2xl border border-slate-100"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Memuat data siswa ${kelas}...</div>`;
+
+  try {
+    const response = await fetch(`${scriptURL}?action=getRekap&kelas=${encodeURIComponent(kelas)}`);
+    const resJson = await response.json();
+
+    if (resJson.status === 'success' && resJson.data && resJson.data.length > 0) {
+      container.innerHTML = '';
+      resJson.data.forEach((siswa, index) => {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3';
+        
+        // Info Nama & JK Siswa
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'flex items-center gap-3 w-full sm:w-auto min-w-0';
+        infoDiv.innerHTML = `
+          <div class="w-8 h-8 rounded-lg bg-emerald-soft border border-emerald-light flex items-center justify-center font-bold text-emerald-deep text-xs flex-shrink-0">${index + 1}</div>
+          <div class="min-w-0 flex-1">
+            <div class="text-xs font-bold text-slate-800 truncate">${siswa.nama}</div>
+            <div class="text-[10px] text-slate-400 font-medium">JK: ${siswa.jk || '-'}</div>
+          </div>
+        `;
+        rowDiv.appendChild(infoDiv);
+
+        // Opsi Radio Kotak Huruf S I A (Hadir, Sakit, Izin, Alpa)
+        const radioGroup = document.createElement('div');
+        radioGroup.className = 'flex items-center gap-2 flex-shrink-0';
+        
+        const options = [
+          { val: '●', label: 'H', title: 'Hadir' },
+          { val: 'S', label: 'S', title: 'Sakit' },
+          { val: 'I', label: 'I', title: 'Izin' },
+          { val: 'A', label: 'A', title: 'Alpa' }
+        ];
+
+        options.forEach(opt => {
+          const label = document.createElement('label');
+          label.className = 'flex flex-col items-center justify-center w-9 h-9 rounded-lg border border-slate-200 bg-slate-50 cursor-pointer hover:bg-emerald-soft transition-all text-xs font-bold text-slate-700 select-none';
+          label.title = opt.title;
+
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.name = `presensi_${index}`;
+          radio.value = opt.val;
+          radio.className = 'hidden';
+
+          // Event ketika opsi radio dipilih
+          radio.onchange = () => {
+            // Berikan highlight visual terpilih
+            radioGroup.querySelectorAll('label').forEach(l => l.classList.remove('bg-emerald-deep', 'text-white', 'border-emerald-deep'));
+            label.classList.add('bg-emerald-deep', 'text-white', 'border-emerald-deep');
+            
+            // Kirim presensi manual
+            kirimPresensiManual(siswa.nama, opt.val);
+          };
+
+          label.appendChild(radio);
+          label.appendChild(document.createTextNode(opt.label));
+          radioGroup.appendChild(label);
+        });
+
+        rowDiv.appendChild(radioGroup);
+        container.appendChild(rowDiv);
+      });
+    } else {
+      container.innerHTML = `<div class="text-center text-xs text-red-500 py-6 bg-white rounded-2xl border border-slate-100 font-bold">Tidak ada data siswa ditemukan untuk kelas ${kelas}.</div>`;
+    }
+  } catch (err) {
+    container.innerHTML = `<div class="text-center text-xs text-red-500 py-6 bg-white rounded-2xl border border-slate-100 font-bold">Gagal memuat data siswa. Periksa koneksi internet.</div>`;
+  }
+}
+
+// Fungsi Pengiriman Presensi Manual
+function kirimPresensiManual(nama, keterangan) {
+  const cfg = JSON.parse(localStorage.getItem('absensiConfig')) || { sound: 'notification/Notif01.mp3' };
+  new Audio(cfg.sound).play().catch(() => {});
+  
+  if (navigator.onLine) {
+    updateStatusUI("✔ MANUAL TERKIRIM: " + nama, "#0F5132");
+    fetch(`${scriptURL}?nama=${encodeURIComponent(nama)}&keterangan=${encodeURIComponent(keterangan)}`, { method: 'GET', mode: 'no-cors', cache: 'no-store' });
+  } else {
+    simpanKeOffline({ nama, keterangan: keterangan });
+  }
+}
+
 // Navigasi Langsung 1 Kali Klik Tanpa Status Bertingkat (Idle/Ready/Active)
 function navKlik(el, aksi) {
-  document.querySelectorAll('.nav-it').forEach(n => { n.classList.remove('active'); });
-  el.classList.add('active');
+  document.querySelectorAll('.nav-it').forEach(n => { 
+    if(n.id !== 'nManualToggle') n.classList.remove('active'); 
+  });
+  if(aksi !== 'manual') el.classList.add('active');
   jalankanNav(aksi);
 }
 
@@ -379,7 +525,11 @@ function jalankanNav(aksi) {
 }
 
 function resetNav() {
-  document.querySelectorAll('.nav-it').forEach(n => { n.classList.remove('active'); });
+  document.querySelectorAll('.nav-it').forEach(n => { 
+    if(n.id !== 'nManualToggle' || currentMode === 'qrcode') {
+      n.classList.remove('active'); 
+    }
+  });
 }
 
 function bukaMod(id) {
