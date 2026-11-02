@@ -1,0 +1,5 @@
+1. Paduan membuat aplikasi melalui github action
+  buat folder .github/workflows/
+  buat/pasang file nama_bebas.yml
+  cara ubah target halaman html yang mau dijadikan aplikasi
+  upload file yml ke gemini ai perintahkan "kode inikan mengarah ke default.html kamu ubah kode ini ke index.html tanpa harus mengubah kode yang lainnya"
