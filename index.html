@@ -876,7 +876,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').then(()=>console.log("SW Aktif!"));
+  navigator.serviceWorker.register('sw.js').then(()=>console.log("SW Aktif!"));
 }
 
 document.addEventListener("deviceready", () => {
