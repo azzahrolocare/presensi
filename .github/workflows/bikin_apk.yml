@@ -50,7 +50,7 @@ jobs:
         # Bersihkan folder www bawaan cordova
         rm -rf cordova-app/www/*
         
-        # Salin file web utama termasuk default.html secara aman
+        # Salin file web utama termasuk index.html secara aman
         cp -r default.html index.html offline.html rekapitulasi.html sw.js manifest.json *.png cordova-app/www/ 2>/dev/null || true
         
         # Unduh ikon resmi langsung ke root proyek untuk digunakan sebagai aset build
@@ -60,8 +60,8 @@ jobs:
         # OTOMATISASI LANDSCAPE KHUSUS REKAPITULASI
         sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("landscape"); } }, false);<\/script><\/body>/g' cordova-app/www/rekapitulasi.html
         
-        # OTOMATISASI PORTRAIT KHUSUS DEFAULT.HTML
-        sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("portrait"); } }, false);<\/script><\/body>/g' cordova-app/www/default.html
+        # OTOMATISASI PORTRAIT KHUSUS INDEX.HTML
+        sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("portrait"); } }, false);<\/script><\/body>/g' cordova-app/www/index.html
         
         # Jika ada folder tambahan seperti notification, ikut disalin
         if [ -d "notification" ]; then cp -r notification cordova-app/www/; fi
@@ -73,8 +73,8 @@ jobs:
         # SUNTIKKAN NAMESPACE ANDROID (Solusi Eror AttributePrefixUnbound)
         sed -i 's/<widget/<widget xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android"/g' config.xml
         
-        # ATUR DEFAULT.HTML SEBAGAI HALAMAN UTAMA (ENTRY POINT)
-        sed -i '/<\/widget>/i \    <content src="default.html" \/>' config.xml
+        # ATUR INDEX.HTML SEBAGAI HALAMAN UTAMA (ENTRY POINT)
+        sed -i '/<\/widget>/i \    <content src="index.html" \/>' config.xml
         
         # Set Fullscreen dan Orientation dasar
         sed -i '/<\/widget>/i \    <preference name="Fullscreen" value="true" \/>' config.xml
