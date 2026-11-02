@@ -146,7 +146,7 @@
         }
     </style>
 </head>
-<body id="mainBody" class="bg-[#f8fafc] min-h-screen text-gray-800 antialiased flex flex-col justify-between overflow-x-hidden" onclick="onBodyClick()">
+<body id="mainBody" class="bg-[#0F5132] min-h-screen text-gray-800 antialiased flex flex-col justify-between overflow-x-hidden" onclick="onBodyClick()">
 
 <div>
     <!-- STATUS TOAST -->
@@ -214,7 +214,7 @@
     </div>
 
     <!-- MAIN CONTENT -->
-    <div class="w-full max-w-md mx-auto p-4 flex flex-col gap-4 mt-2 pb-28 items-center">
+    <div class="w-full max-w-md mx-auto p-4 flex flex-col gap-4 mt-2 pb-28 items-center bg-[#f8fafc] min-h-[70vh] rounded-t-3xl">
 
         <!-- HALAMAN QR CODE (DEFAULT) -->
         <div id="page-qrcode" class="w-full flex flex-col gap-4 items-center">
@@ -519,7 +519,7 @@ async function loadSiswaManual(kelas) {
       // Desain baris compact agar pas satu baris dalam satu layar penuh
       rowDiv.className = 'bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between gap-1.5';
       
-      // Info Nomor & Nama Siswa (Teks nama dibuat fleksibel text-[10px] sm:text-xs tanpa dipotong truncate agar selalu Tampil Utuh/Full)
+      // Info Nomor & Nama Siswa
       const infoDiv = document.createElement('div');
       infoDiv.className = 'flex items-center gap-1.5 min-w-0 flex-1 pr-1';
       infoDiv.innerHTML = `
@@ -583,7 +583,6 @@ async function loadSiswaManual(kelas) {
 
       options.forEach(opt => {
         const label = document.createElement('label');
-        // Ukuran tombol diperkecil sedikit (w-6 h-6 / w-7 h-7) dengan warna khas tiap keterangan
         label.className = `flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded border ${opt.idleBorder} ${opt.idleBg} ${opt.idleText} cursor-pointer transition-all text-[10px] sm:text-xs font-bold select-none shadow-xs`;
         label.title = opt.title;
 
@@ -593,18 +592,14 @@ async function loadSiswaManual(kelas) {
         radio.value = opt.val;
         radio.className = 'hidden';
 
-        // Event ketika opsi radio dipilih
         radio.onchange = () => {
-          // Reset semua tombol dalam baris ini ke warna idle awal
           radioGroup.querySelectorAll('label').forEach((l, idx) => {
             const o = options[idx];
             l.className = `flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded border ${o.idleBorder} ${o.idleBg} ${o.idleText} cursor-pointer transition-all text-[10px] sm:text-xs font-bold select-none shadow-xs`;
           });
 
-          // Tambahkan efek aktif warna khusus tombol yang dipilih
           label.className = `flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded border ${opt.activeBorder} ${opt.activeBg} ${opt.activeText} cursor-pointer transition-all text-[10px] sm:text-xs font-bold select-none shadow-sm scale-105`;
           
-          // Kirim presensi manual
           kirimPresensiManual(siswa.nama, opt.val);
         };
 
@@ -634,7 +629,7 @@ function kirimPresensiManual(nama, keterangan) {
   }
 }
 
-// Navigasi Langsung 1 Kali Klik Tanpa Status Bertingkat (Idle/Ready/Active)
+// Navigasi Langsung 1 Kali Klik Tanpa Status Bertingkat
 function navKlik(el, aksi) {
   document.querySelectorAll('.nav-it').forEach(n => { 
     if(n.id !== 'nManualToggle') n.classList.remove('active'); 
@@ -673,14 +668,12 @@ function tutupMod(id) {
   resetNav();
 }
 
+// Fungsi onBodyClick dibersihkan dari pemanggilan requestFullscreen() untuk mencegah kedipan layout
 function onBodyClick() {
   if (activeModal) return;
   const antrOpen = document.getElementById('modal-antrean').style.display === 'flex';
   const aboutOpen = document.getElementById('about-pop-up').style.display === 'block';
   if (antrOpen || aboutOpen) return;
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch(()=>{});
-  }
 }
 
 function applySettings() {
@@ -850,12 +843,11 @@ function onCordovaReady() {
   }
 }
 
-// PERUBAHAN UTAMA: Memaksa ukuran qrbox menggunakan ukuran fix berbentuk persegi (misal 220 x 220 piksel) agar pasti kotak
 function nyalakanKamera() {
   setTimeout(() => {
     html5QrCode.start(
       { facingMode: "environment" },
-      { fps: 20, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 }, // <--- Ukuran qrbox persegi + feed kamera dipaksa rasio 1:1
+      { fps: 20, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 },
       handleScan
     ).catch(e => {
       if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
