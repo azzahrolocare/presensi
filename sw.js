@@ -1,4 +1,4 @@
-const CACHE_NAME = 'presensi-azzahro-v1.0.6';
+const CACHE_NAME = 'presensi-azzahro-v1.0.7';
 const OFFLINE_URL = './offline.html';
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCXbDTuaFkN7GlcXJxaFgDaKPEp2G9vySF1IKfWxUCTuEOCYt39nMmlEmI25pz4PSd/exec';
 const REKAP_URL = 'https://azzahrolocare.github.io/rekapitulasi-presensi-siswa/';
@@ -7,12 +7,18 @@ const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './offline.html',
+  './rekapitulasi.html',
   './manifest.json',
   './logo-smp-azzahro.png',
   './logo-smk-azzahro.png',
   './notification/Notif01.mp3',
+  './icon-apk-presensi-azzahro.png',
+  // TAMBAHKAN SEMUA PUSTAKA EKSTERNAL DI BAWAH INI AGAR AMAN SAAT OFFLINE:
+  'https://cdn.tailwindcss.com',
+  'https://unpkg.com/lucide@latest',
   'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js',
-  './icon-apk-presensi-azzahro.png'
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap'
 ];
 
 // 1. INSTALL: Simpan aset ke cache
@@ -37,11 +43,24 @@ self.addEventListener('activate', (e) => {
   return self.clients.claim();
 });
 
-// 3. FETCH: Proxy Cache
+// 3. FETCH: Proxy Cache (Mendukung file lokal & CDN eksternal saat offline)
 self.addEventListener('fetch', (e) => {
   if (e.request.url.includes('script.google.com')) return;
+  
   e.respondWith(
-    caches.match(e.request).then((res) => res || fetch(e.request))
+    caches.match(e.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      return fetch(e.request).then((networkResponse) => {
+        return networkResponse;
+      }).catch(() => {
+        // Jika gagal total dan berupa navigasi halaman, kembalikan index.html
+        if (e.request.mode === 'navigate') {
+          return caches.match('./index.html');
+        }
+      });
+    })
   );
 });
 
@@ -76,7 +95,6 @@ async function kirimDataDariIndexedDB() {
 
     for (const item of dataAntrean) {
       try {
-        // Gunakan timeout agar pengiriman banyak data tidak menggantung
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000); 
 
@@ -89,11 +107,9 @@ async function kirimDataDariIndexedDB() {
         clearTimeout(timeoutId);
         suksesCount++;
         
-        // Hapus satu per satu dari DB setelah sukses kirim
         const deleteTx = db.transaction(["antrean"], "readwrite");
         deleteTx.objectStore("antrean").delete(item.id || dataAntrean.indexOf(item) + 1);
         
-        // Jeda kecil (0.3 detik) antar pengiriman agar tidak dianggap spam oleh server
         await new Promise(r => setTimeout(r, 300));
         
       } catch (err) {
@@ -103,7 +119,6 @@ async function kirimDataDariIndexedDB() {
       }
     }
     
-    // Tampilkan notifikasi hasil akhir
     if (suksesCount > 0) {
       showNotification(
         `Sinkronisasi Selesai`, 
