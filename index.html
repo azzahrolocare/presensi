@@ -517,22 +517,22 @@ async function loadSiswaManual(kelas) {
     siswaData.forEach((siswa, index) => {
       const rowDiv = document.createElement('div');
       // Desain baris compact agar pas satu baris dalam satu layar penuh
-      rowDiv.className = 'bg-white px-3 py-2 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between gap-2';
+      rowDiv.className = 'bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between gap-1.5';
       
-      // Info Nomor, Nama & JK Siswa (Nomor diperkecil, Nama truncate jika panjang)
+      // Info Nomor & Nama Siswa (Teks nama dibuat fleksibel text-[10px] sm:text-xs tanpa dipotong truncate agar selalu Tampil Utuh/Full)
       const infoDiv = document.createElement('div');
-      infoDiv.className = 'flex items-center gap-2 min-w-0 flex-1';
+      infoDiv.className = 'flex items-center gap-1.5 min-w-0 flex-1 pr-1';
       infoDiv.innerHTML = `
         <div class="w-5 h-5 rounded bg-emerald-soft border border-emerald-light flex items-center justify-center font-bold text-emerald-deep text-[10px] flex-shrink-0">${index + 1}</div>
         <div class="min-w-0 flex-1">
-          <div class="text-xs font-bold text-slate-800 truncate">${siswa.nama}</div>
+          <div class="text-[10px] sm:text-xs font-bold text-slate-800 leading-tight break-words">${siswa.nama}</div>
         </div>
       `;
       rowDiv.appendChild(infoDiv);
 
-      // Opsi Radio Kotak Huruf S I A (Hadir, Sakit, Izin, Alpa) dengan warna berbeda-beda saat dipilih & netral
+      // Opsi Radio Kotak Huruf H S I A dengan Warna Berbeda yang Elegan
       const radioGroup = document.createElement('div');
-      radioGroup.className = 'flex items-center gap-1.5 flex-shrink-0';
+      radioGroup.className = 'flex items-center gap-1 flex-shrink-0';
       
       const options = [
         { 
@@ -540,38 +540,51 @@ async function loadSiswaManual(kelas) {
           label: 'H', 
           title: 'Hadir',
           activeBg: 'bg-emerald-600',
+          activeText: 'text-white',
           activeBorder: 'border-emerald-600',
-          neutralBg: 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+          idleBg: 'bg-emerald-50',
+          idleText: 'text-emerald-700',
+          idleBorder: 'border-emerald-200'
         },
         { 
           val: 'S', 
           label: 'S', 
           title: 'Sakit',
           activeBg: 'bg-blue-600',
+          activeText: 'text-white',
           activeBorder: 'border-blue-600',
-          neutralBg: 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'
+          idleBg: 'bg-blue-50',
+          idleText: 'text-blue-700',
+          idleBorder: 'border-blue-200'
         },
         { 
           val: 'I', 
           label: 'I', 
           title: 'Izin',
           activeBg: 'bg-amber-500',
+          activeText: 'text-white',
           activeBorder: 'border-amber-500',
-          neutralBg: 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
+          idleBg: 'bg-amber-50',
+          idleText: 'text-amber-700',
+          idleBorder: 'border-amber-200'
         },
         { 
           val: 'A', 
           label: 'A', 
           title: 'Alpa',
           activeBg: 'bg-rose-600',
+          activeText: 'text-white',
           activeBorder: 'border-rose-600',
-          neutralBg: 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
+          idleBg: 'bg-rose-50',
+          idleText: 'text-rose-700',
+          idleBorder: 'border-rose-200'
         }
       ];
 
       options.forEach(opt => {
         const label = document.createElement('label');
-        label.className = `flex flex-col items-center justify-center w-7 h-7 rounded border cursor-pointer transition-all text-[11px] font-bold select-none ${opt.neutralBg}`;
+        // Ukuran tombol diperkecil sedikit (w-6 h-6 / w-7 h-7) dengan warna khas tiap keterangan
+        label.className = `flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded border ${opt.idleBorder} ${opt.idleBg} ${opt.idleText} cursor-pointer transition-all text-[10px] sm:text-xs font-bold select-none shadow-xs`;
         label.title = opt.title;
 
         const radio = document.createElement('input');
@@ -582,14 +595,14 @@ async function loadSiswaManual(kelas) {
 
         // Event ketika opsi radio dipilih
         radio.onchange = () => {
-          // Reset semua tombol pada baris ini ke tampilan warna netralnya masing-masing
-          radioGroup.querySelectorAll('label').forEach((lbl, idx) => {
-            const currentOpt = options[idx];
-            lbl.className = `flex flex-col items-center justify-center w-7 h-7 rounded border cursor-pointer transition-all text-[11px] font-bold select-none ${currentOpt.neutralBg}`;
+          // Reset semua tombol dalam baris ini ke warna idle awal
+          radioGroup.querySelectorAll('label').forEach((l, idx) => {
+            const o = options[idx];
+            l.className = `flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded border ${o.idleBorder} ${o.idleBg} ${o.idleText} cursor-pointer transition-all text-[10px] sm:text-xs font-bold select-none shadow-xs`;
           });
 
-          // Terapkan warna spesifik saat tombol dipilih
-          label.className = `flex flex-col items-center justify-center w-7 h-7 rounded border cursor-pointer transition-all text-[11px] font-bold select-none text-white shadow-sm ${opt.activeBg} ${opt.activeBorder}`;
+          // Tambahkan efek aktif warna khusus tombol yang dipilih
+          label.className = `flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded border ${opt.activeBorder} ${opt.activeBg} ${opt.activeText} cursor-pointer transition-all text-[10px] sm:text-xs font-bold select-none shadow-sm scale-105`;
           
           // Kirim presensi manual
           kirimPresensiManual(siswa.nama, opt.val);
