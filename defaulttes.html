@@ -397,6 +397,39 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
+// FUNGSI PEMBARUAN OTOMATIS DATA SISWA SEKALI SEHARI KETIKA ONLINE
+async function checkAndRefreshDailyStudentData() {
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const lastSyncDate = localStorage.getItem('last_sync_student_date');
+
+  // Jika hari ini belum pernah sync data online, lakukan sync
+  if (lastSyncDate !== todayStr && navigator.onLine) {
+    const daftarKelas = ['KELAS 07', 'KELAS 08', 'KELAS 09', 'KELAS 10', 'KELAS 11', 'KELAS 12'];
+    console.log("Melakukan sinkronisasi otomatis data siswa harian...");
+    
+    for (const kelas of daftarKelas) {
+      try {
+        const response = await fetch(`${scriptURL}?action=getRekap&kelas=${encodeURIComponent(kelas)}`);
+        const resJson = await response.json();
+        if (resJson.status === 'success' && resJson.data) {
+          // Simpan data siswa per kelas ke localStorage
+          localStorage.setItem(`siswa_cache_${kelas}`, JSON.stringify(resJson.data));
+        }
+      } catch (err) {
+        console.error(`Gagal memperbarui cache siswa untuk ${kelas}:`, err);
+      }
+    }
+    // Tandai bahwa hari ini sudah melakukan sinkronisasi
+    localStorage.setItem('last_sync_student_date', todayStr);
+  }
+}
+
+// Jalankan pengecekan sinkronisasi saat aplikasi dimuat
+window.addEventListener('DOMContentLoaded', () => {
+  checkAndRefreshDailyStudentData();
+});
+
 // Fungsi Toggle Mode Presensi (QR Code <-> Manual) pada Nav Bottom
 function toggleModePresensi(el) {
   const pageQrcode = document.getElementById('page-qrcode');
@@ -421,78 +454,93 @@ function toggleModePresensi(el) {
   }
 }
 
-// Logika Load Siswa Manual Berdasarkan Kelas yang Dipilih
+// Logika Load Siswa Manual Berdasarkan Kelas yang Dipilih (Memanfaatkan Cache Lokal / Online)
 async function loadSiswaManual(kelas) {
   const container = document.getElementById('container-daftar-siswa');
   container.innerHTML = `<div class="text-center text-xs text-slate-500 py-8 bg-white rounded-2xl border border-slate-100"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Memuat data siswa ${kelas}...</div>`;
 
-  try {
-    const response = await fetch(`${scriptURL}?action=getRekap&kelas=${encodeURIComponent(kelas)}`);
-    const resJson = await response.json();
+  let siswaData = null;
 
-    if (resJson.status === 'success' && resJson.data && resJson.data.length > 0) {
-      container.innerHTML = '';
-      resJson.data.forEach((siswa, index) => {
-        const rowDiv = document.createElement('div');
-        rowDiv.className = 'bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3';
-        
-        // Info Nama & JK Siswa
-        const infoDiv = document.createElement('div');
-        infoDiv.className = 'flex items-center gap-3 w-full sm:w-auto min-w-0';
-        infoDiv.innerHTML = `
-          <div class="w-8 h-8 rounded-lg bg-emerald-soft border border-emerald-light flex items-center justify-center font-bold text-emerald-deep text-xs flex-shrink-0">${index + 1}</div>
-          <div class="min-w-0 flex-1">
-            <div class="text-xs font-bold text-slate-800 truncate">${siswa.nama}</div>
-            <div class="text-[10px] text-slate-400 font-medium">JK: ${siswa.jk || '-'}</div>
-          </div>
-        `;
-        rowDiv.appendChild(infoDiv);
+  // Coba ambil dari cache lokal terlebih dahulu agar cepat & mendukung offline
+  const cachedData = localStorage.getItem(`siswa_cache_${kelas}`);
+  if (cachedData) {
+    try {
+      siswaData = JSON.parse(cachedData);
+    } catch(e) {}
+  }
 
-        // Opsi Radio Kotak Huruf S I A (Hadir, Sakit, Izin, Alpa)
-        const radioGroup = document.createElement('div');
-        radioGroup.className = 'flex items-center gap-2 flex-shrink-0';
-        
-        const options = [
-          { val: '●', label: 'H', title: 'Hadir' },
-          { val: 'S', label: 'S', title: 'Sakit' },
-          { val: 'I', label: 'I', title: 'Izin' },
-          { val: 'A', label: 'A', title: 'Alpa' }
-        ];
+  // Jika tidak ada di cache dan sedang online, coba ambil langsung dari server
+  if (!siswaData && navigator.onLine) {
+    try {
+      const response = await fetch(`${scriptURL}?action=getRekap&kelas=${encodeURIComponent(kelas)}`);
+      const resJson = await response.json();
+      if (resJson.status === 'success' && resJson.data) {
+        siswaData = resJson.data;
+        localStorage.setItem(`siswa_cache_${kelas}`, JSON.stringify(siswaData));
+      }
+    } catch(err) {}
+  }
 
-        options.forEach(opt => {
-          const label = document.createElement('label');
-          label.className = 'flex flex-col items-center justify-center w-9 h-9 rounded-lg border border-slate-200 bg-slate-50 cursor-pointer hover:bg-emerald-soft transition-all text-xs font-bold text-slate-700 select-none';
-          label.title = opt.title;
+  if (siswaData && siswaData.length > 0) {
+    container.innerHTML = '';
+    siswaData.forEach((siswa, index) => {
+      const rowDiv = document.createElement('div');
+      rowDiv.className = 'bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3';
+      
+      // Info Nama & JK Siswa
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'flex items-center gap-3 w-full sm:w-auto min-w-0';
+      infoDiv.innerHTML = `
+        <div class="w-8 h-8 rounded-lg bg-emerald-soft border border-emerald-light flex items-center justify-center font-bold text-emerald-deep text-xs flex-shrink-0">${index + 1}</div>
+        <div class="min-w-0 flex-1">
+          <div class="text-xs font-bold text-slate-800 truncate">${siswa.nama}</div>
+          <div class="text-[10px] text-slate-400 font-medium">JK: ${siswa.jk || '-'}</div>
+        </div>
+      `;
+      rowDiv.appendChild(infoDiv);
 
-          const radio = document.createElement('input');
-          radio.type = 'radio';
-          radio.name = `presensi_${index}`;
-          radio.value = opt.val;
-          radio.className = 'hidden';
+      // Opsi Radio Kotak Huruf S I A (Hadir, Sakit, Izin, Alpa)
+      const radioGroup = document.createElement('div');
+      radioGroup.className = 'flex items-center gap-2 flex-shrink-0';
+      
+      const options = [
+        { val: '●', label: 'H', title: 'Hadir' },
+        { val: 'S', label: 'S', title: 'Sakit' },
+        { val: 'I', label: 'I', title: 'Izin' },
+        { val: 'A', label: 'A', title: 'Alpa' }
+      ];
 
-          // Event ketika opsi radio dipilih
-          radio.onchange = () => {
-            // Berikan highlight visual terpilih
-            radioGroup.querySelectorAll('label').forEach(l => l.classList.remove('bg-emerald-deep', 'text-white', 'border-emerald-deep'));
-            label.classList.add('bg-emerald-deep', 'text-white', 'border-emerald-deep');
-            
-            // Kirim presensi manual
-            kirimPresensiManual(siswa.nama, opt.val);
-          };
+      options.forEach(opt => {
+        const label = document.createElement('label');
+        label.className = 'flex flex-col items-center justify-center w-9 h-9 rounded-lg border border-slate-200 bg-slate-50 cursor-pointer hover:bg-emerald-soft transition-all text-xs font-bold text-slate-700 select-none';
+        label.title = opt.title;
 
-          label.appendChild(radio);
-          label.appendChild(document.createTextNode(opt.label));
-          radioGroup.appendChild(label);
-        });
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = `presensi_${index}`;
+        radio.value = opt.val;
+        radio.className = 'hidden';
 
-        rowDiv.appendChild(radioGroup);
-        container.appendChild(rowDiv);
+        // Event ketika opsi radio dipilih
+        radio.onchange = () => {
+          // Berikan highlight visual terpilih
+          radioGroup.querySelectorAll('label').forEach(l => l.classList.remove('bg-emerald-deep', 'text-white', 'border-emerald-deep'));
+          label.classList.add('bg-emerald-deep', 'text-white', 'border-emerald-deep');
+          
+          // Kirim presensi manual
+          kirimPresensiManual(siswa.nama, opt.val);
+        };
+
+        label.appendChild(radio);
+        label.appendChild(document.createTextNode(opt.label));
+        radioGroup.appendChild(label);
       });
-    } else {
-      container.innerHTML = `<div class="text-center text-xs text-red-500 py-6 bg-white rounded-2xl border border-slate-100 font-bold">Tidak ada data siswa ditemukan untuk kelas ${kelas}.</div>`;
-    }
-  } catch (err) {
-    container.innerHTML = `<div class="text-center text-xs text-red-500 py-6 bg-white rounded-2xl border border-slate-100 font-bold">Gagal memuat data siswa. Periksa koneksi internet.</div>`;
+
+      rowDiv.appendChild(radioGroup);
+      container.appendChild(rowDiv);
+    });
+  } else {
+    container.innerHTML = `<div class="text-center text-xs text-red-500 py-6 bg-white rounded-2xl border border-slate-100 font-bold">Tidak ada data siswa ditemukan untuk kelas ${kelas}. Pastikan terhubung internet untuk sinkronisasi awal.</div>`;
   }
 }
 
