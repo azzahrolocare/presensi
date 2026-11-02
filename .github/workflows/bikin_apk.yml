@@ -1,4 +1,4 @@
-name: Build Android APK (Presensi)
+name: Build Android APK (Presensi URL Wrapper)
 
 on:
   push:
@@ -38,42 +38,29 @@ jobs:
         cd cordova-app
         cordova platform add android
         
-        # Tambahkan plugin inti UI, Kamera, Navigasi, dan Orientasi Layar
+        # Tambahkan plugin inti UI, Kamera, Navigasi, dan Whitelist
         cordova plugin add cordova-plugin-statusbar
         cordova plugin add cordova-plugin-inappbrowser
         cordova plugin add cordova-plugin-camera
         cordova plugin add cordova-plugin-android-permissions
         cordova plugin add cordova-plugin-screen-orientation
+        cordova plugin add cordova-plugin-whitelist
 
-    - name: Copy Web Assets to Cordova
+    - name: Download App Icon
       run: |
-        # Bersihkan folder www bawaan cordova
-        rm -rf cordova-app/www/*
-        
-        # Salin file web utama secara aman
-        cp -r index.html offline.html rekapitulasi.html sw.js manifest.json *.png cordova-app/www/ 2>/dev/null || true
-        
-        # Unduh ikon resmi langsung ke root proyek untuk digunakan sebagai aset build
         curl -s -L -o cordova-app/icon-presensi.png https://azzahro.web.id/presensi/icon-presensi.png
-        cp cordova-app/icon-presensi.png cordova-app/www/icon-presensi.png
-        
-        # OTOMATISASI LANDSCAPE KHUSUS REKAPITULASI
-        sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("landscape"); } }, false);<\/script><\/body>/g' cordova-app/www/rekapitulasi.html
-        
-        # OTOMATISASI PORTRAIT KHUSUS INDEX
-        sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("portrait"); } }, false);<\/script><\/body>/g' cordova-app/www/index.html
-        
-        # Jika ada folder tambahan seperti notification, ikut disalin
-        if [ -d "notification" ]; then cp -r notification cordova-app/www/; fi
 
-    - name: Configure Cordova config.xml (Anti-Kedip & Splash Screen Hijau)
+    - name: Configure Cordova config.xml (URL Wrapper & Whitelist)
       run: |
         cd cordova-app
         
-        # SUNTIKKAN NAMESPACE ANDROID (Solusi Eror AttributePrefixUnbound)
+        # SUNTIKKAN NAMESPACE ANDROID
         sed -i 's/<widget/<widget xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android"/g' config.xml
         
-        # Set Fullscreen, Orientasi, Ikon, Whitelist, dan Preferensi Anti-Kedip
+        # UBAH KONTEN UTAMA AGAR LANGSUNG MEMUAT LINK WEBSITE AZ-ZAHRO
+        sed -i 's/<content src="index.html" \/>/<content src="https:\/\/azzahro.web.id\/presensi\/" \/>/g' config.xml
+        
+        # Set Fullscreen, Orientasi, Ikon, dan Whitelist Akses Penuh
         sed -i '/<\/widget>/i \    <preference name="Fullscreen" value="true" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="Orientation" value="portrait" \/>' config.xml
         sed -i '/<\/widget>/i \    <icon src="icon-presensi.png" \/>' config.xml
@@ -82,17 +69,17 @@ jobs:
         sed -i '/<\/widget>/i \    <allow-intent href="http:\/\/*\/*" \/>' config.xml
         sed -i '/<\/widget>/i \    <allow-intent href="https:\/\/*\/*" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="backgroundColor" value="0xFF0F5132" \/>' config.xml
+        
+        # Konfigurasi Splash Screen Hijau
         sed -i '/<\/widget>/i \    <preference name="AndroidWindowSplashScreenAnimatedIcon" value="icon-presensi.png" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="AndroidWindowSplashScreenBackground" value="#0F5132" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="AutoHideSplashScreen" value="true" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="SplashScreenDelay" value="2000" \/>' config.xml
-        sed -i '/<\/widget>/i \    <preference name="FadeSplashScreen" value="true" \/>' config.xml
-        sed -i '/<\/widget>/i \    <preference name="FadeSplashScreenDuration" value="300" \/>' config.xml
         
-        # Hapus tag penutup </widget> lama agar bisa digeser ke paling bawah setelah konfigurasi android
+        # Hapus tag penutup widget lama agar bisa disisipi konfigurasi izin Android
         sed -i '$d' config.xml
         
-        # Tambahkan konfigurasi izin Android dan tutup kembali tag widget
+        # Tambahkan izin Android (Kamera & Internet)
         cat << 'EOF' >> config.xml
             <platform name="android">
                 <config-file target="AndroidManifest.xml" parent="/manifest">
