@@ -201,6 +201,17 @@
       </div>
     </nav>
 
+    <!-- INDIKATOR SINKRONISASI DATA SISWA -->
+    <div id="sync-indicator" class="hidden w-full max-w-md mx-auto px-4 mt-3">
+      <div class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-rotate fa-spin text-amber-600"></i>
+          <span id="sync-status-text">Memperbarui data siswa otomatis hari ini...</span>
+        </div>
+        <span id="sync-progress" class="text-[10px] bg-amber-200/60 text-amber-900 px-2 py-0.5 rounded-md font-mono">0/6</span>
+      </div>
+    </div>
+
     <!-- MAIN CONTENT -->
     <div class="w-full max-w-md mx-auto p-4 flex flex-col gap-4 mt-2 pb-28 items-center">
 
@@ -397,7 +408,7 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// FUNGSI PEMBARUAN OTOMATIS DATA SISWA SEKALI SEHARI KETIKA ONLINE
+// FUNGSI PEMBARUAN OTOMATIS DATA SISWA SEKALI SEHARI KETIKA ONLINE DENGAN INDIKATOR
 async function checkAndRefreshDailyStudentData() {
   const now = new Date();
   const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
@@ -406,20 +417,39 @@ async function checkAndRefreshDailyStudentData() {
   // Jika hari ini belum pernah sync data online, lakukan sync
   if (lastSyncDate !== todayStr && navigator.onLine) {
     const daftarKelas = ['KELAS 07', 'KELAS 08', 'KELAS 09', 'KELAS 10', 'KELAS 11', 'KELAS 12'];
-    console.log("Melakukan sinkronisasi otomatis data siswa harian...");
+    const syncIndicator = document.getElementById('sync-indicator');
+    const syncStatusText = document.getElementById('sync-status-text');
+    const syncProgress = document.getElementById('sync-progress');
     
-    for (const kelas of daftarKelas) {
+    // Tampilkan indikator sinkronisasi
+    if (syncIndicator) syncIndicator.classList.remove('hidden');
+
+    let successCount = 0;
+    for (let i = 0; i < daftarKelas.length; i++) {
+      const kelas = daftarKelas[i];
+      if (syncStatusText) syncStatusText.textContent = `Sinkronisasi ${kelas}...`;
+      if (syncProgress) syncProgress.textContent = `${i + 1}/${daftarKelas.length}`;
+
       try {
         const response = await fetch(`${scriptURL}?action=getRekap&kelas=${encodeURIComponent(kelas)}`);
         const resJson = await response.json();
         if (resJson.status === 'success' && resJson.data) {
-          // Simpan data siswa per kelas ke localStorage
           localStorage.setItem(`siswa_cache_${kelas}`, JSON.stringify(resJson.data));
+          successCount++;
         }
       } catch (err) {
         console.error(`Gagal memperbarui cache siswa untuk ${kelas}:`, err);
       }
     }
+
+    // Sembunyikan indikator setelah selesai
+    if (syncIndicator) {
+      if (syncStatusText) syncStatusText.textContent = `Sinkronisasi selesai (${successCount}/6 kelas)`;
+      setTimeout(() => {
+        syncIndicator.classList.add('hidden');
+      }, 2500);
+    }
+
     // Tandai bahwa hari ini sudah melakukan sinkronisasi
     localStorage.setItem('last_sync_student_date', todayStr);
   }
