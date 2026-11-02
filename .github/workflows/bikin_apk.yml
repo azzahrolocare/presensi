@@ -89,7 +89,10 @@ jobs:
         sed -i '/<\/widget>/i \    <preference name="FadeSplashScreen" value="true" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="FadeSplashScreenDuration" value="300" \/>' config.xml
         
-        # Tambahkan konfigurasi izin Android secara aman sebelum tag penutup widget
+        # Hapus tag penutup </widget> lama agar bisa digeser ke paling bawah setelah konfigurasi android
+        sed -i '$d' config.xml
+        
+        # Tambahkan konfigurasi izin Android dan tutup kembali tag widget
         cat << 'EOF' >> config.xml
             <platform name="android">
                 <config-file target="AndroidManifest.xml" parent="/manifest">
