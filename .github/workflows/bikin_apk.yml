@@ -38,7 +38,7 @@ jobs:
         cd cordova-app
         cordova platform add android
         
-        # Tambahkan plugin inti UI, Kamera, Navigasi, dan Orientasi Layar
+        # Tambahkan plugin inti
         cordova plugin add cordova-plugin-statusbar
         cordova plugin add cordova-plugin-inappbrowser
         cordova plugin add cordova-plugin-camera
@@ -47,49 +47,34 @@ jobs:
 
     - name: Copy Web Assets to Cordova
       run: |
-        # Bersihkan folder www bawaan cordova
         rm -rf cordova-app/www/*
-        
-        # Salin file web utama secara aman
         cp -r index.html offline.html rekapitulasi.html sw.js manifest.json *.png cordova-app/www/ 2>/dev/null || true
         
-        # Unduh ikon resmi langsung ke root proyek untuk digunakan sebagai aset build
         curl -s -L -o cordova-app/icon-presensi.png https://azzahro.web.id/presensi/icon-presensi.png
         cp cordova-app/icon-presensi.png cordova-app/www/icon-presensi.png
         
-        # OTOMATISASI LANDSCAPE KHUSUS REKAPITULASI
         sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("landscape"); } }, false);<\/script><\/body>/g' cordova-app/www/rekapitulasi.html
-        
-        # OTOMATISASI PORTRAIT KHUSUS INDEX
         sed -i 's/<\/body>/<script>document.addEventListener("deviceready", () => { if(window.screen \&\& window.screen.orientation) { window.screen.orientation.lock("portrait"); } }, false);<\/script><\/body>/g' cordova-app/www/index.html
         
-        # Jika ada folder tambahan seperti notification, ikut disalin
         if [ -d "notification" ]; then cp -r notification cordova-app/www/; fi
 
-    - name: Configure Cordova config.xml (Anti-Kedip & Splash Screen Hijau)
+    - name: Configure Cordova config.xml
       run: |
         cd cordova-app
         
-        # SUNTIKKAN NAMESPACE ANDROID (Solusi Eror AttributePrefixUnbound)
         sed -i 's/<widget/<widget xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android"/g' config.xml
         
-        # Set Fullscreen dan Orientation dasar
         sed -i '/<\/widget>/i \    <preference name="Fullscreen" value="true" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="Orientation" value="portrait" \/>' config.xml
-        
-        # Set Ikon Utama Aplikasi
         sed -i '/<\/widget>/i \    <icon src="icon-presensi.png" \/>' config.xml
         
-        # KEBIJAKAN WHITELIST AKSES JARINGAN (Solusi Fetch/XHR Terblokir di Cordova)
         sed -i '/<\/widget>/i \    <access origin="*" \/>' config.xml
         sed -i '/<\/widget>/i \    <allow-navigation href="*" \/>' config.xml
         sed -i '/<\/widget>/i \    <allow-intent href="http:\/\/*\/*" \/>' config.xml
         sed -i '/<\/widget>/i \    <allow-intent href="https:\/\/*\/*" \/>' config.xml
         
-        # PREFERENSI ANTI-KEDIP (Mengunci background WebView Android ke warna hijau utama)
         sed -i '/<\/widget>/i \    <preference name="backgroundColor" value="0xFF0F5132" \/>' config.xml
         
-        # KONFIGURASI SPLASH SCREEN MODERN (Diselaraskan ke warna hijau #0F5132 dengan efek fade)
         sed -i '/<\/widget>/i \    <preference name="AndroidWindowSplashScreenAnimatedIcon" value="icon-presensi.png" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="AndroidWindowSplashScreenBackground" value="#0F5132" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="AutoHideSplashScreen" value="true" \/>' config.xml
@@ -97,7 +82,6 @@ jobs:
         sed -i '/<\/widget>/i \    <preference name="FadeSplashScreen" value="true" \/>' config.xml
         sed -i '/<\/widget>/i \    <preference name="FadeSplashScreenDuration" value="300" \/>' config.xml
         
-        # Buat blok konfigurasi izin dengan parent /manifest yang benar sesuai AAPT
         cat << 'EOF' > android_permissions.xml
             <platform name="android">
                 <config-file target="AndroidManifest.xml" parent="/manifest">
@@ -109,9 +93,8 @@ jobs:
                     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
                 </config-file>
             </platform>
-EOF
+        EOF
         
-        # Masukkan blok izin tepat sebelum tag penutup </widget>
         sed -i '/<\/widget>/e cat android_permissions.xml' config.xml
 
     - name: Build Android APK (Debug Signed)
