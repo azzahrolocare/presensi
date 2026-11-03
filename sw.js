@@ -1,4 +1,4 @@
-const CACHE_NAME = 'presensi-azzahro-v1.0.8';
+const CACHE_NAME = 'presensi-azzahro-v1.0.9';
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCXbDTuaFkN7GlcXJxaFgDaKPEp2G9vySF1IKfWxUCTuEOCYt39nMmlEmI25pz4PSd/exec';
 const REKAP_URL = 'https://azzahrolocare.github.io/rekapitulasi-presensi-siswa/';
 
@@ -10,7 +10,17 @@ const ASSETS_TO_CACHE = [
   './logo-smk-azzahro.png',
   './notification/Notif01.mp3',
   './icon-presensi.png',
-  // Pustaka eksternal (CDN)
+  // Pustaka lokal (hasil fetch-libs.sh) agar tampilan tetap utuh saat offline
+  './libs/tailwind.js',
+  './libs/html5-qrcode.min.js',
+  './libs/lucide.min.js',
+  './libs/fonts/fonts.css',
+  './libs/fontawesome/css/all.min.css',
+  './libs/fontawesome/webfonts/fa-solid-900.woff2',
+  './libs/fontawesome/webfonts/fa-regular-400.woff2',
+  './libs/fontawesome/webfonts/fa-brands-400.woff2',
+  './libs/fontawesome/webfonts/fa-v4compatibility.woff2',
+  // Pustaka eksternal (CDN) - cadangan
   'https://cdn.tailwindcss.com',
   'https://unpkg.com/lucide@latest',
   'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js',
@@ -53,11 +63,15 @@ self.addEventListener('fetch', (e) => {
   if (e.request.url.includes('script.google.com')) return;
   
   e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
+    caches.match(e.request, { ignoreSearch: false }).then((cachedResponse) => {
       if (cachedResponse) {
         return cachedResponse;
       }
       return fetch(e.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.ok && e.request.method === 'GET' && e.request.url.startsWith('http')) {
+          const copy = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, copy)).catch(() => {});
+        }
         return networkResponse;
       }).catch(() => {
         if (e.request.mode === 'navigate') {
