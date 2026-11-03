@@ -180,13 +180,13 @@
         
         <!-- Baris Atas: Logo & Judul Utama (SMP Baris Atas, SMK Baris Bawah) -->
         <div class="flex items-center justify-center gap-4 w-full">
-          <img src="logo-smp-azzahro.png" alt="SMP" class="w-11 h-11 object-contain rounded-lg flex-shrink-0 shadow-sm">
+          <img src="https://azzahro.web.id/presensi/logo-smp-azzahro.png" alt="SMP" class="w-11 h-11 object-contain rounded-lg flex-shrink-0 shadow-sm">
           <div class="text-center">
             <h1 class="font-serif-custom text-base font-bold tracking-wide">PRESENSI DIGITAL</h1>
             <p class="text-[10px] uppercase font-medium tracking-wider text-gold-accent">SMP ISLAM AZ-ZAHRO</p>
             <p class="text-[10px] uppercase font-medium tracking-wider text-gold-accent">SMK AZ-ZAHRO</p>
           </div>
-          <img src="logo-smk-azzahro.png" alt="SMK" class="w-11 h-11 object-contain rounded-lg flex-shrink-0 shadow-sm">
+          <img src="https://azzahro.web.id/presensi/logo-smk-azzahro.png" alt="SMK" class="w-11 h-11 object-contain rounded-lg flex-shrink-0 shadow-sm">
         </div>
 
         <!-- Baris Bawah: Jam Digital & Tanggal Terpisah -->
@@ -410,7 +410,7 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// FUNGSI PEMBARUAN OTOMATIS DATA SISWA SEKALI SEHARI KETIKA ONLINE DENGAN INDIKATOR AMAN OFFLINE
+// FUNGSI PEMBARUAN OTOMATIS DATA SISWA SEKALI SEHARI KETIKA ONLINE DENGAN INDIKATOR
 async function checkAndRefreshDailyStudentData() {
   // Jika sedang offline, batalkan proses sinkronisasi otomatis agar tidak macet
   if (!navigator.onLine) {
@@ -488,7 +488,7 @@ function toggleModePresensi(el) {
   }
 }
 
-// Logika Load Siswa Manual Berdasarkan Kelas yang Dipilih
+// Logika Load Siswa Manual Berdasarkan Kelas yang Dipilih (Memanfaatkan Cache Lokal / Online)
 async function loadSiswaManual(kelas) {
   const container = document.getElementById('container-daftar-siswa');
   container.innerHTML = `<div class="text-center text-xs text-slate-500 py-8 bg-white rounded-2xl border border-slate-100"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Memuat data siswa ${kelas}...</div>`;
@@ -574,6 +574,7 @@ async function loadSiswaManual(kelas) {
   }
 }
 
+// Fungsi Pengiriman Presensi Manual
 function kirimPresensiManual(nama, keterangan) {
   const cfg = JSON.parse(localStorage.getItem('absensiConfig')) || { sound: 'notification/Notif01.mp3' };
   new Audio(cfg.sound).play().catch(() => {});
@@ -586,6 +587,7 @@ function kirimPresensiManual(nama, keterangan) {
   }
 }
 
+// Navigasi Langsung 1 Kali Klik Tanpa Status Bertingkat
 function navKlik(el, aksi) {
   document.querySelectorAll('.nav-it').forEach(n => { 
     if(n.id !== 'nManualToggle') n.classList.remove('active'); 
@@ -822,6 +824,7 @@ window.addEventListener('beforeinstallprompt', e=>{
   e.preventDefault(); pwaPrompt=e;
   setTimeout(()=>{ document.getElementById('pwa-popup').style.display='flex'; },2000);
 });
+
 const btnInstalPop = document.getElementById('btnInstalPop');
 if (btnInstalPop) {
   btnInstalPop.onclick = async () => {
@@ -830,6 +833,7 @@ if (btnInstalPop) {
     pwaPrompt.prompt(); pwaPrompt=null;
   };
 }
+
 const btnBatal = document.getElementById('btnBatal');
 if (btnBatal) {
   btnBatal.onclick = () => { document.getElementById('pwa-popup').style.display='none'; };
