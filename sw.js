@@ -1,19 +1,16 @@
-const CACHE_NAME = 'presensi-azzahro-v1.0.7';
-const OFFLINE_URL = './offline.html';
+const CACHE_NAME = 'presensi-azzahro-v1.0.8';
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCXbDTuaFkN7GlcXJxaFgDaKPEp2G9vySF1IKfWxUCTuEOCYt39nMmlEmI25pz4PSd/exec';
 const REKAP_URL = 'https://azzahrolocare.github.io/rekapitulasi-presensi-siswa/';
 
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './offline.html',
-  './rekapitulasi.html',
   './manifest.json',
   './logo-smp-azzahro.png',
   './logo-smk-azzahro.png',
   './notification/Notif01.mp3',
-  './icon-apk-presensi-azzahro.png',
-  // TAMBAHKAN SEMUA PUSTAKA EKSTERNAL DI BAWAH INI AGAR AMAN SAAT OFFLINE:
+  './icon-presensi.png',
+  // Pustaka eksternal (CDN)
   'https://cdn.tailwindcss.com',
   'https://unpkg.com/lucide@latest',
   'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js',
@@ -21,11 +18,19 @@ const ASSETS_TO_CACHE = [
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap'
 ];
 
-// 1. INSTALL: Simpan aset ke cache
+// 1. INSTALL: Simpan aset dengan aman (menggunakan try-catch agar tidak gagalkan instalasi jika ada CDN yang error)
 self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
+    caches.open(CACHE_NAME).then(async (cache) => {
+      for (const asset of ASSETS_TO_CACHE) {
+        try {
+          await cache.add(asset);
+        } catch (err) {
+          console.warn('Gagal cache aset (diabaikan agar SW tetap terpasang):', asset, err);
+        }
+      }
+    })
   );
 });
 
@@ -55,7 +60,6 @@ self.addEventListener('fetch', (e) => {
       return fetch(e.request).then((networkResponse) => {
         return networkResponse;
       }).catch(() => {
-        // Jika gagal total dan berupa navigasi halaman, kembalikan index.html
         if (e.request.mode === 'navigate') {
           return caches.match('./index.html');
         }
@@ -80,7 +84,7 @@ async function kirimDataDariIndexedDB() {
   });
 
   const db = await dbPromise;
-  if (!db.objectStoreNames.contains("antrean")) return;
+  if (!db || !db.objectStoreNames.contains("antrean")) return;
 
   const transaction = db.transaction(["antrean"], "readwrite");
   const store = transaction.objectStore("antrean");
@@ -89,7 +93,7 @@ async function kirimDataDariIndexedDB() {
     req.onsuccess = () => resolve(req.result);
   });
 
-  if (dataAntrean.length > 0) {
+  if (dataAntrean && dataAntrean.length > 0) {
     let suksesCount = 0;
     let gagalCount = 0;
 
@@ -108,14 +112,13 @@ async function kirimDataDariIndexedDB() {
         suksesCount++;
         
         const deleteTx = db.transaction(["antrean"], "readwrite");
-        deleteTx.objectStore("antrean").delete(item.id || dataAntrean.indexOf(item) + 1);
+        deleteTx.objectStore("antrean").delete(item.id);
         
         await new Promise(r => setTimeout(r, 300));
         
       } catch (err) {
         console.error("SW: Gagal kirim satu item, lanjut berikutnya.", err);
         gagalCount++;
-        continue; 
       }
     }
     
@@ -133,8 +136,8 @@ function showNotification(title, body) {
   if (self.registration.showNotification) {
     self.registration.showNotification(title, {
       body: body,
-      icon: './icon-apk-presensi-azzahro.png',
-      badge: './icon-apk-presensi-azzahro.png',
+      icon: './icon-presensi.png',
+      badge: './icon-presensi.png',
       vibrate: [200, 100, 200],
       tag: 'sync-notification',
       data: { url: REKAP_URL },
