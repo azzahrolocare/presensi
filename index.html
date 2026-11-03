@@ -10,8 +10,9 @@
     <link rel="manifest" href="manifest.json">
     
     <!-- Integrasi Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="libs/tailwind.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.tailwindcss.com';document.head.appendChild(s);"></script>
     <script>
+        window.tailwind = window.tailwind || {};
         tailwind.config = {
             theme: {
                 extend: {
@@ -37,9 +38,11 @@
         }
     </script>
     
+    <link href="libs/fonts/fonts.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="libs/lucide.min.js" onerror="this.onerror=null;"></script>
+    <script src="libs/html5-qrcode.min.js" onerror="this.onerror=null;document.write('<script src=&quot;https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js&quot;><\/script>');"></script>
+    <link rel="stylesheet" href="libs/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="cordova.js"></script>
     
@@ -180,13 +183,13 @@
         
         <!-- Baris Atas: Logo & Judul Utama (SMP Baris Atas, SMK Baris Bawah) -->
         <div class="flex items-center justify-center gap-4 w-full">
-          <img src="https://azzahro.web.id/presensi/logo-smp-azzahro.png" alt="SMP" class="w-11 h-11 object-contain rounded-lg flex-shrink-0 shadow-sm">
+          <img src="logo-smp-azzahro.png" alt="SMP" class="w-11 h-11 object-contain rounded-lg flex-shrink-0 shadow-sm">
           <div class="text-center">
             <h1 class="font-serif-custom text-base font-bold tracking-wide">PRESENSI DIGITAL</h1>
             <p class="text-[10px] uppercase font-medium tracking-wider text-gold-accent">SMP ISLAM AZ-ZAHRO</p>
             <p class="text-[10px] uppercase font-medium tracking-wider text-gold-accent">SMK AZ-ZAHRO</p>
           </div>
-          <img src="https://azzahro.web.id/presensi/logo-smk-azzahro.png" alt="SMK" class="w-11 h-11 object-contain rounded-lg flex-shrink-0 shadow-sm">
+          <img src="logo-smk-azzahro.png" alt="SMK" class="w-11 h-11 object-contain rounded-lg flex-shrink-0 shadow-sm">
         </div>
 
         <!-- Baris Bawah: Jam Digital & Tanggal Terpisah -->
@@ -379,7 +382,6 @@
 <script>
 let activeModal = null;
 let currentMode = 'qrcode'; // 'qrcode' atau 'manual'
-const scriptURL = 'https://script.google.com/macros/s/AKfycbwCXbDTuaFkN7GlcXJxaFgDaKPEp2G9vySF1IKfWxUCTuEOCYt39nMmlEmI25pz4PSd/exec';
 
 // SCRIPT JAM REALTIME DENGAN FORMAT TANGGAL INDONESIA
 function updateClock() {
@@ -412,23 +414,18 @@ updateClock();
 
 // FUNGSI PEMBARUAN OTOMATIS DATA SISWA SEKALI SEHARI KETIKA ONLINE DENGAN INDIKATOR
 async function checkAndRefreshDailyStudentData() {
-  // Jika sedang offline, batalkan proses sinkronisasi otomatis agar tidak macet
-  if (!navigator.onLine) {
-    const syncIndicator = document.getElementById('sync-indicator');
-    if (syncIndicator) syncIndicator.classList.add('hidden');
-    return;
-  }
-
   const now = new Date();
   const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   const lastSyncDate = localStorage.getItem('last_sync_student_date');
 
+  // Jika hari ini belum pernah sync data online, lakukan sync
   if (lastSyncDate !== todayStr && navigator.onLine) {
     const daftarKelas = ['KELAS 07', 'KELAS 08', 'KELAS 09', 'KELAS 10', 'KELAS 11', 'KELAS 12'];
     const syncIndicator = document.getElementById('sync-indicator');
     const syncStatusText = document.getElementById('sync-status-text');
     const syncProgress = document.getElementById('sync-progress');
     
+    // Tampilkan indikator sinkronisasi
     if (syncIndicator) syncIndicator.classList.remove('hidden');
 
     let successCount = 0;
@@ -449,6 +446,7 @@ async function checkAndRefreshDailyStudentData() {
       }
     }
 
+    // Sembunyikan indikator setelah selesai
     if (syncIndicator) {
       if (syncStatusText) syncStatusText.textContent = `Sinkronisasi selesai (${successCount}/6 kelas)`;
       setTimeout(() => {
@@ -456,10 +454,12 @@ async function checkAndRefreshDailyStudentData() {
       }, 2500);
     }
 
+    // Tandai bahwa hari ini sudah melakukan sinkronisasi
     localStorage.setItem('last_sync_student_date', todayStr);
   }
 }
 
+// Jalankan pengecekan sinkronisasi saat aplikasi dimuat
 window.addEventListener('DOMContentLoaded', () => {
   checkAndRefreshDailyStudentData();
 });
@@ -495,6 +495,7 @@ async function loadSiswaManual(kelas) {
 
   let siswaData = null;
 
+  // Coba ambil dari cache lokal terlebih dahulu agar cepat & mendukung offline
   const cachedData = localStorage.getItem(`siswa_cache_${kelas}`);
   if (cachedData) {
     try {
@@ -502,6 +503,7 @@ async function loadSiswaManual(kelas) {
     } catch(e) {}
   }
 
+  // Jika tidak ada di cache dan sedang online, coba ambil langsung dari server
   if (!siswaData && navigator.onLine) {
     try {
       const response = await fetch(`${scriptURL}?action=getRekap&kelas=${encodeURIComponent(kelas)}`);
@@ -517,8 +519,10 @@ async function loadSiswaManual(kelas) {
     container.innerHTML = '';
     siswaData.forEach((siswa, index) => {
       const rowDiv = document.createElement('div');
+      // Desain baris compact agar pas satu baris dalam satu layar penuh
       rowDiv.className = 'bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between gap-1.5';
       
+      // Info Nomor & Nama Siswa (Teks nama dibuat fleksibel text-[10px] sm:text-xs tanpa dipotong truncate agar selalu Tampil Utuh/Full)
       const infoDiv = document.createElement('div');
       infoDiv.className = 'flex items-center gap-1.5 min-w-0 flex-1 pr-1';
       infoDiv.innerHTML = `
@@ -529,18 +533,60 @@ async function loadSiswaManual(kelas) {
       `;
       rowDiv.appendChild(infoDiv);
 
+      // Opsi Radio Kotak Huruf H S I A dengan Warna Berbeda yang Elegan
       const radioGroup = document.createElement('div');
       radioGroup.className = 'flex items-center gap-1 flex-shrink-0';
       
       const options = [
-        { val: '●', label: 'H', title: 'Hadir', activeBg: 'bg-emerald-600', activeText: 'text-white', activeBorder: 'border-emerald-600', idleBg: 'bg-emerald-50', idleText: 'text-emerald-700', idleBorder: 'border-emerald-200' },
-        { val: 'S', label: 'S', title: 'Sakit', activeBg: 'bg-blue-600', activeText: 'text-white', activeBorder: 'border-blue-600', idleBg: 'bg-blue-50', idleText: 'text-blue-700', idleBorder: 'border-blue-200' },
-        { val: 'I', label: 'I', title: 'Izin', activeBg: 'bg-amber-500', activeText: 'text-white', activeBorder: 'border-amber-500', idleBg: 'bg-amber-50', idleText: 'text-amber-700', idleBorder: 'border-amber-200' },
-        { val: 'A', label: 'A', title: 'Alpa', activeBg: 'bg-rose-600', activeText: 'text-white', activeBorder: 'border-rose-600', idleBg: 'bg-rose-50', idleText: 'text-rose-700', idleBorder: 'border-rose-200' }
+        { 
+          val: '●', 
+          label: 'H', 
+          title: 'Hadir',
+          activeBg: 'bg-emerald-600',
+          activeText: 'text-white',
+          activeBorder: 'border-emerald-600',
+          idleBg: 'bg-emerald-50',
+          idleText: 'text-emerald-700',
+          idleBorder: 'border-emerald-200'
+        },
+        { 
+          val: 'S', 
+          label: 'S', 
+          title: 'Sakit',
+          activeBg: 'bg-blue-600',
+          activeText: 'text-white',
+          activeBorder: 'border-blue-600',
+          idleBg: 'bg-blue-50',
+          idleText: 'text-blue-700',
+          idleBorder: 'border-blue-200'
+        },
+        { 
+          val: 'I', 
+          label: 'I', 
+          title: 'Izin',
+          activeBg: 'bg-amber-500',
+          activeText: 'text-white',
+          activeBorder: 'border-amber-500',
+          idleBg: 'bg-amber-50',
+          idleText: 'text-amber-700',
+          idleBorder: 'border-amber-200'
+        },
+        { 
+          val: 'A', 
+          label: 'A', 
+          title: 'Alpa',
+          activeBg: 'bg-rose-600',
+          activeText: 'text-white',
+          activeBorder: 'border-rose-600',
+          idleBg: 'bg-rose-50',
+          idleText: 'text-rose-700',
+          idleBorder: 'border-rose-200'
+        }
       ];
 
       options.forEach(opt => {
         const label = document.createElement('label');
+        // Ukuran tombol diperkecil sedikit (w-6 h-6 / w-7 h-7) dengan warna khas tiap keterangan
         label.className = `flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded border ${opt.idleBorder} ${opt.idleBg} ${opt.idleText} cursor-pointer transition-all text-[10px] sm:text-xs font-bold select-none shadow-xs`;
         label.title = opt.title;
 
@@ -550,14 +596,18 @@ async function loadSiswaManual(kelas) {
         radio.value = opt.val;
         radio.className = 'hidden';
 
+        // Event ketika opsi radio dipilih
         radio.onchange = () => {
+          // Reset semua tombol dalam baris ini ke warna idle awal
           radioGroup.querySelectorAll('label').forEach((l, idx) => {
             const o = options[idx];
             l.className = `flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded border ${o.idleBorder} ${o.idleBg} ${o.idleText} cursor-pointer transition-all text-[10px] sm:text-xs font-bold select-none shadow-xs`;
           });
 
+          // Tambahkan efek aktif warna khusus tombol yang dipilih
           label.className = `flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded border ${opt.activeBorder} ${opt.activeBg} ${opt.activeText} cursor-pointer transition-all text-[10px] sm:text-xs font-bold select-none shadow-sm scale-105`;
           
+          // Kirim presensi manual
           kirimPresensiManual(siswa.nama, opt.val);
         };
 
@@ -587,7 +637,7 @@ function kirimPresensiManual(nama, keterangan) {
   }
 }
 
-// Navigasi Langsung 1 Kali Klik Tanpa Status Bertingkat
+// Navigasi Langsung 1 Kali Klik Tanpa Status Bertingkat (Idle/Ready/Active)
 function navKlik(el, aksi) {
   document.querySelectorAll('.nav-it').forEach(n => { 
     if(n.id !== 'nManualToggle') n.classList.remove('active'); 
@@ -640,8 +690,7 @@ function applySettings() {
   const cfg = JSON.parse(localStorage.getItem('absensiConfig')) || {
     sound:'notification/Notif01.mp3'
   };
-  const soundChoice = document.getElementById('sound-choice');
-  if (soundChoice) soundChoice.value = cfg.sound;
+  document.getElementById('sound-choice').value = cfg.sound;
 }
 
 function cancelSettings() { applySettings(); }
@@ -735,6 +784,7 @@ async function kirimManual() {
   },1500);
 }
 
+const scriptURL='https://script.google.com/macros/s/AKfycbwzJeGPQLKAYIOMUWht45sHz3Vv-JBOJ9jfeFZ434ANaT8sPSe2JQI441YoZBrdqV9a/exec';
 let isProcessing=false, detectedBarcodes=new Set(), scanTimer=null;
 
 function sendPresence(nama) {
@@ -776,7 +826,7 @@ function handleScan(txt) {
   },300);
 }
 
-const html5QrCode = new Html5Qrcode("reader");
+const html5QrCode = (typeof Html5Qrcode !== "undefined") ? new Html5Qrcode("reader") : null;
 
 function initAppPlatform() {
   if (window.cordova) {
@@ -803,11 +853,13 @@ function onCordovaReady() {
   }
 }
 
+// PERUBAHAN UTAMA: Memaksa ukuran qrbox menggunakan ukuran fix berbentuk persegi (misal 220 x 220 piksel) agar pasti kotak
 function nyalakanKamera() {
   setTimeout(() => {
+    if (!html5QrCode) { console.error("Library html5-qrcode tidak termuat"); return; }
     html5QrCode.start(
       { facingMode: "environment" },
-      { fps: 20, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 },
+      { fps: 20, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 }, // <--- Ukuran qrbox persegi + feed kamera dipaksa rasio 1:1
       handleScan
     ).catch(e => {
       if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
@@ -824,20 +876,12 @@ window.addEventListener('beforeinstallprompt', e=>{
   e.preventDefault(); pwaPrompt=e;
   setTimeout(()=>{ document.getElementById('pwa-popup').style.display='flex'; },2000);
 });
-
-const btnInstalPop = document.getElementById('btnInstalPop');
-if (btnInstalPop) {
-  btnInstalPop.onclick = async () => {
-    if (!pwaPrompt) return;
-    document.getElementById('pwa-popup').style.display='none';
-    pwaPrompt.prompt(); pwaPrompt=null;
-  };
-}
-
-const btnBatal = document.getElementById('btnBatal');
-if (btnBatal) {
-  btnBatal.onclick = () => { document.getElementById('pwa-popup').style.display='none'; };
-}
+document.getElementById('btnInstalPop').onclick=async()=>{
+  if (!pwaPrompt) return;
+  document.getElementById('pwa-popup').style.display='none';
+  pwaPrompt.prompt(); pwaPrompt=null;
+};
+document.getElementById('btnBatal').onclick=()=>{ document.getElementById('pwa-popup').style.display='none'; };
 
 window.addEventListener('DOMContentLoaded',()=>{
   applySettings();
