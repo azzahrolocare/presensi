@@ -45,6 +45,12 @@ jobs:
         cordova plugin add cordova-plugin-android-permissions
         cordova plugin add cordova-plugin-screen-orientation
 
+    - name: Unduh Library untuk Mode Offline
+      run: |
+        bash fetch-libs.sh
+        echo "Isi folder libs:"
+        ls -R libs | head -40
+
     - name: Copy Web Assets to Cordova
       run: |
         # Bersihkan folder www bawaan cordova
@@ -65,6 +71,11 @@ jobs:
         
         # Jika ada folder tambahan seperti notification, ikut disalin
         if [ -d "notification" ]; then cp -r notification cordova-app/www/; fi
+
+        # Salin library lokal (Tailwind, Font Awesome, font, html5-qrcode) agar aplikasi tampil utuh saat OFFLINE
+        cp -r libs cordova-app/www/
+        echo "Isi www:"
+        ls cordova-app/www cordova-app/www/libs
 
     - name: Configure Cordova config.xml (Perbaikan Struktur XML Manifest & Splash Modern)
       run: |
