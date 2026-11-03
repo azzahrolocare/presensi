@@ -51,6 +51,20 @@
             font-family: 'Inter', system-ui, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
+        /* Header & navbar bawah tetap diam: halaman dikunci, hanya #scroll-area yang scroll */
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            overscroll-behavior: none;
+        }
+        #scroll-area {
+            height: 100vh;
+            height: 100dvh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
+        }
         .font-serif-custom {
             font-family: 'Playfair Display', Georgia, serif;
         }
@@ -151,7 +165,7 @@
 </head>
 <body id="mainBody" class="bg-[#f8fafc] min-h-screen text-gray-800 antialiased flex flex-col justify-between overflow-x-hidden" onclick="onBodyClick()">
 
-<div>
+<div id="scroll-area">
     <!-- STATUS TOAST -->
     <div id="status-kirim" class="fixed top-28 left-1/2 -translate-x-1/2 w-[88%] max-w-[400px] p-4 rounded-2xl z-[700] hidden text-white text-center font-bold text-xs shadow-xl backdrop-blur-md border border-white/20"></div>
 
