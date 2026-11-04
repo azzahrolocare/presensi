@@ -1,6 +1,6 @@
-const CACHE_NAME = 'presensi-azzahro-v1.0.9';
+const CACHE_NAME = 'presensi-azzahro-v1.0.10';
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCXbDTuaFkN7GlcXJxaFgDaKPEp2G9vySF1IKfWxUCTuEOCYt39nMmlEmI25pz4PSd/exec';
-const REKAP_URL = 'https://azzahrolocare.github.io/rekapitulasi-presensi-siswa/';
+const REKAP_URL = 'https://azzahrolocare.github.io/presensi/rekapitulasi/';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -11,6 +11,8 @@ const ASSETS_TO_CACHE = [
   './notification/Notif01.mp3',
   './icon-presensi.png',
   // Pustaka lokal (hasil fetch-libs.sh) agar tampilan tetap utuh saat offline
+  './libs/img/logo-smp-azzahro.png',
+  './libs/img/logo-smk-azzahro.png',
   './libs/tailwind.js',
   './libs/html5-qrcode.min.js',
   './libs/lucide.min.js',
