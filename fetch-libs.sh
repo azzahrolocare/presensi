@@ -32,4 +32,9 @@ while IFS= read -r line; do
   OUT+="$line"$'\n'
 done <<< "$CSS"
 printf "%s" "$OUT" > libs/fonts/fonts.css
+# Logo sekolah (agar tampil saat offline)
+mkdir -p libs/img
+curl -fsSL https://azzahro.web.id/presensi/logo-smp-azzahro.png -o libs/img/logo-smp-azzahro.png
+curl -fsSL https://azzahro.web.id/presensi/logo-smk-azzahro.png -o libs/img/logo-smk-azzahro.png
+
 echo "Selesai: library tersimpan di ./libs"
